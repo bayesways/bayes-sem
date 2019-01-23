@@ -77,24 +77,24 @@ def mcmc(data, nsim=100):
         sigma_s[j] = sigma_temp
 
         # sample w
-        # for i in range(data['J']):
-        #     if (i+1)<=data['K']:
-        #         aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
-        #         inv_C = C0**(-1)*np.eye(i+1) + sigma_temp[i]**(-2)*aux1
-        #         C = inv(inv_C)
-        #         aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
-        #         mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
-        #         if mean[i] > 0 or True:
-        #             ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
-        #
-        #     else:
-        #         aux1= zz_temp.T @ zz_temp
-        #         inv_C = C0**(-1)*np.eye(data['K']) + sigma_temp[i]**(-2)*aux1
-        #         C = inv(inv_C)
-        #         aux2= zz_temp.T @ data['y'][:,i]
-        #         mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
-        #         ww_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
-        # w_s[j] = ww_temp
+        for i in range(data['J']):
+            if (i+1)<=data['K']:
+                aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
+                inv_C = C0**(-1)*np.eye(i+1) + sigma_temp[i]**(-2)*aux1
+                C = inv(inv_C)
+                aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
+                mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
+                # if mean[i] > 0 or True:
+                ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
+
+            else:
+                aux1= zz_temp.T @ zz_temp
+                inv_C = C0**(-1)*np.eye(data['K']) + sigma_temp[i]**(-2)*aux1
+                C = inv(inv_C)
+                aux2= zz_temp.T @ data['y'][:,i]
+                mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
+                ww_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
+        w_s[j] = ww_temp
 
     output = dict()
     output['w'] = w_s
