@@ -69,9 +69,10 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
 
     for j in range(nsim):
-        # sample z
-        zz_temp = sample_z(data, ww_temp, Sigma_temp, nsim_z)
-        z_s[j] = zz_temp
+        # # sample z
+        # zz_temp = sample_z(data, ww_temp, Sigma_temp, nsim_z)
+        # z_s[j] = zz_temp
+
 
         # sample sigma
         for i in range(data['J']):
@@ -118,24 +119,10 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
     return output
 
-def sample_z(data, ww, Sigma, nsim_z):
-    """
-    Sample z all rows at once
-    """
-    z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
-        data['N'], data['K'])
 
-    weights = np.empty(nsim_z)
-    for i in range(nsim_z):
-        y = z[i]@ww.T
-        weights[i] = np.sum(multivariate_normal.logpdf(y,
-            mean=np.zeros(data['J']), cov=Sigma ))
-
-    return sample_from_weighted_array(z, weights)
-
-#
 # def sample_z(data, ww, Sigma, nsim_z):
 #     """
+#     Version 1
 #     Sample z, one row at a time
 #     """
 #
@@ -152,8 +139,24 @@ def sample_z(data, ww, Sigma, nsim_z):
 #                 mean=np.zeros(data['J']), cov=Sigma )
 #
 #         output_z[n] = sample_from_weighted_array(z[:,n,:], weights)
+#     return output_z
 
-    return output_z
+
+def sample_z(data, ww, Sigma, nsim_z):
+    """
+    Version 2
+    Sample z all rows at once
+    """
+    z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
+        data['N'], data['K'])
+
+    weights = np.empty(nsim_z)
+    for i in range(nsim_z):
+        y = z[i]@ww.T
+        weights[i] = np.sum(multivariate_normal.logpdf(y,
+            mean=np.zeros(data['J']), cov=Sigma ))
+
+    return sample_from_weighted_array(z, weights)
 
 
 def sample_index(probs, size=1):
