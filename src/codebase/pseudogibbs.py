@@ -12,24 +12,25 @@ def trunc_normal(i, mean, cov, max_counter=10):
         counter = 0
         while a<=0.:
             if counter >= max_counter:
-                print("No sample")
-                return 0.
+                # print("No sample")
+                return np.array(0.)
             else:
                 a = multivariate_normal.rvs(mean, cov)
                 counter+=1
-        return a
+        return np.array(a)
 
     else:
         a = np.zeros(mean.shape[0])
         counter = 0
         while a[i]<=0.:
             if counter >= max_counter:
-                print("No sample")
+                # print("No sample")
                 return np.zeros(mean.shape[0])
             else:
                 a = multivariate_normal.rvs(mean, cov)
                 counter += 1
-        return a
+        return np.array(a)
+
 
 def create_w_columns(i,k,ww):
     if i+1<=k:
@@ -44,20 +45,23 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
     w_s = np.empty((nsim, data['J'], data['K']))
     sigma_s = np.empty((nsim, data['J']))
+    Sigma_s = np.empty((nsim, data['K'], data['K']))
     z_s = np.empty((nsim, data['N'], data['K']))
 
-    # sigma_temp = np.ones(data['J'])
-    sigma_temp = data['sigma'].copy()
+    sigma_temp = np.ones(data['J'])
+    # sigma_temp = data['sigma'].copy()
     Sigma_temp = np.diag(sigma_temp)
 
-    zz_temp = data['z'].copy()
-    ww_temp = data['w'].copy()
-    # ww_temp = norm.rvs(size=data['J']*data['K']).reshape((data['J'],data['K']))
+    # zz_temp = data['z'].copy()
+    # ww_temp = data['w'].copy()
+    ww_temp = norm.rvs(size=data['J']*data['K']).reshape((data['J'],data['K']))
+    ww_temp[0,1] = 0.
 
     C0 = 1e2
     mu0 = 1
     prior_a = 1e-1
     prior_b = 1e-1
+
 
 
     # Auxialiry variables
@@ -69,10 +73,23 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
 
     for j in range(nsim):
-        # # sample z
-        # zz_temp = sample_z(data, ww_temp, Sigma_temp, nsim_z)
-        # z_s[j] = zz_temp
 
+        # sample z 2
+        inv_Sigma = inv(Sigma_temp)
+        cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
+        Sigma_s[j]= cov1
+        zz_temp = sample_z(data, ww_temp, Sigma_temp, cov1, nsim_z)
+        z_s[j] = zz_temp
+
+        # sample z
+        # zz_temp = np.empty((data['N'], data['K']))
+        # inv_Sigma = inv(Sigma_temp)
+        # cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
+        # Sigma_s[j]= cov1
+        # for t in range(data['N']):
+        #     mean = cov1 @ ww_temp.T @ inv_Sigma @ data['y'][t]
+        #     zz_temp[t] = multivariate_normal.rvs(mean, cov1)
+        # z_s[j] = zz_temp
 
         # sample sigma
         for i in range(data['J']):
@@ -82,6 +99,8 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
             sigma_b = (prior_a*(prior_b**2)+d)/2.
             sigma_temp[i] = invgamma.rvs(sigma_a, scale = sigma_b)
         sigma_s[j] = sigma_temp
+        Sigma_temp = np.diag(sigma_temp)
+
 
         # sample w
         for i in range(data['J']):
@@ -91,8 +110,8 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
                 C = inv(inv_C)
                 aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
                 mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
-                # if mean[i] > 0 or True:
-                ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
+                if mean[i] > 0:
+                    ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
 
             else:
                 aux1= zz_temp.T @ zz_temp
@@ -102,6 +121,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
                 mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
                 ww_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
         w_s[j] = ww_temp
+
 
         if visual_bar:
             if j%bar_num == 0:
@@ -116,6 +136,8 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     output['w'] = w_s
     output['z'] = z_s
     output['sigma'] = sigma_s
+    output['Sigma'] = Sigma_s
+
 
     return output
 
@@ -142,7 +164,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 #     return output_z
 
 
-def sample_z(data, ww, Sigma, nsim_z):
+def sample_z(data, ww, Sigma, cov1, nsim_z):
     """
     Version 2
     Sample z all rows at once
@@ -150,11 +172,18 @@ def sample_z(data, ww, Sigma, nsim_z):
     z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
         data['N'], data['K'])
 
+    # z = np.empty((nsim_z, data['N'], data['K']))
+    #
+    # for i in range(nsim_z):
+    #     z[i] = multivariate_normal.rvs(mean=np.zeros(data['K']),
+    #         cov = cov1, size=data['N'])
+
+    Omega = ww @ ww.T + Sigma
     weights = np.empty(nsim_z)
     for i in range(nsim_z):
         y = z[i]@ww.T
         weights[i] = np.sum(multivariate_normal.logpdf(y,
-            mean=np.zeros(data['J']), cov=Sigma ))
+            mean=np.zeros(data['J']), cov=Omega ))
 
     return sample_from_weighted_array(z, weights)
 
