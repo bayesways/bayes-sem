@@ -58,7 +58,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     ww_temp[0,1] = 0.
 
     C0 = 1e2
-    mu0 = 1
+    mu0 = 0
     prior_a = 1e-1
     prior_b = 1e-1
 
@@ -75,21 +75,19 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     for j in range(nsim):
 
         # sample z 2
-        inv_Sigma = inv(Sigma_temp)
-        cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
-        Sigma_s[j]= cov1
-        zz_temp = sample_z(data, ww_temp, Sigma_temp, cov1, nsim_z)
-        z_s[j] = zz_temp
-
-        # sample z
-        # zz_temp = np.empty((data['N'], data['K']))
         # inv_Sigma = inv(Sigma_temp)
         # cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
         # Sigma_s[j]= cov1
-        # for t in range(data['N']):
-        #     mean = cov1 @ ww_temp.T @ inv_Sigma @ data['y'][t]
-        #     zz_temp[t] = multivariate_normal.rvs(mean, cov1)
+        # zz_temp = sample_z(data, ww_temp, Sigma_temp, nsim_z)
         # z_s[j] = zz_temp
+
+        # sample z
+        zz_temp = np.empty((data['N'], data['K']))
+        inv_Sigma = inv(Sigma_temp)
+        cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
+        Sigma_s[j]= cov1
+        zz_temp = sample_z_q(data, ww_temp, Sigma_temp,cov1, nsim_z)
+        z_s[j] = zz_temp
 
         # sample sigma
         for i in range(data['J']):
@@ -142,50 +140,104 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     return output
 
 
-# def sample_z(data, ww, Sigma, nsim_z):
-#     """
-#     Version 1
-#     Sample z, one row at a time
-#     """
-#
-#     output_z = np.empty((data['N'], data['K']))
-#     z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
-#         data['N'], data['K'])
-#
-#     for n in range(data['N']):
-#         weights = np.empty(nsim_z)
-#
-#         for i in range(nsim_z):
-#             y = z[i, n]@ww.T
-#             weights[i] = multivariate_normal.logpdf(y,
-#                 mean=np.zeros(data['J']), cov=Sigma )
-#
-#         output_z[n] = sample_from_weighted_array(z[:,n,:], weights)
-#     return output_z
-
-
-def sample_z(data, ww, Sigma, cov1, nsim_z):
+def sample_z(data, ww, Sigma, nsim_z):
     """
-    Version 2
-    Sample z all rows at once
+    Version 1
+    Sample z, one row at a time
     """
+
+    output_z = np.empty((data['N'], data['K']))
     z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
         data['N'], data['K'])
 
-    # z = np.empty((nsim_z, data['N'], data['K']))
-    #
-    # for i in range(nsim_z):
-    #     z[i] = multivariate_normal.rvs(mean=np.zeros(data['K']),
-    #         cov = cov1, size=data['N'])
+    for i in range(data['N']):
+        weights = np.empty(nsim_z)
 
-    Omega = ww @ ww.T + Sigma
-    weights = np.empty(nsim_z)
-    for i in range(nsim_z):
-        y = z[i]@ww.T
-        weights[i] = np.sum(multivariate_normal.logpdf(y,
-            mean=np.zeros(data['J']), cov=Omega ))
+        zz_temp = norm.rvs(size=(nsim_z *data['K'])).reshape(nsim_z,
+            data['K'])
 
-    return sample_from_weighted_array(z, weights)
+        y = zz_temp @ ww.T
+        lklhd = multivariate_normal.logpdf(y,
+            mean=np.zeros(data['J']), cov=Sigma )
+
+        weights = lklhd
+
+        output_z[i] = sample_from_weighted_array(zz_temp, weights)
+    return output_z
+
+
+# def sample_z(data, ww, Sigma, nsim_z):
+#     """
+#     Version 2
+#     Sample z all rows at once
+#     """
+#     z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
+#         data['N'], data['K'])
+#
+#     weights = np.empty(nsim_z)
+#     for i in range(nsim_z):
+#         y = z[i]@ww.T
+#         weights[i] = np.sum(multivariate_normal.logpdf(y,
+#             mean=np.zeros(data['J']), cov=Sigma ))
+#
+#     return sample_from_weighted_array(z, weights)
+
+
+def sample_z_q(data, ww, Sigma, cov1, nsim_z):
+    """
+    Sample z one row at time with proposal q
+    """
+    output_z = np.empty((data['N'], data['K']))
+    inv_Sigma = inv(Sigma)
+
+    for t in range(data['N']):
+        weights = np.empty(nsim_z)
+
+        mean = cov1 @ ww.T @ inv_Sigma @ data['y'][t]
+        # mean = np.zeros(data['K'])
+        zz_temp = multivariate_normal.rvs(mean, cov1, size=nsim_z)
+
+        y = zz_temp @ ww.T
+        lklhd = multivariate_normal.logpdf(y,
+            mean=np.zeros(data['J']), cov=Sigma )
+        prior = multivariate_normal.logpdf(zz_temp,
+            mean=np.zeros(data['K']) )
+        proposal =  multivariate_normal.logpdf(zz_temp,
+            mean=np.zeros(data['K']), cov = cov1)
+
+        weights = lklhd + prior - proposal
+
+        output_z[t] = sample_from_weighted_array(zz_temp, weights)
+
+    return output_z
+
+
+
+# def sample_z_q(data, ww, Sigma, cov1, nsim_z):
+#     """
+#     Version 1
+#     Sample z all rows at once
+#     """
+#     z = np.empty((nsim_z, data['N'], data['K']))
+#
+#     for i in range(nsim_z):
+#         z[i] = multivariate_normal.rvs(mean=np.zeros(data['K']),
+#             cov = cov1, size=data['N'])
+#
+#
+#     weights = np.empty(nsim_z)
+#     for i in range(nsim_z):
+#         y = z[i]@ww.T
+#         lklhd = np.sum(multivariate_normal.logpdf(y,
+#             mean=np.zeros(data['J']), cov=Sigma ))
+#         prior = np.sum(multivariate_normal.logpdf(z[i],
+#             mean=np.zeros(data['K']) ))
+#         proposal =  np.sum(multivariate_normal.logpdf(z[i],
+#             mean=np.zeros(data['K']), cov = cov1))
+#         weights[i] = lklhd + prior - proposal
+#
+#     return sample_from_weighted_array(z, weights)
+
 
 
 def sample_index(probs, size=1):

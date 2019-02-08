@@ -49,15 +49,15 @@ def mcmc(data, nsim=100):
     # sigma_temp = data['sigma'].copy()
     Sigma_temp = np.diag(sigma_temp)
 
-    zz_temp = data['z'].copy()
+    # zz_temp = data['z'].copy()
     # ww_temp = data['w'].copy()
     ww_temp = norm.rvs(size=data['J']*data['K']).reshape((data['J'],data['K']))
     ww_temp[0,1] = 0.
 
     C0 = 1e2
-    mu0 = 1
-    prior_a = 1e-1
-    prior_b = 1e-1
+    mu0 = 0
+    prior_a = 2*1e-1
+    prior_b = 2*1e-1
 
     for j in range(nsim):
         # sample z
@@ -74,7 +74,7 @@ def mcmc(data, nsim=100):
             sigma_a = (data['N'] + prior_a )*.5
             aux = data['y'][:,i] - zz_temp @ create_w_columns(i,k=2, ww=ww_temp).T
             d = aux.T @ aux
-            sigma_b = (prior_a*(prior_b**2)+d)/2.
+            sigma_b = (prior_a*(prior_b**2)+d)* 0.5
             sigma_temp[i] = invgamma.rvs(sigma_a, scale = sigma_b)
         sigma_s[j] = sigma_temp
         Sigma_temp = np.diag(sigma_temp)
