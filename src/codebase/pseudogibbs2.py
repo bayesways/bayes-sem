@@ -75,7 +75,12 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     for j in range(nsim):
 
         # sample z
-        zz_temp = sample_z2(data, ww_temp, Sigma_temp, nsim_z)
+        zz_temp = np.empty((data['N'], data['K']))
+        inv_Sigma = inv(Sigma_temp)
+        cov1 = inv(np.eye(data['K']) +  ww_temp.T @ inv_Sigma @ ww_temp)
+        for t in range(data['N']):
+            mean = cov1 @ ww_temp.T @ inv_Sigma @ data['y'][t]
+            zz_temp[t] = multivariate_normal.rvs(mean, cov1)
         z_s[j] = zz_temp
 
 
@@ -91,23 +96,24 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
 
         # sample w
-        for i in range(data['J']):
-            if (i+1)<=data['K']:
-                aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
-                inv_C = C0**(-1)*np.eye(i+1) + sigma_temp[i]**(-2)*aux1
-                C = inv(inv_C)
-                aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
-                mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
-                if mean[i] > 0:
-                    ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
-
-            else:
-                aux1= zz_temp.T @ zz_temp
-                inv_C = C0**(-1)*np.eye(data['K']) + sigma_temp[i]**(-2)*aux1
-                C = inv(inv_C)
-                aux2= zz_temp.T @ data['y'][:,i]
-                mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
-                ww_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
+        ww_temp = sample_beta(data, Sigma_temp, nsim_z)
+        # for i in range(data['J']):
+        #     if (i+1)<=data['K']:
+        #         aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
+        #         inv_C = C0**(-1)*np.eye(i+1) + sigma_temp[i]**(-2)*aux1
+        #         C = inv(inv_C)
+        #         aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
+        #         mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
+        #         if mean[i] > 0:
+        #             ww_temp[i,:(i+1)] = trunc_normal(i, mean, C)
+        #
+        #     else:
+        #         aux1= zz_temp.T @ zz_temp
+        #         inv_C = C0**(-1)*np.eye(data['K']) + sigma_temp[i]**(-2)*aux1
+        #         C = inv(inv_C)
+        #         aux2= zz_temp.T @ data['y'][:,i]
+        #         mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
+        #         ww_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
         w_s[j] = ww_temp
 
 
@@ -130,28 +136,30 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     return output
 
 
-def sample_z(data, ww, Sigma, nsim_z):
+def sample_beta(data, Sigma, nsim_z):
     """
     Version 1
     Sample z, one row at a time
     """
 
-    output_z = np.empty((data['N'], data['K']))
+    output_beta = np.empty((data['N'], data['K']))
 
-    for n in range(data['N']):
-        weights = np.empty(nsim_z)
+    weights = np.empty(nsim_z)
 
-        zz_temp = norm.rvs(size=(nsim_z *data['K'])).reshape(nsim_z,
-            data['K'])
+    beta_temp = norm.rvs(size=(nsim_z *data['K'] * data['J'])).reshape(nsim_z,
+        data['J'], data['K'])
 
-        mean = zz_temp @ ww.T
+    for j in range(nsim_z):
+        beta_temp[j,0,:] = trunc_normal(0, np.zeros(2), np.eye(2))
+        beta_temp[j,0,1] = 0.
+        beta_temp[j,1,:] = trunc_normal(1, np.zeros(2), np.eye(2))
 
-        for j in range(nsim_z):
-            weights[j] = multivariate_normal.logpdf(data['y'][n], mean=mean[j],
-                cov=Sigma )
+    for j in range(nsim_z):
+        Omega = beta_temp[j] @ beta_temp[j].T
+        weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
+            mean=np.zeros(data['J']), cov=Sigma + Omega ))
 
-        output_z[n] = sample_from_weighted_array(zz_temp, weights)
-    return output_z
+    return sample_from_weighted_array(beta_temp, weights)
 
 
 def sample_index(probs, size=1):
