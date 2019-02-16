@@ -29,5 +29,8 @@ Convert `a.ipynb` to `a.py`:
 
 * Gibbs sampler in `1. Gibbs notebook`
 
-* Gibbs + Pseudomarginal in `2. Pseudomarginal` notebook. Here the sampling
+* Gibbs + Pseudomarginal in `2.1 Pseudomarginal` notebook. Here the sampling
 conditionals are the same as above except $p(z| y,\theta)$.
+
+* Gibbs + Pseudomarginal in `2.2 Pseudomarginal` notebook. Here the sampling
+conditionals are the same as above except $p(\beta| y, \sigma)$.
