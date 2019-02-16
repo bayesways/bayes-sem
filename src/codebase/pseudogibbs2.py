@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scipy.stats import norm, multivariate_normal, invwishart, invgamma
+from scipy.stats import norm, multivariate_normal, matrix_normal, invwishart, invgamma
 from numpy.linalg import inv
 from pdb import set_trace
 from time import sleep
@@ -155,9 +155,16 @@ def sample_beta(data, Sigma, nsim_z):
         beta_temp[j,1,:] = trunc_normal(1, np.zeros(2), np.eye(2))
 
     for j in range(nsim_z):
-        Omega = beta_temp[j] @ beta_temp[j].T
+        Omega = beta_temp[j] @ beta_temp[j].T + Sigma
         weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
-            mean=np.zeros(data['J']), cov=Sigma + Omega ))
+            mean=np.zeros(data['J']), cov= Omega ))
+
+        # equivalent to above
+        # weights[j] = matrix_normal.logpdf(data['y'],
+        #             mean = np.tile(np.zeros(data['J']), data['N']).\
+        #                 reshape((data['N'],data['J'])),
+        #             rowcov=np.eye(data['N']),
+        #             colcov=Omega)
 
     return sample_from_weighted_array(beta_temp, weights)
 

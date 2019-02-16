@@ -6,7 +6,38 @@ import sys
 from time import sleep
 from scipy.special import logsumexp
 
-def prior_w(k, j, mu0=None, Sigma0=None, size=1, random_seed = None):
+
+def trunc_normal_zero(i, mean, cov, max_counter=10):
+    """
+    Return a vector x ~ N(m, C) where x[i] >0 and x[j]=0 for j>i
+    """
+    if mean.shape[0] == 1:
+        a = 0.
+        counter = 0
+        while a<=0.:
+            if counter >= max_counter:
+                print("No sample")
+                return np.array(0.)
+            else:
+                a = multivariate_normal.rvs(mean, cov)
+                counter+=1
+        return np.array(a)
+
+    else:
+        a = np.zeros(mean.shape[0])
+        counter = 0
+        while a[i]<=0.:
+            if counter >= max_counter:
+                # print("No sample")
+                return np.zeros(mean.shape[0])
+            else:
+                a = multivariate_normal.rvs(mean, cov)
+                counter += 1
+        a[(i+1):] = 0.
+        return np.array(a)
+
+
+def prior_beta(k, j, mu0=None, Sigma0=None, size=1, random_seed = None):
     """
     returns mean vectors (size x dim)
     """
@@ -19,10 +50,13 @@ def prior_w(k, j, mu0=None, Sigma0=None, size=1, random_seed = None):
     # if Sigma0 is None:
     #     Sigma0 = np.eye(dim)*1e2
 
-    ww = norm.rvs(size=k * j * size ).reshape((size, j,k,))
-    ww[0,1] = 0.
+    beta = norm.rvs(size=k * j * size ).reshape((size, j,k,))
+    for j in range(size):
+        beta[j,0,:] = trunc_normal_zero(0, np.zeros(2), np.eye(2))
+        # beta[j,0,1] = 0.
+        beta[j,1,:] = trunc_normal_zero(1, np.zeros(2), np.eye(2))
 
-    return ww
+    return beta
 
 
 def prior_sigma(dim, a0 = None, b0 = None, size=1, random_seed = None):
@@ -48,19 +82,18 @@ def prior_sigma(dim, a0 = None, b0 = None, size=1, random_seed = None):
     return s
 
 
-# def construct_Sigma(sigma):
-#
-#
-#     Sigma = np.empty_like(R)
-#
-#     if sigma.ndim == 1:
-#         return np.diag(sigma[0])
-#
-#     for i in range(Sigma.shape[0]):
-#         D = np.diag(sigma[i])
-#         Sigma[i] = D @ R[i] @ D
-#
-#     return Sigma
+def construct_Sigma(sigma):
+    if sigma.ndim == 1:
+        return np.diag(sigma[0])
+
+    else:
+        n = sigma.shape[0]
+        k = sigma.shape[1]
+        Sigma = np.empty((n, k, k ))
+        for i in range(n):
+            Sigma[i] = np.diag(sigma[i])
+
+    return Sigma
 
 
 def loglklhd_z(y, z):
@@ -119,48 +152,64 @@ def jitter(data, particles, nsim_z=1000):
 
     return particles
 
-#
-# def log_weight(data, params, nsim_z):
-#     """
-#     Returns the logweight of one particle.
-#     data is supposed to include a single point data['y]
-#     """
-#     Kc = data['Kc']
-#     Kb = data['Kb']
-#
-#
-#     # generate $\{z_i\}_{i=1}^M \sim p(z| y^{(c)}, \theta)$
-#     mu_bar, Sigma_bar = norm_cond_1(data['y'][:Kc],
-#             params['mu'], params['Sigma'], Kc, Kb)
-#
-#     z = multivariate_normal.rvs(mean=mu_bar,
-#                     cov = Sigma_bar, size=nsim_z).reshape(nsim_z, Kb)
-#
-#     # Compute $p(y^{(b)} | z_i)$
-#     logv = loglklhd_z(data['y'][Kc:], z)
-#     # Efficient alternative to logp1 = np.log(np.average(np.exp(logv)))
-#     logp1 = logsumexp(logv) - np.log(logv.shape[0])
-#
-#
-#     # Compute  p(y^{(c)}| \theta)
-#     logp2 = multivariate_normal.logpdf(data['y'][:Kc], mean = params['mu'][:Kc],
-#                                   cov = params['Sigma'][:Kc, :Kc])
-#
-#     logweight = logp1 + logp2
-#
-#     return logweight
-#
-#
-# def get_weights(data, particles, nsim_z=1000):
-#     logweights = np.empty(particles['N'])
-#
-#     for m in range(particles['N']):
-#         # for each particle
-#         logweights[m]= log_weight(data,
-#             {'mu':particles['mu'][m], 'Sigma':particles['Sigma'][m]},
-#             nsim_z=nsim_z)
-#
-#     return logweights
+
+def log_weight(data, params):
+    """
+    Returns the logweight of one particle.
+    data is supposed to include a single point data['y']
+    """
+
+    Sigma_temp = np.diag(params['sigma'])
+    Omega = params['beta'] @ params['beta'].T + Sigma_temp
+    logweight = multivariate_normal.logpdf(data['y'],
+        mean=np.zeros(data['J']), cov= Omega )
+
+    return logweight
+
+
+def sample_beta(data, Sigma, nsim_z):
+    """
+    Version 1
+    Sample z, one row at a time
+    """
+
+    output_beta = np.empty((data['N'], data['K']))
+
+    weights = np.empty(nsim_z)
+
+    beta_temp = norm.rvs(size=(nsim_z *data['K'] * data['J'])).reshape(nsim_z,
+        data['J'], data['K'])
+
+    for j in range(nsim_z):
+        beta_temp[j,0,:] = trunc_normal(0, np.zeros(2), np.eye(2))
+        beta_temp[j,0,1] = 0.
+        beta_temp[j,1,:] = trunc_normal(1, np.zeros(2), np.eye(2))
+
+    for j in range(nsim_z):
+        Omega = beta_temp[j] @ beta_temp[j].T + Sigma
+        weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
+            mean=np.zeros(data['J']), cov= Omega ))
+
+        # equivalent to above
+        # weights[j] = matrix_normal.logpdf(data['y'],
+        #             mean = np.tile(np.zeros(data['J']), data['N']).\
+        #                 reshape((data['N'],data['J'])),
+        #             rowcov=np.eye(data['N']),
+        #             colcov=Omega)
+
+    return sample_from_weighted_array(beta_temp, weights)
+
+
+
+def get_weights(data, particles, nsim_z=1000):
+    logweights = np.empty(particles['N'])
+
+    for m in range(particles['N']):
+        # for each particle
+        logweights[m]= log_weight(data,
+            {'beta':particles['beta'][m], 'sigma':particles['sigma'][m]})
+
+    return logweights
 
 
 def ESS(w):
