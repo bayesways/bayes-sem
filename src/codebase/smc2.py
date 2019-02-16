@@ -1,6 +1,9 @@
 from scipy.stats import multivariate_normal, invwishart, invgamma, norm
 from numpy.linalg import inv
 from scipy.special import expit
+from .pseudogibbs2 import create_w_columns,\
+    sample_beta, sample_from_weighted_array
+from .pseudogibbs import trunc_normal
 import numpy as np
 import sys
 from time import sleep
@@ -133,22 +136,134 @@ def multinomial_sample_particles(particles, probs = None):
     return particles
 
 
-def jitter(data, particles, nsim_z=1000):
+def mcmc(data, params, nsim=100, nsim_b = 100):
+
+    beta_s = np.empty((nsim, data['J'], data['K']))
+    sigma_s = np.empty((nsim, data['J']))
+    z_s = np.empty((nsim, data['N'], data['K']))
+
+
+    zz_temp = data['z'].copy()
+
+    sigma_temp = params['sigma'].copy()
+    # sigma_temp = data['sigma'].copy()
+    Sigma_temp = np.diag(sigma_temp)
+    beta_temp = params['beta'].copy()
+
+    C0 = 1e2
+    mu0 = 0
+    prior_a = 1e-1
+    prior_b = 1e-1
+
+
+    for j in range(nsim):
+        # sample z
+        zz_temp = np.empty((data['N'], data['K']))
+        inv_Sigma = inv(Sigma_temp)
+        cov1 = inv(np.eye(data['K']) +  beta_temp.T @ inv_Sigma @ beta_temp)
+        for t in range(data['N']):
+            mean = cov1 @ beta_temp.T @ inv_Sigma @ data['y'][t]
+            zz_temp[t] = multivariate_normal.rvs(mean, cov1)
+        z_s[j] = zz_temp
+
+        # sample sigma
+        for i in range(data['J']):
+            sigma_a = (data['N'] + prior_a )*.5
+            aux = data['y'][:,i] - zz_temp @ create_w_columns(i,k=2, ww=beta_temp).T
+            d = aux.T @ aux
+            sigma_b = (prior_a*(prior_b**2)+d)* 0.5
+            sigma_temp[i] = invgamma.rvs(sigma_a, scale = sigma_b)
+        sigma_s[j] = sigma_temp
+        Sigma_temp = np.diag(sigma_temp)
+
+
+        # sample w
+        for i in range(data['J']):
+            if (i+1)<=data['K']:
+                aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
+                inv_C = C0**(-1)*np.eye(i+1) + sigma_temp[i]**(-2)*aux1
+                C = inv(inv_C)
+                aux2= zz_temp[:,:(i+1)].T @ data['y'][:,i]
+                mean = C @ (C0**(-1)*mu0*np.ones(i+1) + sigma_temp[i]**(-2)*aux2 )
+                if mean[i] > 0:
+                    beta_temp[i,:(i+1)] = trunc_normal(i, mean, C)
+
+            else:
+                aux1= zz_temp.T @ zz_temp
+                inv_C = C0**(-1)*np.eye(data['K']) + sigma_temp[i]**(-2)*aux1
+                C = inv(inv_C)
+                aux2= zz_temp.T @ data['y'][:,i]
+                mean = C @ (C0**(-1)*mu0*np.ones(data['K'])+sigma_temp[i]**(-2)*aux2 )
+                beta_temp[i,:] = multivariate_normal.rvs(mean, cov=C)
+        beta_s[j] = beta_temp
+
+    output = dict()
+    output['beta'] = beta_s[-1]
+    output['sigma'] = sigma_s[-1]
+    # output['Sigma'] = Sigma_s[-1]
+    return output
+
+
+#
+# def mcmc(data, params, nsim=100, nsim_b = 100):
+#
+#     beta_s = np.empty((nsim, data['J'], data['K']))
+#     sigma_s = np.empty((nsim, data['J']))
+#     Sigma_s = np.empty((nsim, data['K'], data['K']))
+#     z_s = np.empty((nsim, data['N'], data['K']))
+#
+#
+#     zz_temp = data['z'].copy()
+#
+#     sigma_temp = params['sigma'].copy()
+#     # sigma_temp = data['sigma'].copy()
+#     Sigma_temp = np.diag(sigma_temp)
+#     beta_temp = params['beta'].copy()
+#
+#     C0 = 1e2
+#     mu0 = 0
+#     prior_a = 1e-1
+#     prior_b = 1e-1
+#
+#     for j in range(nsim):
+#
+#         # sample sigma
+#         for i in range(data['J']):
+#             sigma_a = (data['N'] + prior_a )*.5
+#             aux = data['y'][:,i] - zz_temp @ create_w_columns(i,k=2,\
+#                 ww=beta_temp).T
+#             d = aux.T @ aux
+#             sigma_b = (prior_a*(prior_b**2)+d)/2.
+#             sigma_temp[i] = invgamma.rvs(sigma_a, scale = sigma_b)
+#         sigma_s[j] = sigma_temp
+#         Sigma_temp = np.diag(sigma_temp)
+#
+#
+#         # sample w
+#         beta_temp = sample_beta(data, Sigma_temp, nsim_b)
+#         beta_s[j] = beta_temp
+#
+#     output = dict()
+#     output['beta'] = beta_s[-1]
+#     output['sigma'] = sigma_s[-1]
+#     # output['Sigma'] = Sigma_s[-1]
+#     return output
+
+
+
+def jitter(data, particles, nsim_b=1000):
     size = particles['N']
     for j in range(size):
         jittered_sample = mcmc(data,
             params = {
-            'mu':particles['mu'][j],
-            'sigma': particles['sigma'][j],
-            'R' : particles['R'][j],
-            'Sigma' : particles['Sigma'][j]
+            'beta':particles['beta'][j],
+            'sigma': particles['sigma'][j]
             },
-          nsim=20, nsim_z=nsim_z)
+          nsim=20, nsim_b=nsim_b)
 
-        particles['mu'][j] = jittered_sample['mu']
+        particles['beta'][j] = jittered_sample['beta']
         particles['sigma'][j] = jittered_sample['sigma']
-        particles['R'][j] = jittered_sample['R']
-        particles['Sigma'][j] = jittered_sample['Sigma']
+        # particles['Sigma'][j] = jittered_sample['Sigma']
 
     return particles
 
@@ -165,40 +280,6 @@ def log_weight(data, params):
         mean=np.zeros(data['J']), cov= Omega )
 
     return logweight
-
-
-def sample_beta(data, Sigma, nsim_z):
-    """
-    Version 1
-    Sample z, one row at a time
-    """
-
-    output_beta = np.empty((data['N'], data['K']))
-
-    weights = np.empty(nsim_z)
-
-    beta_temp = norm.rvs(size=(nsim_z *data['K'] * data['J'])).reshape(nsim_z,
-        data['J'], data['K'])
-
-    for j in range(nsim_z):
-        beta_temp[j,0,:] = trunc_normal(0, np.zeros(2), np.eye(2))
-        beta_temp[j,0,1] = 0.
-        beta_temp[j,1,:] = trunc_normal(1, np.zeros(2), np.eye(2))
-
-    for j in range(nsim_z):
-        Omega = beta_temp[j] @ beta_temp[j].T + Sigma
-        weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
-            mean=np.zeros(data['J']), cov= Omega ))
-
-        # equivalent to above
-        # weights[j] = matrix_normal.logpdf(data['y'],
-        #             mean = np.tile(np.zeros(data['J']), data['N']).\
-        #                 reshape((data['N'],data['J'])),
-        #             rowcov=np.eye(data['N']),
-        #             colcov=Omega)
-
-    return sample_from_weighted_array(beta_temp, weights)
-
 
 
 def get_weights(data, particles, nsim_z=1000):
