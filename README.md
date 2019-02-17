@@ -35,5 +35,8 @@ conditionals are the same as above except $p(z| y,\theta)$.
 * Gibbs + Pseudomarginal in `2.2 Pseudomarginal` notebook. Here the sampling
 conditionals are the same as above except $p(\beta| y, \sigma)$.
 
-* SMC2 + Gibbs in `3. SMC2` notebook. The weights are calculated using the marginal
+* SMC2 + Gibbs in `3.1 SMC2` notebook. The weights are calculated using the
+augmented likelihood, marginalizing over $Z$. The jittering MCMC is full Gibbs.
+
+* SMC2 + Gibbs in `3.2 SMC2` notebook. The weights are calculated using the marginal
 likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs.

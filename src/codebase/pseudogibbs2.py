@@ -41,7 +41,7 @@ def create_w_columns(i,k,ww):
         return ww[i,:]
 
 
-def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
+def mcmc(data, nsim=100, nsim_b = 10, visual_bar=True):
 
     w_s = np.empty((nsim, data['J'], data['K']))
     sigma_s = np.empty((nsim, data['J']))
@@ -96,7 +96,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
 
 
         # sample w
-        ww_temp = sample_beta(data, Sigma_temp, nsim_z)
+        ww_temp = sample_beta(data, Sigma_temp, nsim_b)
         # for i in range(data['J']):
         #     if (i+1)<=data['K']:
         #         aux1= zz_temp[:,:(i+1)].T @ zz_temp[:,:(i+1)]
@@ -136,7 +136,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     return output
 
 
-def sample_beta(data, Sigma, nsim_z):
+def sample_beta(data, Sigma, nsim):
     """
     Version 1
     Sample z, one row at a time
@@ -144,17 +144,17 @@ def sample_beta(data, Sigma, nsim_z):
 
     output_beta = np.empty((data['N'], data['K']))
 
-    weights = np.empty(nsim_z)
+    weights = np.empty(nsim)
 
-    beta_temp = norm.rvs(size=(nsim_z *data['K'] * data['J'])).reshape(nsim_z,
+    beta_temp = norm.rvs(size=(nsim *data['K'] * data['J'])).reshape(nsim,
         data['J'], data['K'])
 
-    for j in range(nsim_z):
+    for j in range(nsim):
         beta_temp[j,0,:] = trunc_normal(0, np.zeros(2), np.eye(2))
         beta_temp[j,0,1] = 0.
         beta_temp[j,1,:] = trunc_normal(1, np.zeros(2), np.eye(2))
 
-    for j in range(nsim_z):
+    for j in range(nsim):
         Omega = beta_temp[j] @ beta_temp[j].T + Sigma
         weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
             mean=np.zeros(data['J']), cov= Omega ))
