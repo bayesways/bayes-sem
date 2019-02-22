@@ -156,7 +156,7 @@ def sample_beta(data, Sigma, nsim):
 
     for j in range(nsim):
         Omega = beta_temp[j] @ beta_temp[j].T + Sigma
-        weights[j] = np.sum(multivariate_normal.logpdf(data['y'],
+        weights[j] = np.prod(multivariate_normal.pdf(data['y'],
             mean=np.zeros(data['J']), cov= Omega ))
 
         # equivalent to above

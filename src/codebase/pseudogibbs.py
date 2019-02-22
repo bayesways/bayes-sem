@@ -48,14 +48,14 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     Sigma_s = np.empty((nsim, data['K'], data['K']))
     z_s = np.empty((nsim, data['N'], data['K']))
 
-    sigma_temp = np.ones(data['J'])
-    # sigma_temp = data['sigma'].copy()
+    # sigma_temp = np.ones(data['J'])
+    sigma_temp = data['sigma'].copy()
     Sigma_temp = np.diag(sigma_temp)
 
     # zz_temp = data['z'].copy()
-    # ww_temp = data['w'].copy()
-    ww_temp = norm.rvs(size=data['J']*data['K']).reshape((data['J'],data['K']))
-    ww_temp[0,1] = 0.
+    ww_temp = data['beta'].copy()
+    # ww_temp = norm.rvs(size=data['J']*data['K']).reshape((data['J'],data['K']))
+    # ww_temp[0,1] = 0.
 
     C0 = 1e2
     mu0 = 0
@@ -75,7 +75,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
     for j in range(nsim):
 
         # sample z
-        zz_temp = sample_z2(data, ww_temp, Sigma_temp, nsim_z)
+        zz_temp = sample_z(data, ww_temp, Sigma_temp, nsim_z)
         z_s[j] = zz_temp
 
 
@@ -121,7 +121,7 @@ def mcmc(data, nsim=100, nsim_z = 10, visual_bar=True):
                 sleep(0.25)
 
     output = dict()
-    output['w'] = w_s
+    output['beta'] = w_s
     output['z'] = z_s
     output['sigma'] = sigma_s
     output['Sigma'] = Sigma_s
@@ -147,11 +147,35 @@ def sample_z(data, ww, Sigma, nsim_z):
         mean = zz_temp @ ww.T
 
         for j in range(nsim_z):
-            weights[j] = multivariate_normal.logpdf(data['y'][n], mean=mean[j],
-                cov=Sigma )
+            weights[j] = multivariate_normal.pdf(data['y'][n], mean=mean[j],
+                cov=Sigma)
 
         output_z[n] = sample_from_weighted_array(zz_temp, weights)
     return output_z
+
+#
+# def sample_z2(data, ww, Sigma, nsim_z):
+#     """
+#     Version 2
+#     Sample z all rows at once
+#     """
+#     z = norm.rvs(size=(nsim_z * data['N']*data['K'])).reshape(nsim_z,
+#         data['N'], data['K'])
+#
+#     weights = np.empty(nsim_z)
+#     for i in range(nsim_z):
+#         mean = z[i]@ww.T
+#         # weights[i] = np.sum(multivariate_normal.logpdf(data['y'],
+#         #     mean=mean, cov=Sigma ))
+#
+#         # equivalent to above
+#         weights[j] = matrix_normal.logpdf(data['y'],
+#                     mean = mean,
+#                     rowcov=np.eye(data['N']),
+#                     colcov=Sigma)
+#
+#     return sample_from_weighted_array(z, weights)
+
 
 
 def sample_index(probs, size=1):
