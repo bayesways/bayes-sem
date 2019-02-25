@@ -13,9 +13,8 @@ parameters {
 
 transformed parameters{
   matrix[J,J] Omega;
-  matrix[J,J] Sigma;
   
-  Omega = beta * beta' + diag_matrix(sigma .* sigma); 
+  Omega = beta * beta' + diag_matrix(sigma .* sigma);
 }
 
 model {
