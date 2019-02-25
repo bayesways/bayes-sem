@@ -29,14 +29,23 @@ Convert `a.ipynb` to `a.py`:
 
 * Gibbs sampler in `1. Gibbs notebook`
 
-* Gibbs + Pseudomarginal in `2.1 Pseudomarginal` notebook. Here the sampling
-conditionals are the same as above except $p(z| y,\theta)$.
+* Gibbs + Pseudomarginal in `2. Pseudomarginal` notebook. Here the sampling
+conditionals are the same as above except $p(z| y,\theta)$. We generate many
+z_i for each row and choose from a multinomial. Was initiated at the correct
+values.
 
 * Gibbs + Pseudomarginal in `2.2 Pseudomarginal` notebook. Here the sampling
 conditionals are the same as above except $p(\beta| y, \sigma)$.
 
-* SMC2 + Gibbs in `3.1 SMC2` notebook. The weights are calculated using the
-augmented likelihood, marginalizing over $Z$. The jittering MCMC is full Gibbs.
+* SMC2 + Gibbs in `3.1 SMC2` notebook. The weights are calculated using the marginal
+likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs. For
+an alternative weight calculation using the augmented likelihood, marginalizing
+over $Z$ see `smc2_auglklh`.
 
-* SMC2 + Gibbs in `3.2 SMC2` notebook. The weights are calculated using the marginal
-likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs.
+* HMC sampler in `4. HMC` where $z$ is sampled post-HMC using the eigenvector
+of $\beta \beta^T$
+
+
+## To Do
+
+* When sampling with the weights need to use real weights, not log weights.
