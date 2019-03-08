@@ -42,8 +42,19 @@ likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs. For
 an alternative weight calculation using the augmented likelihood, marginalizing
 over $Z$ see `smc2_auglklh`.
 
-* HMC sampler in `4. HMC` where $z$ is sampled post-HMC using the eigenvector
-of $\beta \beta^T$
+* HMC sampler in `src/hmc/1. hmc` where $z$ is sampled post-HMC using the eigenvector
+of $\beta \beta^T$. 
+
+* In `src/irt/1. hmc.ipynb` we have a model for a simple IRT model with `mu=0`
+using the marginal likelihood and `src/irt/2. hmc.ipynb` we have a model for
+`mu \neq 0`. The observable $D$ is distributed as bernoulli_logit of the latent
+variable $y \sim N(\mu, \Omega)$ where $\Omega = \beta \beta' + I$
+
+* In `src/irt/3. hmc.ipynb` we have a model for the same simple IRT model above
+using the augmented likelihood.
+The observable $D$ is distributed as bernoulli_logit of the latent
+variable $y = \mu + z \beta' + \epsilon$ where $z \sim N(0,1)$ and
+$\epsilon \sim N(0, I)$.
 
 
 ## To Do
