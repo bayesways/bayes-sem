@@ -43,7 +43,7 @@ an alternative weight calculation using the augmented likelihood, marginalizing
 over $Z$ see `smc2_auglklh`.
 
 * HMC sampler in `src/hmc/1. hmc` where $z$ is sampled post-HMC using the eigenvector
-of $\beta \beta^T$. 
+of $\beta \beta^T$.
 
 * In `src/irt/1. hmc.ipynb` we have a model for a simple IRT model with `mu=0`
 using the marginal likelihood and `src/irt/2. hmc.ipynb` we have a model for
@@ -56,6 +56,10 @@ The observable $D$ is distributed as bernoulli_logit of the latent
 variable $y = \mu + z \beta' + \epsilon$ where $z \sim N(0,1)$ and
 $\epsilon \sim N(0, I)$.
 
+* We do the Normal Normal factor model with $u$ in `src/5 Normal normal.ipynb`
+
+* We do the Logit Normal IRT factor model with $u$ for binary data in 
+`src/6 IRT.ipynb`
 
 ## To Do
 
