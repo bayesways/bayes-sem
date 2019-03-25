@@ -42,9 +42,6 @@ likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs. For
 an alternative weight calculation using the augmented likelihood, marginalizing
 over $Z$ see `smc2_auglklh`.
 
-* HMC sampler in `src/hmc/1. hmc` where $z$ is sampled post-HMC using the eigenvector
-of $\beta \beta^T$.
-
 * We do the Normal Normal factor model with $u$ in `src/5 Normal normal.ipynb`
 
 * In `src/6.1` we have a model for a simple IRT using the marginal likelihood.
