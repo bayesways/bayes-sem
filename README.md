@@ -45,22 +45,23 @@ over $Z$ see `smc2_auglklh`.
 * HMC sampler in `src/hmc/1. hmc` where $z$ is sampled post-HMC using the eigenvector
 of $\beta \beta^T$.
 
-* In `src/irt/1. hmc.ipynb` we have a model for a simple IRT model with `mu=0`
-using the marginal likelihood and `src/irt/2. hmc.ipynb` we have a model for
-`mu \neq 0`. The observable $D$ is distributed as bernoulli_logit of the latent
-variable $y \sim N(\mu, \Omega)$ where $\Omega = \beta \beta' + I$
-
-* In `src/irt/3. hmc.ipynb` we have a model for the same simple IRT model above
-using the augmented likelihood.
-The observable $D$ is distributed as bernoulli_logit of the latent
-variable $y = \mu + z \beta' + \epsilon$ where $z \sim N(0,1)$ and
-$\epsilon \sim N(0, I)$.
-
 * We do the Normal Normal factor model with $u$ in `src/5 Normal normal.ipynb`
 
-* We do the Logit Normal IRT factor model with $u$ for binary data in 
-`src/6 IRT.ipynb`
+* In `src/6.1` we have a model for a simple IRT using the marginal likelihood.
+The observable $D$ is distributed as bernoulli_logit of the latent
+variable $y \sim N(\mu, \Omega)$ where $\Omega = \beta \beta' + cI$
+
+* In `src/6.2` we have a model for the same simple IRT model above
+using the augmented likelihood.
+The observable $D$ is distributed as bernoulli_logit of the latent
+variable $y = \mu + z \beta' + u$ where $z \sim N(0,1)$ and
+$\epsilon \sim N(0, I)$.
+
+* In `6.2.2` is the same as above except the data are simulated without adding
+the noise elements u.
+
 
 ## To Do
 
-* When sampling with the weights need to use real weights, not log weights.
+* In sequential setting when sampling with the weights need to use real weights,
+not log weights.
