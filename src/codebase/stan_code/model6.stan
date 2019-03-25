@@ -7,9 +7,8 @@ data {
 }
 
 transformed data {
-  matrix[J, J] Sigma = diag_matrix(rep_vector(0.04, J));
+  matrix[J, J] I_c = diag_matrix(rep_vector(0.04, J));
 }
-
 
 parameters {
   vector[J] mu;
@@ -20,17 +19,14 @@ parameters {
 
 transformed parameters{
   matrix[J,J] Omega;
-  Omega = beta * beta' + Sigma;
+  Omega = beta * beta' + I_c;
 }
 
 model {
   to_row_vector(beta) ~ normal(0, 1);
   to_row_vector(mu) ~ normal(0, 100);
   for (n in 1:N){
-  to_row_vector(uu[n,]) ~ normal(0, 0.02);
-  }
-  for (n in 1:N){
-    yy[n,] ~ multi_normal(mu+uu[n,], Omega);
+    yy[n,] ~ multi_normal(mu, Omega);
   }
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
