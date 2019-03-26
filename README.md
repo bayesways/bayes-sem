@@ -57,6 +57,8 @@ $\epsilon \sim N(0, I)$.
 * In `6.2.2` is the same as above except the data are simulated without adding
 the noise elements u.
 
+* `7.1 IRT_1_LSAT` We ran the model replacing the last 100 points with random
+coin flips and saw the change in u's. 
 
 ## To Do
 
