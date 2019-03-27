@@ -57,8 +57,15 @@ $\epsilon \sim N(0, I)$.
 * In `6.2.2` is the same as above except the data are simulated without adding
 the noise elements u.
 
+
+* In `6.2 LSAT_1` notebooks run the model with and without u's with 1 factor
+
+* In `6.2 LSAT_2` notebooks run the model with and without u's with 2 factors
+
+* `Results` notebook collects results for social stats talk.
+
 * `7.1 IRT_1_LSAT` We ran the model replacing the last 100 points with random
-coin flips and saw the change in u's. 
+coin flips and saw the change in u's.
 
 ## To Do
 
