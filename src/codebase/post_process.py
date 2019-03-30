@@ -1,6 +1,8 @@
 import numpy as np
 import operator
 from numpy.linalg import eigh
+from scipy.stats import kde
+
 
 def get_topn(L, topn):
     """
@@ -17,6 +19,7 @@ def get_topn(L, topn):
         # delete element to repeat process
         L_c = np.delete(L_c,ind)
     return index, max_evals
+
 
 def get_topn_eig(M, topn):
     eset = eigh(M)
@@ -53,3 +56,14 @@ def get_non_zeros(x, prc_min = 10, prc_max = 90):
     indx = (min_b < zeros) & (zeros < max_b)
     # data['u'][~indx]
     return np.nonzero(~indx)
+
+
+def kde_mode(x):
+    """
+    Find the mode of the kernel density estimated by the data.
+
+    :param x: [n,k] array of sample size n each of dimension k
+    :return [k,] array of modes for each dimension of x
+    """
+    nparam_density = kde.gaussian_kde(x)
+    return x[np.argsort(nparam_density)[-1]]
