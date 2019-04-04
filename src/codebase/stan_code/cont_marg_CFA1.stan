@@ -15,14 +15,14 @@ parameters {
   vector[J] mu;
   vector[J] uu[N];
   cov_matrix[J] Sigma_u;
-  vector[J-1] beta_t;
+  vector<lower=0>[J-1] beta_t;
 }
 
 transformed parameters{
-  vector[J] beta;
-  matrix[J, J] Sigma_epsilon;
-  matrix[J, J] Omega;
-  Sigma_epsilon = diag_matrix(sigma .* sigma);
+  vector<lower=0>[J] beta;
+  cov_matrix[J] Sigma_epsilon;
+  cov_matrix[J] Omega;
+  Sigma_epsilon = diag_matrix(square(sigma));
   beta = append_row(1, beta_t);
   Omega = dot_product(beta, beta') * square(sigma_z) + Sigma_epsilon;
 }
