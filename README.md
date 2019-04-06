@@ -47,8 +47,7 @@ It uses the marginal likelihood $y \sim N(\mu + u, \beta \beta' + \Sigma)$
 where $\Sigma = diag(\sigma)$
 
 * The equivalent IRT model with $u$ is in `src/5.2 EFA IRT.ipynb`.
-It uses the marginal likelihood $y \sim N(\mu + u, \beta \beta' + \Sigma)$
-where $\Sigma = diag(\sigma)$
+It uses the marginal likelihood $y \sim N(\mu + u, \beta \beta' + I)$
 
 * In `src/6.1` we have a model for a simple IRT using the marginal likelihood.
 The observable $D$ is distributed as bernoulli_logit of the latent
