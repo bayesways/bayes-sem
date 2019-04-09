@@ -46,8 +46,14 @@ over $Z$ see `smc2_auglklh`.
 It uses the marginal likelihood $y \sim N(\mu + u, \beta \beta' + \Sigma)$
 where $\Sigma = diag(\sigma)$
 
-* We run the IRT model with hierarchical priors on $\Sigma_u$ in notebook
-`src/5.2.2-IRT-EFA-hierarchical-prior.ipynb` 
+* We run the IRT model with marginal likelihood formulas in notebook
+`src/5.2.1-IRT-EFA-marg.ipynb`
+
+* We run the IRT model with augmented likelihood formulas in notebook
+`src/5.2.2-IRT-EFA-aug.ipynb`
+
+* We run the IRT model with augmented likelihood and hierarchical priors on
+$\Sigma_u$ in notebook `src/5.2.3-IRT-EFA-hierarchical-prior.ipynb` 
 
 * In `src/6.1` we have a model for a simple IRT using the marginal likelihood.
 The observable $D$ is distributed as bernoulli_logit of the latent
