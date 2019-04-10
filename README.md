@@ -42,9 +42,14 @@ likelihood (not the augmented likelihood). The jittering MCMC is full Gibbs. For
 an alternative weight calculation using the augmented likelihood, marginalizing
 over $Z$ see `smc2_auglklh`.
 
-* We do the Normal Normal factor model with $u$ in `src/5. EFA Normal normal.ipynb`.
-It uses the marginal likelihood $y \sim N(\mu + u, \beta \beta' + \Sigma)$
-where $\Sigma = diag(\sigma)$
+* We run the Normal-Normal model with marginal likelihood formulas in notebook
+`src/5.1.1-NN-EFA.ipynb`
+
+* We run the Normal-Normal model with augmented likelihood formulas in notebook
+`src/5.1.2-NN-EFA-aug.ipynb`. This runs with worst mixing that `5.1.1`
+
+* We run the Normal-Normal model with marginal likelihood and hierarchical priors on
+$\Sigma_u$ in notebook `src/5.1.3-NN-EFA-marg-hier.ipynb` 
 
 * We run the IRT model with marginal likelihood formulas in notebook
 `src/5.2.1-IRT-EFA-marg.ipynb`
@@ -53,7 +58,7 @@ where $\Sigma = diag(\sigma)$
 `src/5.2.2-IRT-EFA-aug.ipynb`
 
 * We run the IRT model with augmented likelihood and hierarchical priors on
-$\Sigma_u$ in notebook `src/5.2.3-IRT-EFA-hierarchical-prior.ipynb` 
+$\Sigma_u$ in notebook `src/5.2.3-IRT-EFA-hierarchical-prior.ipynb`
 
 * In `src/6.1` we have a model for a simple IRT using the marginal likelihood.
 The observable $D$ is distributed as bernoulli_logit of the latent
