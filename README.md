@@ -49,7 +49,7 @@ over $Z$ see `smc2_auglklh`.
 `src/5.1.2-NN-EFA-aug.ipynb`. This runs with worst mixing that `5.1.1`
 
 * We run the Normal-Normal model with marginal likelihood and hierarchical priors on
-$\Sigma_u$ in notebook `src/5.1.3-NN-EFA-marg-hier.ipynb` 
+$\Sigma_u$ in notebook `src/5.1.3-NN-EFA-marg-hier.ipynb`
 
 * We run the IRT model with marginal likelihood formulas in notebook
 `src/5.2.1-IRT-EFA-marg.ipynb`
@@ -82,6 +82,16 @@ the noise elements u.
 
 * `7.1 IRT_1_LSAT` We ran the model replacing the last 100 points with random
 coin flips and saw the change in u's.
+
+* CFA for Normal-Normal model with marginal likelihood formulas in notebook
+`src/8.1.1-NN-CFA.ipynb`
+
+* CFA for Normal-Normal model with marginal likelihood formulas in notebook
+and hierarchical priors on $\Sigma_u$ in notebook `src/8.1.2-NN-CFA-aug-hier.ipynb`
+
+* We run the IRT model with augmented likelihood and hierarchical priors on
+$\Sigma_u$ in notebook `src/8.2.1-IRT-CFA-aug-hier.ipynb`
+
 
 ## To Do
 
