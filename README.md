@@ -90,6 +90,10 @@ coin flips and saw the change in u's.
 and hierarchical priors on $\Sigma_u$ in notebook `src/8.1.2-NN-CFA-aug-hier.ipynb`
 
 * We run the IRT model with augmented likelihood and hierarchical priors on
+$\Sigma_u$ in notebook `src/8.3.1-IRT-CFA-aug-hier.ipynb` with the improvements
+of the stan model.
+
+* We run the IRT model with augmented likelihood and hierarchical priors on
 $\Sigma_u$ in notebook `src/8.2.1-IRT-CFA-aug-hier.ipynb`
 
 
