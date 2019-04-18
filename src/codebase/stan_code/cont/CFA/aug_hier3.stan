@@ -16,7 +16,7 @@ parameters {
   vector[J] alpha;
   matrix[K,K] beta_free;
   matrix[K+1,K] beta_zeros;
-  cholesky_factor_cov[K] V_chol;
+  cov_matrix[K] V;
   matrix[N,K] zz;
   matrix[N,J] uu;
   cov_matrix[J] Sigma_u;
@@ -47,10 +47,10 @@ model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 1);
-  to_vector(sigma) ~ cauchy(0,2);
-  V_chol ~ lkj_corr_cholesky(2);
+  sigma ~ cauchy(0,2);
+  V ~ inv_wishart(2, diag_matrix(rep_vector(1, K)));
   for (n in 1:N){
-      to_vector(zz[n, ]) ~ multi_normal_cholesky(rep_vector(0, K), V_chol);
+      to_vector(zz[n, ]) ~ multi_normal_cholesky(rep_vector(0, K), V);
   }
   Sigma_u ~ inv_wishart(J+6, I_c);
   for (n in 1:N){
@@ -62,7 +62,6 @@ model {
 }
 
 generated quantities{
-  matrix [J, J] Omega_beta = beta * V_chol * V_chol' * beta';
-  matrix [K, K] V = V_chol * V_chol';
+  matrix [J, J] Omega = beta * V * beta';
 }
 

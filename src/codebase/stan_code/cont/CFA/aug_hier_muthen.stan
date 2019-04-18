@@ -13,10 +13,11 @@ transformed data{
 
 parameters {
   vector<lower=0>[J] sigma;
+  vector<lower=0>[K] sigma_z;
   vector[J] alpha;
-  matrix[K,K] beta_free;
-  matrix[K+1,K] beta_zeros;
-  cholesky_factor_cov[K] V_chol;
+  matrix[2, K] beta_free;
+  matrix[J-3, K] beta_zeros;
+  cholesky_factor_corr[K] V_corr_chol;
   matrix[N,K] zz;
   matrix[N,J] uu;
   cov_matrix[J] Sigma_u;
@@ -30,27 +31,33 @@ transformed parameters{
   for (j in 1:J){
     for (k in 1:K) beta[j,k] = 0;
   }
-  beta[1,1] = 1;
-  beta[2:3,1] = beta_free[1:2,1];
-  beta[4,2] = 1;
-  beta[5:6,2] = beta_free[1:2,2];
-  beta[4:6,1] = beta_zeros[1:3, 1];
-  beta[1:3,2] = beta_zeros[1:3, 2];
+  
+  // set ones 
+  for (k in 1:K) beta[1+3*(k-1), k] = 1;
+  
+  // set the free elements
+  for (k in 1:K) beta[2+3*(k-1) : 3+3*(k-1), k] = beta_free[1:2,k];
+  
+  // set the zero elements
+  beta[4:J, 1] = beta_zeros[1:(J-3), 1];
+  for (k in 2:(K-1)) beta[1:3*(k-1), k] = beta_zeros[1:3*(k-1), k];
+  beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
   
   for (n in 1:N){
     mean_yy[n,] = to_row_vector(alpha) + zz[n,] * beta' + uu[n, ];
   }
-  
 }
 
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 1);
-  to_vector(sigma) ~ cauchy(0,2);
-  V_chol ~ lkj_corr_cholesky(2);
+  sigma ~ cauchy(0,2);
+  sigma_z ~ cauchy(0,2);
+  V_corr_chol ~ lkj_corr_cholesky(2);
   for (n in 1:N){
-      to_vector(zz[n, ]) ~ multi_normal_cholesky(rep_vector(0, K), V_chol);
+      to_vector(zz[n, ]) ~ multi_normal_cholesky(rep_vector(0, K),
+      diag_pre_multiply(sigma_z, V_corr_chol));
   }
   Sigma_u ~ inv_wishart(J+6, I_c);
   for (n in 1:N){
@@ -62,7 +69,7 @@ model {
 }
 
 generated quantities{
-  matrix [J, J] Omega_beta = beta * V_chol * V_chol' * beta';
-  matrix [K, K] V = V_chol * V_chol';
+  matrix [K, K] V = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, V_corr_chol));
+  matrix [J, J] Omega_beta = beta * V * beta';
 }
 
