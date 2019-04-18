@@ -1,21 +1,10 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import pandas as pd
 import pystan
-from scipy.stats import norm, multivariate_normal, invwishart, invgamma
-from statsmodels.tsa.stattools import acf
 import datetime
 import sys
 import os
-
-from codebase.plot import *
 from codebase.file_utils import save_obj, load_obj
-from codebase.post_process import *
 
 
 df = pd.read_csv("../dat/muthen_men.csv")
