@@ -6,7 +6,7 @@ data {
 }
 
 transformed data{
-  real<lower=0> c = 0.01;
+  real<lower=0> c = 1;
   vector[J] zeros = rep_vector(0, J);
   cov_matrix[J] I_c = diag_matrix(rep_vector(c, J));
 }
@@ -15,8 +15,8 @@ parameters {
   vector<lower=0>[J] sigma;
   vector<lower=0>[K] sigma_z;
   vector[J] alpha;
-  matrix[K,K] beta_free;
-  matrix[K+1,K] beta_zeros;
+  matrix[2,K] beta_free; // 2 free eleements per factor
+  matrix[3,K] beta_zeros; // 3 zero elements per factor
   cholesky_factor_corr[K] V_corr_chol;
   matrix[N,K] zz;
   matrix[N,J] uu;
@@ -27,15 +27,17 @@ transformed parameters{
   matrix[J,K] beta;
   cov_matrix[J] Sigma_epsilon;
   matrix[N,J] mean_yy;
+  
   Sigma_epsilon = diag_matrix(square(sigma));
-  for (j in 1:J){
-    for (k in 1:K) beta[j,k] = 0;
-  }
+  
+  // 1st factor
   beta[1,1] = 1;
-  beta[2:3,1] = beta_free[1:2,1];
-  beta[4,2] = 1;
-  beta[5:6,2] = beta_free[1:2,2];
+  beta[2:3,1] = beta_free[1:2, 1];
   beta[4:6,1] = beta_zeros[1:3, 1];
+
+  // 2nd factor
+  beta[4,2] = 1;
+  beta[5:6,2] = beta_free[1:2, 2];
   beta[1:3,2] = beta_zeros[1:3, 2];
   
   for (n in 1:N){
@@ -65,7 +67,8 @@ model {
 }
 
 generated quantities{
+  matrix [K, K] V_corr = multiply_lower_tri_self_transpose(V_corr_chol);
   matrix [K, K] V = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, V_corr_chol));
   matrix [J, J] Omega_beta = beta * V * beta';
+  
 }
-

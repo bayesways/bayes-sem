@@ -83,15 +83,11 @@ the noise elements u.
 * `7.1 IRT_1_LSAT` We ran the model replacing the last 100 points with random
 coin flips and saw the change in u's.
 
-* CFA for Normal-Normal model with marginal likelihood formulas in notebook
+* CFA for Normal-Normal model with augmented likelihood formulas in notebook
 `src/8.1.1-NN-CFA.ipynb`
 
 * CFA for Normal-Normal model with marginal likelihood formulas in notebook
-and hierarchical priors on $\Sigma_u$ in notebook `src/8.1.2-NN-CFA-aug-hier.ipynb`
-
-* We run the IRT model with augmented likelihood and hierarchical priors on
-$\Sigma_u$ in notebook `src/8.1.3-NN-CFA-aug-hier.ipynb` with the improvements
-of the stan model.
+`src/8.1.2-NN-CFA.ipynb`
 
 * We run the IRT model with augmented likelihood and hierarchical priors on
 $\Sigma_u$ in notebook `src/8.2.1-IRT-CFA-aug-hier.ipynb`
