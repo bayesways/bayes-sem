@@ -43,7 +43,10 @@ transformed parameters{
 
   // set the zero elements
   beta[4:J, 1] = beta_zeros[1:(J-3), 1];
-  for (k in 2:(K-1)) beta[1:3*(k-1), k] = beta_zeros[1:3*(k-1), k];
+  for (k in 2:(K-1)) {
+    beta[1:3*(k-1), k] = beta_zeros[1:3*(k-1), k];
+    beta[4+3*(k-1):J, k] = beta_zeros[3*(k-1)+1:J-3, k];
+  }
   beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
 
   Omega = beta * V * beta'+ Sigma_epsilon;
