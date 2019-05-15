@@ -5,7 +5,7 @@
 Initial install:
 
     $ conda env create -f environment.yml
-    $ source activate smc
+    $ source activate bayes-sem
 
 Update:
 
@@ -17,7 +17,7 @@ Deactivate Environment:
 
 Remove:
 
-    $ conda remove -n smc --all
+    $ conda remove -n bayes-sem --all
 
 
 Convert `a.ipynb` to `a.py`:
