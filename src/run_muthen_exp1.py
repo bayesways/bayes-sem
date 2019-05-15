@@ -21,7 +21,7 @@ parser.add_argument("-xdir", "--existing_directory", help="refit compiled model 
 
 args = parser.parse_args()
 
-print("Reading data for %s"%args.gender)
+print("\n\nReading data for %s"%args.gender)
 df = pd.read_csv("../dat/muthen_"+args.gender+".csv")
 
 
@@ -31,7 +31,7 @@ data['N'] = df.shape[0]
 data['K'] = 5
 data['J'] = df.shape[1]
 data['y'] = df.values
-print("N = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
+print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
 stan_data = dict(N = data['N'], K = data['K'], J = data['J'], yy = data['y'])
 
@@ -44,32 +44,35 @@ if args.print_model == True:
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') # ISO 8601 format
     log_dir =  "./log/"+nowstr+"%s/" % args.task_handle
-    print("Compiling model")
+    print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-    print("Saving compiled model in directory %s"%log_dir)
+    print("\n\nSaving compiled model in directory %s"%log_dir)
     save_obj(sm, 'sm', log_dir)
 
 
 else:
-    log_dir = "./log/"+args.existing_directory
-    print("Reading existing compiled model from directory %s"%log_dir)
+    log_dir = args.existing_directory
+    if log_dir[-1] != "/":
+        print("\n\nAppending `/`-character at the end of directory")
+        log_dir = log_dir+ "/"
+    print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
 
 
-print("Fitting model.... \n\n")
+print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
     warmup=args.num_warmup, chains=args.num_chains)
 
-print("Saving fitted model in directory %s"%log_dir)
+print("\n\nSaving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)
 
 
-print("Saving posterior samples in %s"%log_dir)
+print("\n\nSaving posterior samples in %s"%log_dir)
 param_names = ['Omega_beta', 'beta', 'V_corr', 'V' , 'uu', 'alpha', 'sigma', 'sigma_z']
 
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
