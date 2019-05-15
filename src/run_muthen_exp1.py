@@ -67,3 +67,17 @@ fit_run = sm.sampling(data=stan_data,
 
 print("Saving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)
+
+
+print("Saving posterior samples in %s"%log_dir)
+param_names = ['Omega_beta', 'beta', 'V_corr', 'V' , 'uu', 'alpha', 'sigma', 'sigma_z']
+
+stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
+
+if args.num_chains ==1:
+    ps = dict()
+    for name in param_names:
+        ps[name] = np.squeeze(stan_samples[name])
+else:
+    ps = stan_samples
+save_obj(ps, 'ps', log_dir)
