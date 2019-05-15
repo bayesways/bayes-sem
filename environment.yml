@@ -9,8 +9,8 @@ dependencies:
   - blas=1.1=openblas
   - bleach=2.1.3=py_0
   - bokeh=0.13.0=py36_0
-  - ca-certificates=2017.08.26=ha1e5d58_0
-  - certifi=2018.1.18=py36_0
+  - ca-certificates=2019.3.9=hecc5488_0
+  - certifi=2019.3.9=py36_0
   - cycler=0.10.0=py36_0
   - decorator=4.2.1=py36_0
   - entrypoints=0.2.3=py36_1
@@ -31,9 +31,10 @@ dependencies:
   - jupyter_console=5.2.0=py36_0
   - jupyter_core=4.4.0=py_0
   - kiwisolver=1.0.1=py36_1
-  - libgfortran=3.0.0=0
+  - libgfortran=3.0.1=0
   - libpng=1.6.34=0
   - libsodium=1.0.15=1
+  - libtiff=4.0.9=he6b73bb_1
   - markupsafe=1.0=py36_0
   - matplotlib=2.2.0=py36_0
   - mistune=0.8.3=py_0
@@ -42,8 +43,9 @@ dependencies:
   - ncurses=5.9=10
   - notebook=5.4.0=py36_0
   - numpy=1.14.2=py36_blas_openblas_200
+  - olefile=0.46=py_0
   - openblas=0.2.20=7
-  - openssl=1.0.2n=hdbc3d79_0
+  - openssl=1.0.2r=h1de35cc_0
   - packaging=18.0=py36_0
   - pandas=0.22.0=py36_0
   - pandoc=2.1.2=0
@@ -53,7 +55,6 @@ dependencies:
   - patsy=0.5.0=py36_0
   - pexpect=4.4.0=py36_0
   - pickleshare=0.7.4=py36_0
-  - pip=9.0.1=py36_1
   - prompt_toolkit=1.0.15=py36_0
   - ptyprocess=0.5.2=py36_0
   - pygments=2.2.0=py36_0
@@ -90,4 +91,11 @@ dependencies:
   - yaml=0.1.7=hc338f04_2
   - zeromq=4.2.3=2
   - zlib=1.2.11=0
-prefix: /Users/Konstantin/miniconda3/envs/factor-analysis
+  - pip:
+    - cython==0.29.5
+    - ipython-autotime==0.1
+    - pillow==6.0.0
+    - pip==19.0.2
+    - pystan==2.18.1.0
+prefix: /Users/itemgmt/miniconda3/envs/factor-analysis
+
