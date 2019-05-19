@@ -23,6 +23,9 @@ args = parser.parse_args()
 
 print("\n\nReading data for %s"%args.gender)
 df = pd.read_csv("../dat/muthen_"+args.gender+".csv")
+df = df.replace(-9, np.nan).astype(float)
+df.dropna(inplace=True)
+df = df.astype(int)
 
 
 
