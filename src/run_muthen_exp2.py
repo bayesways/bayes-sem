@@ -35,8 +35,8 @@ data['K'] = 5
 data['J'] = df.shape[1]
 data['y'] = df.values
 
-print("\n\n********** \nReplacing last 10% of data with 7's \n***********\n\n")
-data['y'][-int(data['N']*.1):] = 7
+print("\n\n********** \nReplacing last 10% of data with 10's \n***********\n\n")
+data['y'][-int(data['N']*.1):] = 10
 
 print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
