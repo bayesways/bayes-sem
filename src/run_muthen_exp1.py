@@ -14,8 +14,9 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("gender", help="run men or women", type=str, default="men")
 # Optional arguments
+parser.add_argument("-uu", "--use_u", help="print model on screen", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
-parser.add_argument("-prm", "--print_model", help="print model on screen", type=bool, default=False)
+parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
     type=str, default=None)
 
@@ -37,9 +38,13 @@ print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
 stan_data = dict(N = data['N'], K = data['K'], J = data['J'], yy = data['y'])
 
-with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
-    model_code = file.read()
-if args.print_model == True:
+if bool(args.use_u) :
+    with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
+        model_code = file.read()
+else:
+    with open('./codebase/stan_code/cont/CFA/marg_m_nou.stan', 'r') as file:
+        model_code = file.read()
+if bool(args.print_model):
     print(model_code)
 
 
@@ -75,7 +80,9 @@ save_obj(fit_run, 'fit', log_dir)
 
 
 print("\n\nSaving posterior samples in %s"%log_dir)
-param_names = ['Omega_beta', 'beta', 'V_corr', 'V' , 'uu', 'alpha', 'sigma', 'sigma_z']
+param_names = ['Omega_beta', 'beta', 'V_corr', 'V' , 'alpha', 'sigma', 'sigma_z']
+if bool(args.use_u) :
+    param_names.append('uu')
 
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
