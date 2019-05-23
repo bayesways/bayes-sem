@@ -16,7 +16,7 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("num_chains", help="number of MCMC chains", type=int, default=1)
 # Optional arguments
 parser.add_argument("-rs", "--random_seed", help="random seed to use for data generation", type=int, default=None)
-parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
+parser.add_argument("-th", "--task_handle", help="handle (name) for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
     type=str, default=None)
