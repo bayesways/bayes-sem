@@ -4,9 +4,6 @@ import pystan
 import datetime
 import sys
 import os
-from scipy.stats import norm, multivariate_normal
-from codebase.data import gen_data
-
 from codebase.file_utils import save_obj, load_obj
 import argparse
 
