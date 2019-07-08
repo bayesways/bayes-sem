@@ -67,3 +67,4 @@ on the server, collect the results and visualize them locally with
 ## To Do
 
 * ~~Experiment to detect extreme values of y's~~
+* Check calculations of PPP against Muthen paper

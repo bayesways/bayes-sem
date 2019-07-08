@@ -17,17 +17,17 @@ parameters {
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
-  cholesky_factor_corr[K] V_corr_chol;
+  cholesky_factor_corr[K] Phi_corr_chol;
 }
 
 transformed parameters{
-  cov_matrix[J] Sigma_epsilon;
+  cov_matrix[J] Theta;
   matrix[J,K] beta;
-  cov_matrix [K] V ;
-  cov_matrix[J] Omega;
+  cov_matrix [K] Phi_cov ;
+  cov_matrix[J] Marg_cov;
 
-  Sigma_epsilon = diag_matrix(square(sigma));
-  V = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, V_corr_chol));
+  Theta = diag_matrix(square(sigma));
+  Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, Phi_corr_chol));
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -47,7 +47,7 @@ transformed parameters{
   }
   beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
 
-  Omega = beta * V * beta'+ Sigma_epsilon;
+  Marg_cov = beta * Phi_cov * beta'+ Theta;
 }
 
 model {
@@ -56,13 +56,12 @@ model {
   to_vector(alpha) ~ normal(0, 1);
   sigma ~ cauchy(0,1);
   sigma_z ~ cauchy(0,1);
-  V_corr_chol ~ lkj_corr_cholesky(2);
+  Phi_corr_chol ~ lkj_corr_cholesky(2);
   for (n in 1:N){
-    yy[n, ] ~ multi_normal(alpha,  Omega);
+    yy[n, ] ~ multi_normal(alpha,  Marg_cov);
   }
 }
 
 generated quantities{
-  matrix [K, K] V_corr = multiply_lower_tri_self_transpose(V_corr_chol);
-  matrix [J, J] Omega_beta = beta * V * beta';
+  matrix [K, K] Phi_corr = multiply_lower_tri_self_transpose(Phi_corr_chol);
 }
