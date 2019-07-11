@@ -5,12 +5,6 @@ data {
   matrix[N,J] yy;
 }
 
-transformed data{
-  real<lower=0> c = 1;
-  vector[J] zeros = rep_vector(0, J);
-  cov_matrix[J] I_c = diag_matrix(rep_vector(c, J));
-}
-
 parameters {
   vector<lower=0>[J] sigma;
   vector<lower=0>[K] sigma_z;
