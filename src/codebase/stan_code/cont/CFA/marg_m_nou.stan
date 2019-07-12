@@ -47,9 +47,9 @@ transformed parameters{
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
-  to_vector(alpha) ~ normal(0, 1);
-  sigma ~ cauchy(0,1);
-  sigma_z ~ cauchy(0,1);
+  to_vector(alpha) ~ normal(0, 10);
+  sigma ~ cauchy(0,3);
+  sigma_z ~ cauchy(0,3);
   Phi_corr_chol ~ lkj_corr_cholesky(2);
   for (n in 1:N){
     yy[n, ] ~ multi_normal(alpha,  Marg_cov);

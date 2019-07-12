@@ -15,7 +15,7 @@ parameters {
 }
 
 model {
-  to_vector(alpha) ~ normal(0, 100);
+  to_vector(alpha) ~ normal(0, 10);
   Sigma ~ inv_wishart(J+2, I);
   for (n in 1:N){
     yy[n, ] ~ multi_normal(alpha,  Sigma);

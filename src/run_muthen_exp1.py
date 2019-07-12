@@ -73,12 +73,15 @@ if args.existing_directory is None:
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/cont/CFA/marg_m_nou_no_approxbeta.stan', 'r') as file:
             model_code = file.read()
+    elif args.stan_model == 3 :
+        with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
+            model_code = file.read()
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
     if bool(args.print_model):
         print(model_code)
-    file = open(log_dir+"model.txt", "w") 
+    file = open(log_dir+"model.txt", "w")
     file.write(model_code)
     file.close()
 
