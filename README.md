@@ -93,3 +93,4 @@ respectively for different models.
 * ~~Experiment to detect extreme values of y's~~
 * ~~Check calculations of PPP against Muthen paper~~
 * Add kfold PPP calculations
+* Run model3 (unrestricted) on fabian - need to update the muthen_exp_kfold.py script first
