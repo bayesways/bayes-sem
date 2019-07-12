@@ -22,15 +22,17 @@ Remove:
 
 Convert `a.ipynb` to `a.py`:
 
-  $ jupyter nbconvert --to script a.ipynb
+    $ jupyter nbconvert --to script a.ipynb
 
 
 ## How to use:
 
 * To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
 
-    $ run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
-
+  ```
+  run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+  ```
+  
 with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), and
 `-xdir` (`--existing_directory`). The results are saved in
 `src/log/<date-time>_<task_handle>`.
@@ -45,14 +47,17 @@ stan model to load and run with the new number of iterations.
 * The same model but replacing 10% of the data with 10's `run_muthen_exp2.py`.
 The command runs as follows
 
-    $ run_muthen_exp2.py <num_warmup> <num_samples> <num_chains> <men/women>
-
+    ```
+    run_muthen_exp2.py <num_warmup> <num_samples> <num_chains> <men/women>
+    ```
 
 * Script `muthen_exp_ppp_kfold.py` runs a kfold version of the `run_muthen_exp1`
 script. It works as follows
 
-    $ run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
-
+    ```
+    run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+    ```
+    
 with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
 (`n_splits`) and `-xdir` (`--existing_directory`). The results are saved in
 `src/log/<date-time>_<task_handle>`.
