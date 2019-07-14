@@ -98,7 +98,6 @@ for mcmc_iter in range(mcmc_length):
     model_1_lgpdf = Nlogpdf(complete_data[0]['test']['yy'],
         model_posterior_samples[1][0]['alpha'][mcmc_iter],
         model_posterior_samples[1][0]['Marg_cov'][mcmc_iter])
-    Ds[mcmc_iter] = -2*np.sum(model_1_lgpdf - model_2_lgpdf)
 
     model_2_lgpdf = Nlogpdf(complete_data[0]['test']['yy'],
         model_posterior_samples[2][0]['alpha'][mcmc_iter],
