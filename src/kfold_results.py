@@ -38,12 +38,12 @@ if log_dir2[-1] != "/":
     log_dir2 = log_dir2+ "/"
 
 if bool(args.print_model):
-    print("\n\nModel 1...")
+    print("\n\nBenchmark Model Code... \n\n")
     file = open(log_dir1+"model.txt", "r")
     print(file.read())
     file.close()
 
-    print("\n\nModel 2...")
+    print("\n\nModel to be Tested Code... \n\n")
     file = open(log_dir2+"model.txt", "r")
     print(file.read())
     file.close()
@@ -99,11 +99,11 @@ for fold_index in range(3):
     for mcmc_iter in range(mcmc_length):
         model_1_lgpdf = Nlogpdf(complete_data[fold_index]['test']['yy'],
             model_posterior_samples[1][fold_index]['alpha'][mcmc_iter],
-            model_posterior_samples[1][fold_index]['Marg_cov'][mcmc_iter])
+            model_posterior_samples[1][fold_index]['Sigma'][mcmc_iter])
 
         model_2_lgpdf = Nlogpdf(complete_data[fold_index]['test']['yy'],
             model_posterior_samples[2][fold_index]['alpha'][mcmc_iter],
-            model_posterior_samples[2][fold_index]['Marg_cov'][mcmc_iter])
+            model_posterior_samples[2][fold_index]['Marg_cov2'][mcmc_iter])
         Ds[mcmc_iter, fold_index] = -2*np.sum(model_1_lgpdf - model_2_lgpdf)
 
 print(Ds)
