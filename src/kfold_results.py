@@ -4,7 +4,7 @@ import pystan
 import datetime
 import sys
 import os
-import numpy as np
+from scipy.stats import multivariate_normal
 from sklearn.model_selection import KFold
 
 from codebase.file_utils import save_obj, load_obj
@@ -56,7 +56,7 @@ mcmc_length = ps[0]['alpha'].shape[0]
 Ds = np.empty((mcmc_length,))
 for mcmc_iter in range(mcmc_length):
     Ds[mcmc_iter] = -2*np.sum(\
-        Nlogpdf(complete_data[0]['test']['yy'], ps[0]['alpha'][mcmc_iter], ps[0]['Sigma'][mcmc_iter] ) -\
+        Nlogpdf(complete_data[0]['test']['yy'], ps[0]['alpha'][mcmc_iter], ps[0]['Marg_cov'][mcmc_iter] ) -\
         Nlogpdf(complete_data[0]['test']['yy'], sample_mean, sample_cov ))
 
 print(Ds)
