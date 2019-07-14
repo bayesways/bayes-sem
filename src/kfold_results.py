@@ -38,6 +38,12 @@ if log_dir2[-1] != "/":
     log_dir2 = log_dir2+ "/"
 
 if bool(args.print_model):
+    print("\n\nModel 1...")
+    file = open(log_dir1+"model.txt", "r")
+    print(file.read())
+    file.close()
+
+    print("\n\nModel 2...")
     file = open(log_dir2+"model.txt", "r")
     print(file.read())
     file.close()
