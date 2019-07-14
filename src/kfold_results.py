@@ -94,6 +94,12 @@ print("\n\nComputing Folds...\n\n")
 
 mcmc_length = model_posterior_samples[1][0]['alpha'].shape[0]
 
+
+if 'Marg_cov2' in model_posterior_samples[2][0].keys():
+    marg_cov = 'Marg_cov2'
+else:
+    marg_cov = 'Marg_cov'
+
 Ds = np.empty((mcmc_length,3))
 for fold_index in range(3):
     for mcmc_iter in range(mcmc_length):
@@ -101,9 +107,10 @@ for fold_index in range(3):
             model_posterior_samples[1][fold_index]['alpha'][mcmc_iter],
             model_posterior_samples[1][fold_index]['Sigma'][mcmc_iter])
 
+
         model_2_lgpdf = Nlogpdf(complete_data[fold_index]['test']['yy'],
             model_posterior_samples[2][fold_index]['alpha'][mcmc_iter],
-            model_posterior_samples[2][fold_index]['Marg_cov'][mcmc_iter])
+            model_posterior_samples[2][fold_index][marg_cov][mcmc_iter])
         Ds[mcmc_iter, fold_index] = -2*np.sum(model_1_lgpdf - model_2_lgpdf)
 
 print(Ds)
