@@ -92,7 +92,7 @@ sample_cov = np.cov(complete_data[0]['train']['yy'], rowvar=False)
 
 print("\n\nComputing Folds...\n\n")
 
-mcmc_length = model_posterior_samples[1][0]['alpha'].shape[0]
+mcmc_length = model_posterior_samples[0]['alpha'].shape[0]
 
 Ds = np.empty((mcmc_length,3))
 for fold_index in range(3):
