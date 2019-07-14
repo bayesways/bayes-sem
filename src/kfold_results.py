@@ -13,10 +13,14 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("logdir", help="path to files", type=str, default=None)
 # Optional arguments
-parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
+parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=1)
 
 args = parser.parse_args()
 
+print("\n\nPrinting Stan model code \n\n")
+
+
+log_dir = args.logdir
 
 if bool(args.print_model):
     file = open(log_dir+"model.txt", "r")
@@ -25,6 +29,8 @@ if bool(args.print_model):
 
 ############################################################
 ################ Load Data and models  ##########
+
+print("\n\nLoading files...\n\n")
 complete_data = load_obj("complete_data", log_dir)
 
 ps = dict()
@@ -41,6 +47,7 @@ sample_mean = np.mean(complete_data[0]['train']['yy'], axis=0)
 sample_cov = np.cov(complete_data[0]['train']['yy'], rowvar=False)
 
 
+print("\n\nComputing Folds...\n\n")
 
 mcmc_length = ps[0]['alpha'].shape[0]
 Ds = np.empty((mcmc_length,))
