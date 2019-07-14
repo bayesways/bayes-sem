@@ -56,7 +56,7 @@ mcmc_length = ps[0]['alpha'].shape[0]
 Ds = np.empty((mcmc_length,))
 for mcmc_iter in range(mcmc_length):
     Ds[mcmc_iter] = -2*np.sum(\
-        Nlogpdf(complete_data[0]['test']['yy'], ps_model3_0['alpha'][mcmc_iter], ps_model3_0['Sigma'][mcmc_iter] ) -\
+        Nlogpdf(complete_data[0]['test']['yy'], ps[0]['alpha'][mcmc_iter], ps[0]['Sigma'][mcmc_iter] ) -\
         Nlogpdf(complete_data[0]['test']['yy'], sample_mean, sample_cov ))
 
 print(Ds)
