@@ -21,6 +21,9 @@ print("\n\nPrinting Stan model code \n\n")
 
 
 log_dir = args.logdir
+if log_dir[-1] != "/":
+    print("\n\nAppending `/`-character at the end of directory")
+    log_dir = log_dir+ "/"
 
 if bool(args.print_model):
     file = open(log_dir+"model.txt", "r")
