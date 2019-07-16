@@ -113,6 +113,7 @@ for fold_index in range(3):
             model_posterior_samples[2][fold_index][marg_cov][mcmc_iter])
         Ds[mcmc_iter, fold_index] = -2*np.sum(model_1_lgpdf - model_2_lgpdf)
 
-print(Ds)
 print(Ds.shape)
-print(np.mean(Ds, axis=0))
+save_obj(Ds, 'ds', "./")
+print(np.sum(Ds>0, axis=0)/mcmc_length)
+print(np.mean(np.sum(Ds>0, axis=0)/mcmc_length))
