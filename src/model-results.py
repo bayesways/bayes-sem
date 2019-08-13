@@ -37,20 +37,6 @@ if bool(args.print_model):
 data = load_obj("stan_data", log_dir)
 ps = load_obj('ps', log_dir)
 
-plots = []
-for j in range(data['K']):
-    for k in range(data['K']):
-        if j!=k:
-            plots.append(plot_trace(ps['Phi_cov'][:,j,k],
-            title = 'Posterior distribution for Phi(%s,%s)'%(j,k)).options(fig_inches=10, aspect=3))
-layout = hv.Layout(plots).options(show_title = True,
-#     tight = True, tight_padding=10,
-    vspace = .5,
-    absolute_scaling=False, fig_size=100)
-layout.cols(2)
-
-
-
 
 def ff (yy, model_mu, model_Sigma, p=15, q=5):
     mle_est = dict()
