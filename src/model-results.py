@@ -39,7 +39,6 @@ ps = load_obj('ps', log_dir)
 
 
 def ff (yy, model_mu, model_Sigma, p=15, q=5):
-    mle_est = dict()
     sample_S = np.cov(yy, rowvar=False)
     sample_m = np.mean(yy, axis=0)
     n_data = yy.shape[0]
@@ -53,7 +52,17 @@ def ff (yy, model_mu, model_Sigma, p=15, q=5):
     return ff
 
 
-if 'Marg_cov2' in model_posterior_samples[2][0].keys():
+def ff2(yy, model_mu, model_Sigma, p=15, q=5):
+    sample_S = np.cov(yy, rowvar=False)
+    ldS = np.log(det(sample_S))
+    iSigma = inv(model_Sigma)
+    ldSigma = np.log(det(model_Sigma))
+    n_data = yy.shape[0]
+    ff2 =(n_data-1)*(ldSigma+np.sum(np.diag(sample_S @ iSigma))-ldS-p)
+    return ff2
+
+
+if 'Marg_cov2' in ps.keys():
     marg_cov = 'Marg_cov2'
 else:
     marg_cov = 'Marg_cov'
@@ -64,10 +73,10 @@ def compute_D(mcmc_iter, pred=True):
         y_pred=multivariate_normal.rvs(mean= ps['alpha'][mcmc_iter],
                         cov=ps[marg_cov][mcmc_iter],
                        size = data['yy'].shape[0])
-        return ff(y_pred, ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
+        return ff2(y_pred, ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
 
     else:
-        return ff(data['yy'], ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
+        return ff2(data['yy'], ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
 
 
 mcmc_length = ps['alpha'].shape[0]

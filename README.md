@@ -79,7 +79,17 @@ on the server, collect the results and visualize them locally with
 `1.1.Muthen-women` or `1.2.Muthen-men`. Also see more recent results for
 `women` only run on fabian at
 `10.Muthen-results-model0`, `10.Muthen-results-model1`, and `10.Muthen-results-model2`
-respectively for different models.
+respectively for different models. 
+
+* We ran the following models to compare the PPP values using `model-results.py`.
+Results are saved in `log/fabian_runs` folders:
+ 
+    * `model0` : Factor model with u's and approx zeros
+    * `model2` : Factor model with no u's and exact zeros
+
+* In addition we ran the kfold-PPP values using `kfold_results.py`, including the following model:
+
+    * `model3` : Simplest model (no factors) using a full covariance matrix
 
 * The results of experiment of replacing 10% is in notebooks
 `2.1.Muthen-women-experiment` and `2.2.Muthen-men-experiment`
@@ -90,9 +100,12 @@ respectively for different models.
 * The results of using the no-u model with 10% experiment is in  
 `4.1.Muthen-women-nou-exp2`
 
+
+
 ## To Do
 
 * ~~Experiment to detect extreme values of y's~~
 * ~~Check calculations of PPP against Muthen paper~~
-* Add kfold PPP calculations
+* ~~Add kfold PPP calculations~~
 * Run model3 (unrestricted) on fabian - need to update the muthen_exp_kfold.py script first
+* check with Kostas if `model-results.py` is computing PPP values correctly
