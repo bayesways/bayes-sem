@@ -3,10 +3,15 @@ data {
   int<lower=1> K;
   int<lower=1> J;
   matrix[N,J] yy;
+  vector[J] sigma_prior;
+}
+
+transformed data{
+  real<lower=0> c0 = 2.5;
 }
 
 parameters {
-  vector<lower=0>[J] sigma;
+  vector<lower=0>[J] sigma_square;
   vector<lower=0>[K] sigma_z;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
@@ -19,7 +24,7 @@ transformed parameters{
   cov_matrix [K] Phi_cov ;
   cov_matrix[J] Marg_cov;
 
-  Theta = diag_matrix(square(sigma));
+  Theta = diag_matrix(sigma_square);
   Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, Phi_corr_chol));
 
   for(j in 1:J) {
@@ -38,7 +43,7 @@ transformed parameters{
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  sigma ~ cauchy(0,3);
+  for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/sigma_prior[j]);
   sigma_z ~ cauchy(0,3);
   Phi_corr_chol ~ lkj_corr_cholesky(2);
   for (n in 1:N){
@@ -48,4 +53,6 @@ model {
 
 generated quantities{
   matrix [K, K] Phi_corr = multiply_lower_tri_self_transpose(Phi_corr_chol);
+  vector<lower=0>[J] sigma = sqrt(sigma_square);
+
 }

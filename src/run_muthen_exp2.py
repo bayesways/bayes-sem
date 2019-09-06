@@ -37,13 +37,16 @@ data['N'] = df.shape[0]
 data['K'] = 5
 data['J'] = df.shape[1]
 data['y'] = df.values
+data['sigma_prior'] = np.diag(np.linalg.inv(np.cov(data['y'], rowvar=False)))
 
 print("\n\n********** \nReplacing last 10% of data with 10's \n***********\n\n")
 data['y'][-int(data['N']*.1):] = 10
 
+
 print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
-stan_data = dict(N = data['N'], K = data['K'], J = data['J'], yy = data['y'])
+stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
+    yy = data['y'], sigma_prior = data['sigma_prior'])
 
 if bool(args.use_u) :
     with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
