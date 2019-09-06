@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -268,7 +269,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -342,18 +342,6 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
@@ -397,22 +385,20 @@ $ source activate bayes-sem</code></pre>
 <h2>How to use:</h2>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
-<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre></li>
-</ul>
+<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre>
 <p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:full model, 1:no u’s, 2: no u’s no approx zero betas”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
-<p>The results are processed using <code>model-results.py</code></p>
-<ul>
+<p>The results are processed using <code>model-results.py</code></p></li>
 <li><p>The same model but replacing 10% of the data with 10’s <code>run_muthen_exp2.py</code>. The command runs as follows</p>
 <pre><code>run_muthen_exp2.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt;</code></pre></li>
 <li><p>Script <code>muthen_exp_ppp_kfold.py</code> runs a kfold version of the <code>run_muthen_exp1</code> script. It works as follows</p>
-<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre></li>
-</ul>
+<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre>
 <p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), <code>-nfl</code> (<code>n_splits</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:full model, 1:no u’s, 2: no u’s no approx zero betas”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
-<p>The results are processed using <code>kfold_results.py</code></p>
+<p>The results are processed using <code>kfold_results.py</code></p></li>
+</ul>
 </div>
 <div id="results" class="section level2">
 <h2>Results:</h2>
@@ -462,6 +448,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

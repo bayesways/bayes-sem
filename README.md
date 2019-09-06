@@ -33,17 +33,17 @@ Convert `a.ipynb` to `a.py`:
   run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
   ```
 
-with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), and
-`-xdir` (`--existing_directory`). The results are saved in
-`src/log/<date-time>_<task_handle>`.
-
-To choose which model to run use the `<model_code>` option as follows:
-"0:full model, 1:no u's, 2: no u's no approx zero betas "
-
-If an existing directory is given then the script looks for an existing compiled
-stan model to load and run with the new number of iterations.
-
-The results are processed using `model-results.py`
+  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), and
+  `-xdir` (`--existing_directory`). The results are saved in
+  `src/log/<date-time>_<task_handle>`.
+  
+  To choose which model to run use the `<model_code>` option as follows:
+  "0:full model, 1:no u's, 2: no u's no approx zero betas "
+  
+  If an existing directory is given then the script looks for an existing compiled
+  stan model to load and run with the new number of iterations.
+  
+  The results are processed using `model-results.py`
 
 * The same model but replacing 10% of the data with 10's `run_muthen_exp2.py`.
 The command runs as follows
@@ -59,17 +59,17 @@ script. It works as follows
     run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
     ```
 
-with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
-(`n_splits`) and `-xdir` (`--existing_directory`). The results are saved in
-`src/log/<date-time>_<task_handle>`.
-
-To choose which model to run use the `<model_code>` option as follows:
-"0:full model, 1:no u's, 2: no u's no approx zero betas "
-
-If an existing directory is given then the script looks for an existing compiled
-stan model to load and run with the new number of iterations.
-
-The results are processed using `kfold_results.py`
+  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
+  (`n_splits`) and `-xdir` (`--existing_directory`). The results are saved in
+  `src/log/<date-time>_<task_handle>`.
+  
+  To choose which model to run use the `<model_code>` option as follows:
+  "0:full model, 1:no u's, 2: no u's no approx zero betas "
+  
+  If an existing directory is given then the script looks for an existing compiled
+  stan model to load and run with the new number of iterations.
+  
+  The results are processed using `kfold_results.py`
 
 
 ## Results:
