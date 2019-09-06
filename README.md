@@ -72,6 +72,23 @@ script. It works as follows
   The results are processed using `kfold_results.py`
 
 
+### On Fabian
+
+Fabian currently can only use pystan version 2.17 which returns posterior samples in differen shapes. For this reason we have the equivalent script versions that run on fabian only. 
+
+1. Activate `apps/anaconda/4.4.0/bin` and use env `pystan`
+
+    ```
+    module add apps/anaconda/4.4.0/bin 
+    source activate pystan
+    ```
+    
+2. Use `python3` at front and use the fabian version of any script (ends in `_fabian.py`). For example
+
+    ```
+    python3 run_muthen_exp1_fabian.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+    ```
+
 ## Results:
 
 * To run the experiment of Muthen data `run_muthen_exp1.py`. Usually we run this
