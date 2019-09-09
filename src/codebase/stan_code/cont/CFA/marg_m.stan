@@ -29,7 +29,6 @@ transformed parameters{
   cov_matrix [K] Phi_cov ;
   cov_matrix[J] Marg_cov;
   
-  
   Theta = diag_matrix(sigma_square);
   Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, Phi_corr_chol));
 
@@ -76,7 +75,5 @@ generated quantities{
   matrix [K, K] V_corr = multiply_lower_tri_self_transpose(Phi_corr_chol);
   matrix [J, J] Marg_cov2 = Marg_cov + Omega ;
   vector<lower=0>[J] sigma = sqrt(sigma_square);
-
-
 }
 
