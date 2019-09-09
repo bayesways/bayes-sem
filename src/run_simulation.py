@@ -13,6 +13,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("num_chains", help="number of MCMC chains", type=int, default=1)
+parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+
 # Optional arguments
 parser.add_argument("-rs", "--random_seed", help="random seed to use for data generation", type=int, default=None)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
@@ -63,8 +65,26 @@ else:
 ################ Compile Model or Load ##########
 if args.existing_directory is None:
 
-    with open('./codebase/stan_code/cont/CFA/marg_simulation.stan', 'r') as file:
-        model_code = file.read()
+    print("\n\nReading Stan Code from model %d" % args.stan_model)
+    if args.stan_model == 0 :
+        with open('./codebase/stan_code/cont/CFA/model0_sim.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+            'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
+
+    elif args.stan_model == 2 :
+        with open('./codebase/stan_code/cont/CFA/model2_sim.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'sigma_z', 'alpha', "Theta"]
+
+    elif args.stan_model == 3 :
+        with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Sigma', 'alpha']
+
+    else:
+        print("Choose stan model {0:full model, 2: no u's no approx zero betas}")
     if bool(args.print_model):
         print(model_code)
     file = open(log_dir+"model.txt", "w")
@@ -95,10 +115,7 @@ fit_run = sm.sampling(data=stan_data,
 print("\n\nSaving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)
 
-
 print("\n\nSaving posterior samples in %s"%log_dir)
-param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-    'sigma_z', 'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
 
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
