@@ -398,6 +398,10 @@ $ source activate bayes-sem</code></pre>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:full model, 1:no u’s, 2: no u’s no approx zero betas”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>kfold_results.py</code></p></li>
+<li><p>Similarly can run <code>run_simulation.py</code> that generates data and hence can check the results against the true answer</p>
+<pre><code>run_simulation.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;model_code&gt;</code></pre>
+<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
+<p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:full model, 1:no u’s, 2: no u’s no approx zero betas, 3 simple model”</p></li>
 </ul>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
