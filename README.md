@@ -74,13 +74,13 @@ script. It works as follows
 
 ### On Fabian
 
-Fabian currently can only use pystan version 2.17 which returns posterior samples in differen shapes. For this reason we have the equivalent script versions that run on fabian only. 
+We installed pystan version 2.19 which should run the same scripts as local correctly.
 
-1. Activate `apps/anaconda/4.4.0/bin` and use env `pystan`
+1. Activate `apps/anaconda3` and use env `pystan-dev`
 
     ```
-    module add apps/anaconda/4.4.0/bin 
-    source activate pystan
+    module add apps/anaconda3
+    source activate pystan-dev
     ```
     
 2. Use `python3` at front and use the fabian version of any script (ends in `_fabian.py`). For example

@@ -401,11 +401,11 @@ $ source activate bayes-sem</code></pre>
 </ul>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
-<p>Fabian currently can only use pystan version 2.17 which returns posterior samples in differen shapes. For this reason we have the equivalent script versions that run on fabian only.</p>
+<p>We installed pystan version 2.19 which should run the same scripts as local correctly.</p>
 <ol style="list-style-type: decimal">
-<li><p>Activate <code>apps/anaconda/4.4.0/bin</code> and use env <code>pystan</code></p>
-<pre><code>module add apps/anaconda/4.4.0/bin 
-source activate pystan</code></pre></li>
+<li><p>Activate <code>apps/anaconda3</code> and use env <code>pystan-dev</code></p>
+<pre><code>module add apps/anaconda3
+source activate pystan-dev</code></pre></li>
 <li><p>Use <code>python3</code> at front and use the fabian version of any script (ends in <code>_fabian.py</code>). For example</p>
 <pre><code>python3 run_muthen_exp1_fabian.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre></li>
 </ol>
