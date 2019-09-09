@@ -10,16 +10,16 @@ def gen_data(nsim_data, J, K, rho =0.5, random_seed=None):
     alpha = np.array([1,2,.3,-.8, 1, -1.4])
     beta = np.array([[1,0], [.2, 0],[.6,0],[0,1], [0,.5], [0,.8]], dtype=float)
     sigma_z = np.array([1.2, .7])
-    V_corr = np.eye(K)
-    V_corr[0,1] = rho
-    V_corr[1,0] = rho
-    V = np.diag(sigma_z) @ V_corr @  np.diag(sigma_z)
+    Phi_corr = np.eye(K)
+    Phi_corr[0,1] = rho
+    Phi_corr[1,0] = rho
+    Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
 
-    sigma_e = np.array([1,1.2,.9,.8, 1, 1.4])
-    Sigma_e = np.diag(sigma_e**2)
+    sigma = np.array([1,1.2,.9,.8, 1, 1.4])
+    Theta = np.diag(sigma**2)
 
-    Omega = beta @ V @ beta.T + Sigma_e
-    yy = multivariate_normal.rvs(mean = alpha, cov=Omega, size=nsim_data)
+    Marg_cov = beta @ Phi_cov @ beta.T + Theta
+    yy = multivariate_normal.rvs(mean = alpha, cov=Marg_cov, size=nsim_data)
 
 
 
@@ -30,11 +30,11 @@ def gen_data(nsim_data, J, K, rho =0.5, random_seed=None):
     data['alpha'] = alpha
     data['beta'] = beta
     data['sigma_z'] = sigma_z
-    data['V_corr'] = V_corr
-    data['V'] = V
-    data['Omega'] = Omega
-    data['Sigma_e'] = Sigma_e
-    data['sigma_e'] = sigma_e
+    data['Phi_corr'] = Phi_corr
+    data['Phi_cov'] = Phi_cov
+    data['Marg_cov'] = Marg_cov
+    data['Theta'] = Theta
+    data['sigma'] = sigma
     data['y'] = yy
 
     return(data)
