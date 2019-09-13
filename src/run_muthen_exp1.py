@@ -15,6 +15,7 @@ parser.add_argument("num_chains", help="number of MCMC chains", type=int, defaul
 parser.add_argument("gender", help="run men or women", type=str, default="men")
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
+parser.add_argument("-std", "--standardize", help="standardize the data", type=int, default=0)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
@@ -47,7 +48,12 @@ if args.existing_directory is None:
     data['N'] = df.shape[0]
     data['K'] = 5
     data['J'] = df.shape[1]
-    data['y'] = df.values
+    if args.standardize:
+        from sklearn import preprocessing
+        data['y'] = preprocessing.scale(df.values)
+    else:
+        data['y'] = df.values
+
     data['sigma_prior'] = np.diag(np.linalg.inv(np.cov(data['y'], rowvar=False)))
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
@@ -69,15 +75,33 @@ if args.existing_directory is None:
     if args.stan_model == 0 :
         with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+            'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
     elif args.stan_model == 1 :
         with open('./codebase/stan_code/cont/CFA/marg_m_nou.stan', 'r') as file:
             model_code = file.read()
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/cont/CFA/marg_m_nou_no_approxbeta.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+                    'alpha', "Theta"]
     elif args.stan_model == 3 :
         with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['alpha',  'Sigma']
+
+    elif args.stan_model == 4:
+        with open('./codebase/stan_code/cont/CFA/model0_std.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta", 'uu', 'Omega', 'Marg_cov2']
+    elif args.stan_model == 5:
+        with open('./codebase/stan_code/cont/CFA/model2_std.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta"]
+    elif args.stan_model == 6 :
+        with open('./codebase/stan_code/cont/CFA/model3_std.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Sigma']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
@@ -113,10 +137,7 @@ save_obj(fit_run, 'fit', log_dir)
 
 
 print("\n\nSaving posterior samples in %s"%log_dir)
-param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z', 'alpha', "Theta"]
 
-if args.stan_model == 0 :
-    param_names.extend(['uu', 'Omega', 'Marg_cov2'])
 
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
