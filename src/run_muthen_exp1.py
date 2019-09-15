@@ -121,11 +121,13 @@ if args.existing_directory is None:
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
-        
+
     if args.stan_model == 0 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
             'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
     elif args.stan_model == 1 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+                    'alpha', "Theta"]
     elif args.stan_model == 2 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
                     'alpha', "Theta"]
