@@ -89,7 +89,6 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha',  'Sigma']
-
     elif args.stan_model == 4:
         with open('./codebase/stan_code/cont/CFA/model0_std.stan', 'r') as file:
             model_code = file.read()
@@ -122,6 +121,25 @@ if args.existing_directory is None:
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
+        
+    if args.stan_model == 0 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+            'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
+    elif args.stan_model == 1 :
+    elif args.stan_model == 2 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+                    'alpha', "Theta"]
+    elif args.stan_model == 3 :
+        param_names = ['alpha',  'Sigma']
+    elif args.stan_model == 4:
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta", 'uu', 'Omega', 'Marg_cov2']
+    elif args.stan_model == 5:
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta"]
+    elif args.stan_model == 6 :
+        param_names = ['Sigma']
+    else:
+        print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
+
 
 
 ############################################################
