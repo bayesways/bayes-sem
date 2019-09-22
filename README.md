@@ -130,6 +130,12 @@ Results are saved in `log/fabian_runs` folders:
 * The results of using the no-u model with 10% experiment is in  
 `4.1.Muthen-women-nou-exp2`
 
+## Currently working on 
+
+* Standardize data and scores. We run `model0_std` and `model2_std` on fabian and collected the results at `20190913_235513_model_0_std` and `20190913_235659_model2_std` respectively but the results do not match Muthen's results.
+
+* We ran a factor model `model0` on known data to measure the difference in PPP value, as it compares to the saturated model `model3`. We also compared it to `model2` which has a exact zeros and no u's. The results were `20190909_225051_exp1_model3`,  `20190909_225014_exp1_model2`, `20190909_183952_exp1_model0`.
+
 
 
 ## To Do
