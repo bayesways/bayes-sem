@@ -101,6 +101,11 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/cont/CFA/model3_std.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Sigma']
+    elif args.stan_model == 7 :
+        with open('./codebase/stan_code/cont/CFA/model0_centered.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha',  'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
@@ -139,6 +144,9 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta"]
     elif args.stan_model == 6 :
         param_names = ['Sigma']
+    elif args.stan_model == 7 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha',  'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
