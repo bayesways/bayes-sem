@@ -123,6 +123,6 @@ dependencies:
     - brewer2mpl==1.4.1
     - cython==0.29.7
     - ggplot==0.11.5
-    - pystan==2.18.1.0
+    - pystan==2.19.0.1.dev0
 prefix: /Users/itemgmt/miniconda3/envs/bayes-sem
 
