@@ -73,10 +73,10 @@ if args.existing_directory is None:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model0_marg.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-            'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', "Theta", 'Omega']
     elif args.stan_model == 1 :
         with open('./codebase/stan_code/cont/CFA/marg_m_nou.stan', 'r') as file:
             model_code = file.read()
@@ -106,6 +106,11 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha',  'Omega']
+    elif args.stan_model == 8 :
+        with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', "Theta", 'uu', 'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
@@ -128,8 +133,8 @@ else:
     sm = load_obj('sm', log_dir)
 
     if args.stan_model == 0 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-            'alpha', "Theta", 'uu', 'Omega', 'Marg_cov2']
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+                    'alpha', "Theta", 'Omega']
     elif args.stan_model == 1 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
                     'alpha', "Theta"]
@@ -147,6 +152,9 @@ else:
     elif args.stan_model == 7 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha',  'Omega']
+    elif args.stan_model == 8 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', "Theta", 'uu', 'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 

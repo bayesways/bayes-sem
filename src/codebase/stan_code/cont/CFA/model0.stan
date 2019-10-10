@@ -8,17 +8,17 @@ data {
 
 transformed data{
   vector[J] zeros = rep_vector(0, J);
-  cov_matrix[J] I = diag_matrix(rep_vector(1, J));
+  cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
+  cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
   real<lower=0> c0 = 2.5;
 }
 
 parameters {
   vector<lower=0>[J] sigma_square;
-  vector<lower=0>[K] sigma_z;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
-  cholesky_factor_corr[K] Phi_corr_chol;
+  cov_matrix [K] Phi_cov;
   matrix[N,J] uu;
   cov_matrix[J] Omega;
 }
@@ -26,11 +26,9 @@ parameters {
 transformed parameters{
   cov_matrix[J] Theta;
   matrix[J,K] beta;
-  cov_matrix [K] Phi_cov ;
   cov_matrix[J] Marg_cov;
   
   Theta = diag_matrix(sigma_square);
-  Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, Phi_corr_chol));
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -59,9 +57,8 @@ model {
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
   for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/sigma_prior[j]);
-  sigma_z ~ cauchy(0,3);
-  Phi_corr_chol ~ lkj_corr_cholesky(2);
-  Omega ~ inv_wishart(J+6, I);
+  Phi_cov ~ inv_wishart(J+4, I_K);
+  Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N){
     to_vector(uu[n,]) ~ multi_normal(zeros, Omega);
   }
@@ -72,8 +69,6 @@ model {
 }
 
 generated quantities{
-  matrix [K, K] V_corr = multiply_lower_tri_self_transpose(Phi_corr_chol);
-  matrix [J, J] Marg_cov2 = Marg_cov + Omega ;
   vector<lower=0>[J] sigma = sqrt(sigma_square);
 }
 
