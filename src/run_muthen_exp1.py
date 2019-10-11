@@ -73,41 +73,21 @@ if args.existing_directory is None:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/CFA/model0_marg.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha', "Theta", 'Omega']
+        param_names = ['Sigma', 'alpha']
     elif args.stan_model == 1 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_nou.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
+                        'alpha', "Theta"]
     elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_nou_no_approxbeta.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
                     'alpha', "Theta"]
     elif args.stan_model == 3 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha',  'Sigma']
-    elif args.stan_model == 4:
-        with open('./codebase/stan_code/cont/CFA/model0_std.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta", 'uu', 'Omega', 'Marg_cov2']
-    elif args.stan_model == 5:
-        with open('./codebase/stan_code/cont/CFA/model2_std.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta"]
-    elif args.stan_model == 6 :
-        with open('./codebase/stan_code/cont/CFA/model3_std.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Sigma']
-    elif args.stan_model == 7 :
-        with open('./codebase/stan_code/cont/CFA/model0_centered.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha',  'Omega']
-    elif args.stan_model == 8 :
-        with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2_u.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha', "Theta", 'uu', 'Omega']
