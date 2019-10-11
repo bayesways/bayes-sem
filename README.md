@@ -38,7 +38,7 @@ Convert `a.ipynb` to `a.py`:
   `src/log/<date-time>_<task_handle>`.
   
   To choose which model to run use the `<model_code>` option as follows:
-  "0:full model, 1:no u's, 2: no u's no approx zero betas "
+  "0:benchmark saturated model, 1:no u's, 2: full factor model"
   
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
@@ -64,26 +64,13 @@ script. It works as follows
   `src/log/<date-time>_<task_handle>`.
   
   To choose which model to run use the `<model_code>` option as follows:
-  "0:full model, 1:no u's, 2: no u's no approx zero betas "
+  "0:benchmark saturated model, 1:no u's, 2: full factor model"
   
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
   
   The results are processed using `kfold_results.py`
 
-
-* Similarly can run `run_simulation.py` that generates data and hence can check the results against the true answer
-
-    ```
-    run_simulation.py <num_warmup> <num_samples> <num_chains> <model_code>
-    ```
-
-  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), 
-  and `-xdir` (`--existing_directory`). The results are saved in
-  `src/log/<date-time>_<task_handle>`.
-  
-  To choose which model to run use the `<model_code>` option as follows:
-  "0:full model, 1:no u's, 2: no u's no approx zero betas, 3 simple model "
 
 ### On Fabian
 
