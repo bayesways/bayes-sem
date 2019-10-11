@@ -19,6 +19,7 @@ parameters {
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cov_matrix [K] Phi_cov;
+  matrix[N,J] uu;
   cov_matrix[J] Omega;
 }
 
@@ -47,7 +48,7 @@ transformed parameters{
   }
   beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
 
-  Marg_cov = beta * Phi_cov * beta'+ Theta + Omega;
+  Marg_cov = beta * Phi_cov * beta'+ Theta;
 
 }
 
@@ -59,7 +60,10 @@ model {
   Phi_cov ~ inv_wishart(J+4, I_K);
   Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N){
-    yy[n, ] ~ multi_normal(alpha,  Marg_cov);
+    to_vector(uu[n,]) ~ multi_normal(zeros, Omega);
+  }
+  for (n in 1:N){
+    yy[n, ] ~ multi_normal(alpha + to_vector(uu[n,]),  Marg_cov);
   }
   
 }
