@@ -97,14 +97,10 @@ We installed pystan version 2.19 which should run the same scripts as local corr
 
 * To run the experiment of Muthen data `run_muthen_exp1.py`. Usually we run this
 on the server, collect the results and visualize them locally with
-`1.1.Muthen-women` or `1.2.Muthen-men`. Also see more recent results for
-`women` only run on fabian at
-`10.Muthen-results-model0`, `10.Muthen-results-model1`, and `10.Muthen-results-model2`
-respectively for different models. 
+`1.1.Muthen-women` or `1.2.Muthen-men`. 
 
 * Run the following models to compare the PPP values using `model-results.py`.
 Results are saved in `TO_DO` folders:
- 
     
 * In addition we run the kfold-PPP values using `kfold_results.py`, including the following model:
 
