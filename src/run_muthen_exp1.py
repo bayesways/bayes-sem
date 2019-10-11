@@ -79,18 +79,17 @@ if args.existing_directory is None:
     elif args.stan_model == 1 :
         with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-                        'alpha', "Theta"]
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/cont/CFA/model2.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-                    'alpha', "Theta"]
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
     elif args.stan_model == 3 :
         with open('./codebase/stan_code/cont/CFA/model2_u.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha', "Theta", 'uu', 'Omega']
+            'alpha', 'Theta', 'uu', 'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
@@ -113,28 +112,15 @@ else:
     sm = load_obj('sm', log_dir)
 
     if args.stan_model == 0 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-                    'alpha', "Theta", 'Omega']
+        param_names = ['Sigma', 'alpha']
     elif args.stan_model == 1 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-                    'alpha', "Theta"]
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z',
-                    'alpha', "Theta"]
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
     elif args.stan_model == 3 :
-        param_names = ['alpha',  'Sigma']
-    elif args.stan_model == 4:
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta", 'uu', 'Omega', 'Marg_cov2']
-    elif args.stan_model == 5:
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', "Theta"]
-    elif args.stan_model == 6 :
-        param_names = ['Sigma']
-    elif args.stan_model == 7 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha',  'Omega']
-    elif args.stan_model == 8 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha', "Theta", 'uu', 'Omega']
+            'alpha', 'Theta', 'uu', 'Omega']
     else:
         print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
 
