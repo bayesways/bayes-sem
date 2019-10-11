@@ -10,14 +10,14 @@ transformed data{
 }
 
 parameters {
-  cov_matrix[J] Sigma;
+  cov_matrix[J] Marg_cov;
   vector[J] alpha;
 }
 
 model {
   to_vector(alpha) ~ normal(0, 10);
-  Sigma ~ inv_wishart(J+2, I);
+  Marg_cov ~ inv_wishart(J+2, I);
   for (n in 1:N){
-    yy[n, ] ~ multi_normal(alpha,  Sigma);
+    yy[n, ] ~ multi_normal(alpha,  Marg_cov);
   }
 }
