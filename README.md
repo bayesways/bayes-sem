@@ -52,11 +52,11 @@ The command runs as follows
     run_muthen_exp2.py <num_warmup> <num_samples> <num_chains> <men/women>
     ```
 
-* Script `muthen_exp_ppp_kfold.py` runs a kfold version of the `run_muthen_exp1`
+* Script `run_exp1_ppp_kfold.py` runs a kfold version of the `run_muthen_exp1`
 script. It works as follows
 
     ```
-    run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+    run_exp1_ppp_kfold.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
     ```
 
   with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
@@ -69,8 +69,12 @@ script. It works as follows
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
   
-  The results are processed using `kfold_results.py`
-
+  The results are processed using `kfold_results.py` by passing the two `log/<dir>`
+  of the two models to be compared. The order matters, as follows.
+    
+    ```
+    kfold_results.py <log_dir_benchmark_model> <log_dir_proposed_model> 
+    ```
 
 ### On Fabian
 
