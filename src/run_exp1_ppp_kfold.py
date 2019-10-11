@@ -100,7 +100,7 @@ if args.existing_directory is None:
     if args.stan_model == 0 :
         with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Sigma', 'alpha']
+        param_names = ['Marg_cov', 'alpha']
     elif args.stan_model == 1 :
         with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
             model_code = file.read()
@@ -137,7 +137,7 @@ else:
     sm = load_obj('sm', log_dir)
 
     if args.stan_model == 0 :
-        param_names = ['Sigma', 'alpha']
+        param_names = ['Marg_cov', 'alpha']
     elif args.stan_model == 1 :
         param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
