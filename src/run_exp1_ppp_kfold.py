@@ -71,11 +71,15 @@ if args.existing_directory is None:
         stan_data[fold_index] = dict(N = data_fold['N_train'],
                                           K = data['K'],
                                           J = data['J'],
-                                          yy = data_fold['y_train'])
+                                          yy = data_fold['y_train'],
+                                          sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_train'], rowvar=False)))
+                                          )
         test_data_fold = dict(N = data_fold['N_test'],
                                           K = data['K'],
                                           J = data['J'],
-                                          yy = data_fold['y_test'])
+                                          yy = data_fold['y_test'],
+                                          sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_test'], rowvar=False)))
+                                          )
         complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
 
         fold_index += 1
