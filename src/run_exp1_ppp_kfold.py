@@ -175,7 +175,7 @@ print("\n\nSaving posterior samples in %s ..."%log_dir)
 
 stan_samples = dict()
 for fold_index in range(3):
-    print("\n\nSaving posterior for fold %s samples in %s"%(log_dir, fold_index))
+    print("\n\nSaving posterior for fold %s samples in %s"%(fold_index, log_dir))
     stan_samples[fold_index] = fit_runs[fold_index].extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
     if args.num_chains ==1:
