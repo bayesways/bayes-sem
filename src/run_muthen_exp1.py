@@ -91,7 +91,7 @@ if args.existing_directory is None:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha', 'Theta', 'uu', 'Omega']
     else:
-        print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
+        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
     if bool(args.print_model):
         print(model_code)
@@ -122,7 +122,7 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha', 'Theta', 'uu', 'Omega']
     else:
-        print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
+        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
 
 
