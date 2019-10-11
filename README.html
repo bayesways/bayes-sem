@@ -415,36 +415,16 @@ source activate pystan-dev</code></pre></li>
 <h2>Results:</h2>
 <ul>
 <li><p>To run the experiment of Muthen data <code>run_muthen_exp1.py</code>. Usually we run this on the server, collect the results and visualize them locally with <code>1.1.Muthen-women</code> or <code>1.2.Muthen-men</code>. Also see more recent results for <code>women</code> only run on fabian at <code>10.Muthen-results-model0</code>, <code>10.Muthen-results-model1</code>, and <code>10.Muthen-results-model2</code> respectively for different models.</p></li>
-<li><p>We ran the following models to compare the PPP values using <code>model-results.py</code>. Results are saved in <code>log/fabian_runs</code> folders:</p>
-<ul>
-<li><code>model0</code> : Factor model with u’s and approx zeros</li>
-<li><code>model2</code> : Factor model with no u’s and exact zeros</li>
-</ul></li>
-<li><p>In addition we ran the kfold-PPP values using <code>kfold_results.py</code>, including the following model:</p>
-<ul>
-<li><code>model3</code> : Simplest model (no factors) using a full covariance matrix</li>
-</ul></li>
+<li><p>Run the following models to compare the PPP values using <code>model-results.py</code>. Results are saved in <code>TO_DO</code> folders:</p></li>
+<li><p>In addition we run the kfold-PPP values using <code>kfold_results.py</code>, including the following model:</p></li>
 <li><p>The results of experiment of replacing 10% is in notebooks <code>2.1.Muthen-women-experiment</code> and <code>2.2.Muthen-men-experiment</code></p></li>
-<li><p>The results of using the no-u model is in <code>3.1.Muthen-women-nou</code> and <code>3.2.Muthen-men-nou</code></p></li>
-<li><p>The results of using the no-u model with 10% experiment is in<br />
-<code>4.1.Muthen-women-nou-exp2</code></p></li>
-</ul>
-</div>
-<div id="currently-working-on" class="section level2">
-<h2>Currently working on</h2>
-<ul>
-<li><p>Standardize data and scores. We run <code>model0_std</code> and <code>model2_std</code> on fabian and collected the results at <code>20190913_235513_model_0_std</code> and <code>20190913_235659_model2_std</code> respectively but the results do not match Muthen’s results.</p></li>
-<li><p>We ran a factor model <code>model0</code> on known data to measure the difference in PPP value, as it compares to the saturated model <code>model3</code>. We also compared it to <code>model2</code> which has a exact zeros and no u’s. The results were <code>20190909_225051_exp1_model3</code>, <code>20190909_225014_exp1_model2</code>, <code>20190909_183952_exp1_model0</code>.</p></li>
 </ul>
 </div>
 <div id="to-do" class="section level2">
 <h2>To Do</h2>
 <ul>
-<li><del>Experiment to detect extreme values of y’s</del></li>
-<li><del>Check calculations of PPP against Muthen paper</del></li>
-<li><del>Add kfold PPP calculations</del></li>
-<li>Run model3 (unrestricted) on fabian - need to update the muthen_exp_kfold.py script first</li>
-<li>check with Kostas if <code>model-results.py</code> is computing PPP values correctly</li>
+<li>Compare PPP values for <code>model1</code> and <code>model2</code></li>
+<li>Compare k-fold PPP for <code>model1</code> and <code>model2</code></li>
 </ul>
 </div>
 </div>

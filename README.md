@@ -98,37 +98,17 @@ on the server, collect the results and visualize them locally with
 `10.Muthen-results-model0`, `10.Muthen-results-model1`, and `10.Muthen-results-model2`
 respectively for different models. 
 
-* We ran the following models to compare the PPP values using `model-results.py`.
-Results are saved in `log/fabian_runs` folders:
+* Run the following models to compare the PPP values using `model-results.py`.
+Results are saved in `TO_DO` folders:
  
-    * `model0` : Factor model with u's and approx zeros
-    * `model2` : Factor model with no u's and exact zeros
-
-* In addition we ran the kfold-PPP values using `kfold_results.py`, including the following model:
-
-    * `model3` : Simplest model (no factors) using a full covariance matrix
+    
+* In addition we run the kfold-PPP values using `kfold_results.py`, including the following model:
 
 * The results of experiment of replacing 10% is in notebooks
 `2.1.Muthen-women-experiment` and `2.2.Muthen-men-experiment`
 
-* The results of using the no-u model is in
-`3.1.Muthen-women-nou` and `3.2.Muthen-men-nou`
-
-* The results of using the no-u model with 10% experiment is in  
-`4.1.Muthen-women-nou-exp2`
-
-## Currently working on 
-
-* Standardize data and scores. We run `model0_std` and `model2_std` on fabian and collected the results at `20190913_235513_model_0_std` and `20190913_235659_model2_std` respectively but the results do not match Muthen's results.
-
-* We ran a factor model `model0` on known data to measure the difference in PPP value, as it compares to the saturated model `model3`. We also compared it to `model2` which has a exact zeros and no u's. The results were `20190909_225051_exp1_model3`,  `20190909_225014_exp1_model2`, `20190909_183952_exp1_model0`.
-
-
 
 ## To Do
 
-* ~~Experiment to detect extreme values of y's~~
-* ~~Check calculations of PPP against Muthen paper~~
-* ~~Add kfold PPP calculations~~
-* Run model3 (unrestricted) on fabian - need to update the muthen_exp_kfold.py script first
-* check with Kostas if `model-results.py` is computing PPP values correctly
+* Compare PPP values for `model1` and `model2`
+* Compare k-fold PPP for `model1` and `model2`
