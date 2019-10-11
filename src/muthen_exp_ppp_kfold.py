@@ -98,19 +98,25 @@ if args.existing_directory is None:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/CFA/marg_m.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Sigma', 'alpha']
     elif args.stan_model == 1 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_nou.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_nou_no_approxbeta.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
     elif args.stan_model == 3 :
-        with open('./codebase/stan_code/cont/CFA/marg_m_simple.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2_u.stan', 'r') as file:
             model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', 'Theta', 'uu', 'Omega']
     else:
-        print("Choose stan model {0:full model, 1:no u's, 2: no u's no approx zero betas}")
+        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
     if bool(args.print_model):
         print(model_code)
@@ -130,6 +136,20 @@ else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
 
+    if args.stan_model == 0 :
+        param_names = ['Sigma', 'alpha']
+    elif args.stan_model == 1 :
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+    elif args.stan_model == 2 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
+    elif args.stan_model == 3 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', 'Theta', 'uu', 'Omega']
+    else:
+        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
+
+
 
 ############################################################
 ################ Fit Model ##########
@@ -147,19 +167,11 @@ for fold_index in range(args.n_splits):
     save_obj(fit_runs[fold_index], 'fit_'+str(fold_index), log_dir)
 
 
-print("\n\nSaving posterior samples in %s"%log_dir)
-param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'sigma_z', 'alpha', "Theta"]
-
-if args.stan_model == 0 :
-    param_names.extend(['uu', 'Omega', 'Marg_cov2'])
-
-if args.stan_model == 3 :
-    param_names = ['alpha',  'Sigma']
-
+print("\n\nSaving posterior samples in %s ..."%log_dir)
 
 stan_samples = dict()
 for fold_index in range(3):
-    print("\n\nSaving posterior samples in %s"%log_dir)
+    print("\n\nSaving posterior for fold %s samples in %s"%(log_dir, fold_index))
     stan_samples[fold_index] = fit_runs[fold_index].extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
     if args.num_chains ==1:
