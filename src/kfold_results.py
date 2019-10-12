@@ -83,12 +83,7 @@ model_posterior_samples[2] = ps
 
 
 def Nlogpdf(yy, mean, cov):
-    return multivariate_normal.logpdf(yy,
-                               mean,
-                               cov)
-sample_mean = np.mean(complete_data[0]['train']['yy'], axis=0)
-sample_cov = np.cov(complete_data[0]['train']['yy'], rowvar=False)
-
+    return multivariate_normal.logpdf(yy, mean, cov, allow_singular=True)
 
 print("\n\nComputing Folds...\n\n")
 
