@@ -62,21 +62,15 @@ def ff2(yy, model_mu, model_Sigma, p=15, q=5):
     return ff2
 
 
-if 'Marg_cov2' in ps.keys():
-    marg_cov = 'Marg_cov2'
-else:
-    marg_cov = 'Marg_cov'
-
-
 def compute_D(mcmc_iter, pred=True):
     if pred == True:
         y_pred=multivariate_normal.rvs(mean= ps['alpha'][mcmc_iter],
-                        cov=ps[marg_cov][mcmc_iter],
+                        cov=ps['Marg_cov'][mcmc_iter],
                        size = data['yy'].shape[0])
-        return ff2(y_pred, ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
+        return ff2(y_pred, ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter])
 
     else:
-        return ff2(data['yy'], ps['alpha'][mcmc_iter], ps[marg_cov][mcmc_iter])
+        return ff2(data['yy'], ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter])
 
 
 mcmc_length = ps['alpha'].shape[0]
