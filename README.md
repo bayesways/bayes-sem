@@ -99,16 +99,15 @@ We installed pystan version 2.19 which should run the same scripts as local corr
 on the server, collect the results and visualize them locally with
 `1.1.Muthen-women` or `1.2.Muthen-men`. 
 
-* Run the following models to compare the PPP values using `model-results.py`.
-Results are saved in `TO_DO` folders:
-    
-* In addition we run the kfold-PPP values using `kfold_results.py`, including the following model:
+* Compared the PPP values using `model-results.py` of model 1 and model 2.
+
+* Compared the kfold-PPP values using `kfold_results.py` of model 1 and model 2 as it compares to model 0.
 
 * The results of experiment of replacing 10% is in notebooks
-`2.1.Muthen-women-experiment` and `2.2.Muthen-men-experiment`
+`2.1.Muthen-women-experiment` and `2.2.Muthen-men-experiment` but are outdated now, as we have not run them using the latest models.
 
 
 ## To Do
 
-* Compare PPP values for `model1` and `model2`
-* Compare k-fold PPP for `model1` and `model2`
+* ~~Compare PPP values for `model1` and `model2`~~
+* ~~Compare k-fold PPP for `model1` and `model2`~~
