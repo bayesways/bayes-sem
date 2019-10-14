@@ -57,7 +57,7 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/sigma_prior[j]);
   Phi_cov ~ inv_wishart(J+4, I_K);
-  Omega ~ inv_wishart(J+6, I_J);
+  Omega ~ inv_wishart(J+5, I_J);
   for (n in 1:N){
     yy[n, ] ~ multi_normal(alpha,  Marg_cov);
   }
