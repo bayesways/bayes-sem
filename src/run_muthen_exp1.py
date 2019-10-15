@@ -15,7 +15,7 @@ parser.add_argument("num_chains", help="number of MCMC chains", type=int, defaul
 parser.add_argument("gender", help="run men or women", type=str, default="men")
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-parser.add_argument("-std", "--standardize", help="standardize the data", type=int, default=0)
+parser.add_argument("-std", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
@@ -105,6 +105,10 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
+    elif args.stan_model == 7 :
+        with open('./codebase/stan_code/cont/CFA/model1_prior1.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
@@ -145,6 +149,8 @@ else:
     elif args.stan_model == 6 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
+    elif args.stan_model == 7 :
+        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
