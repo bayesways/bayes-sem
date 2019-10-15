@@ -14,7 +14,7 @@ transformed data{
 }
 
 parameters {
-  vector<lower=0>[J] sigma_square;
+  vector<lower=0>[J] sigma;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
@@ -27,7 +27,7 @@ transformed parameters{
   matrix[J,K] beta;
   cov_matrix[J] Marg_cov;
   
-  Theta = diag_matrix(sigma_square);
+  Theta = diag_matrix(square(sigma));
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -55,16 +55,12 @@ model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
-  sigma_square ~ cauchy(0,3);
+  sigma ~ cauchy(0,3);
   Phi_cov ~ inv_wishart(J+4, I_K);
   Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N){
     yy[n, ] ~ multi_normal(alpha,  Marg_cov);
   }
   
-}
-
-generated quantities{
-  vector<lower=0>[J] sigma = sqrt(sigma_square);
 }
 

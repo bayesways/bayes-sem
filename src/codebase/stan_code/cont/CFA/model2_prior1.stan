@@ -20,6 +20,7 @@ parameters {
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cov_matrix[J] Omega;
+  cholesky_factor_corr[K] Phi_corr_chol;
 }
 
 transformed parameters{
@@ -27,6 +28,7 @@ transformed parameters{
   matrix[J,K] beta;
   cov_matrix[J] Marg_cov;
   cov_matrix [K] Phi_cov;
+  
 
   Theta = diag_matrix(sigma_square);
   Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, Phi_corr_chol));
@@ -46,7 +48,7 @@ transformed parameters{
   beta[4:J, 1] = beta_zeros[1:(J-3), 1];
   for (k in 2:(K-1)) {
     beta[1:3*(k-1), k] = beta_zeros[1:3*(k-1), k];
-    beta[4+3*(k-1):J, k] = beta_zeros[3*(k-ß1)+1:J-3, k];
+    beta[4+3*(k-1):J, k] = beta_zeros[3*(k-1)+1:J-3, k];
   }
   beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
 
