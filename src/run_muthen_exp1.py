@@ -100,6 +100,11 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
+    elif args.stan_model == 6 :
+        with open('./codebase/stan_code/cont/CFA/model2_prior3.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
@@ -135,6 +140,9 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     elif args.stan_model == 5 :
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+            'Theta', 'Omega']
+    elif args.stan_model == 6 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     else:
