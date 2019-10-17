@@ -45,6 +45,7 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     yy = multivariate_normal.rvs(mean = alpha, cov=Marg_cov, size=nsim_data)
 
     data = dict()
+    data['random_seed'] = random_seed
     data['N'] = nsim_data
     data['K'] = K
     data['J'] = J
