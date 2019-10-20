@@ -105,4 +105,6 @@ for fold_index in range(3):
 print(Ds.shape)
 save_obj(Ds, 'ds', "./")
 print(np.sum(Ds>0, axis=0)/mcmc_length)
-print(np.mean(np.sum(Ds>0, axis=0)/mcmc_length))
+result = np.round(100*np.mean(np.sum(Ds>0, axis=0)/mcmc_length))
+
+print("k-fold Index = %d %%"%result)

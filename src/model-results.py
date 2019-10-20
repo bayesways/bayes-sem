@@ -80,4 +80,5 @@ for mcmc_iter in range(mcmc_length):
     Ds[mcmc_iter,1] = compute_D(mcmc_iter, pred=True)
 
 
-print(np.sum(Ds[:,0] < Ds[:,1]) / mcmc_length)
+result = np.round(100*(np.sum(Ds[:,0] < Ds[:,1]) / mcmc_length),0)
+print("PPP = %d %%"%result)
