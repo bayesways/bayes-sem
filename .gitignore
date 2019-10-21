@@ -2,6 +2,7 @@
 **/src/log
 
 *.Rproj
+*.Rhistory
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

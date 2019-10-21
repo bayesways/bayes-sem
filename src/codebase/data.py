@@ -3,20 +3,65 @@ import pandas as pd
 import pystan
 from scipy.stats import multivariate_normal
 
+
+def flatten_df(df0, val_name, var_name = 'K'):
+    df = pd.DataFrame(df0)
+    df.columns  = df.columns + 1
+    df['J'] = np.arange(len(df))+1
+    return df.melt(id_vars=['J'], var_name=var_name, value_name = val_name)
+
+
+def post_summary(samples):
+    mean =  pd.DataFrame(np.mean(samples, axis=0))
+    ps_df = flatten_df(mean, 'mean')
+    median = pd.DataFrame(np.median(samples, axis=0))
+    ps_df['median'] = flatten_df(median, 'median')['median']
+    per1 = pd.DataFrame(np.percentile(samples, 2.5,axis=0))
+    ps_df['q2.5'] = flatten_df(per1, 'q2.5')['q2.5']
+    per2 = pd.DataFrame(np.percentile(samples, 97.5,axis=0))
+    ps_df['q97.5'] = flatten_df(per2, 'q97.5')['q97.5']
+    return ps_df
+
+
+def C_to_R(M):
+    """
+    Send a covariance matrix M to the corresponding
+    correlation matrix R
+    Inputs
+    ============
+    - M : covariance matrix
+    Output
+    ============
+    - correlation matrix
+    """
+    d = np.asarray(M.diagonal())
+    d2 = np.diag(d**(-.5))
+    R = d2 @ M @ d2
+    return R
+
+
 def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.2,
-             random_seed=None):
+             noisy_loadings = False, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
     alpha = np.zeros(J)
-    b = 0.8
-    beta = np.array([[1,0],
-                     [b, 0],
-                     [b,0],
-                     [0,1],
-                     [0,b],
-                     [0,b]], dtype=float)
+    if noisy_loadings:
+        beta = np.array([[1,0.01],
+                         [b, 0.02],
+                         [b,-.05],
+                         [0.1,1],
+                         [-.08,b],
+                         [0.15,b]], dtype=float)
+
+    else:
+        beta = np.array([[1,0],
+                         [b, 0],
+                         [b,0],
+                         [0,1],
+                         [0,b],
+                         [0,b]], dtype=float)
 
     sigma_z = np.repeat(np.sqrt(c), K)
     Phi_corr = np.eye(K)
