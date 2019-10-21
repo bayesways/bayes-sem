@@ -48,10 +48,10 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     alpha = np.zeros(J)
     if noisy_loadings:
-        beta = np.array([[1,0.01],
-                         [b, 0.02],
+        beta = np.array([[1,0.2],
+                         [b, -0.3],
                          [b,-.05],
-                         [0.1,1],
+                         [-0.2,1],
                          [-.08,b],
                          [0.15,b]], dtype=float)
 
