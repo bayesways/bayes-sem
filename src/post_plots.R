@@ -5,7 +5,7 @@ library('ggthemes')
 library('scales')
 library('reshape2')
 library('readr')
-library(forcats)
+library('forcats')
 
 df <- read_csv("src/log/plot_data/post_df.csv") %>%
   mutate(error = data - mean, 
@@ -65,17 +65,21 @@ ggplot(df) +
 ggsave("doc/sim2.png", width = 8, height = 12, units = "cm")
 
 
-post_color <- '#020f4d'
-data_color <-'#c28f30'
+# post_color <- '#28ad8c'
+# post_color <- '#020f4d'
+post_color <- '#3e6cc2'
+# data_color <-'#d45842'
+data_color <-'#ab47bf'
+
 
 ggplot(df) +
   theme_economist_white(gray_bg = F)+
   geom_segment(aes(x = `q2.5` , xend = `q97.5`, y=index, yend=index),
                color = post_color, size = 1.5, alpha = 0.6) +
   geom_segment(aes(x = prior1 , xend = prior2, y=index, yend=index),
-               color = post_color, size = 1, alpha = 0.5) +
-  geom_point(aes(y=index, x=prior1), shape=3, color = post_color, alpha=.5)+
-  geom_point(aes(y=index, x=prior2), shape=3, color = post_color, alpha=.5)+
+               color = post_color, size = .7, alpha = 0.5) +
+  # geom_point(aes(y=index, x=prior1), shape=3, color = post_color, alpha=.5)+
+  # geom_point(aes(y=index, x=prior2), shape=3, color = post_color, alpha=.5)+
   geom_point(aes(y=index, x=mean), color = post_color, alpha=.5, size = 2.5)+
   geom_point(aes(y=index, x=data), shape=24, fill =data_color, color =  data_color, alpha=.5, size = 2.5)+
   scale_y_discrete(labels = labels)+
@@ -89,8 +93,8 @@ ggplot(df) +
           axis.ticks.length = unit( 10 * 0.5, "points"),
           panel.grid = element_blank(),
           # panel.grid.major.x = element_blank(),
-          panel.grid.major.x = element_line(colour = "grey85", size = rel(.5)),
-          panel.grid.major.y = element_line(colour = "grey85", size = rel(.5)),
+          panel.grid.major.x = element_line(colour = "grey90", size = rel(.5)),
+          panel.grid.major.y = element_line(colour = "grey90", size = rel(.5)),
           axis.text.y = element_text(hjust = .8,
                                      color= 'grey40'),
           axis.text.x = element_text(hjust = 0.5,
