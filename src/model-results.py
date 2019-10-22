@@ -49,17 +49,17 @@ def ff2(yy, model_mu, model_Sigma, p):
 
 
 def compute_D(mcmc_iter, pred=True):
-    p = ps['alpha'][mcmc_iter].shape[0]
+    J = ps['alpha'][mcmc_iter].shape[0]
     if pred == True:
         y_pred=multivariate_normal.rvs(mean= ps['alpha'][mcmc_iter],
                         cov=ps['Marg_cov'][mcmc_iter],
                        size = data['yy'].shape[0])
         return ff2(y_pred, ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter],
-            p = p)
+            p = J)
 
     else:
         return ff2(data['yy'], ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter],
-            p = p)
+            p = J)
 
 
 mcmc_length = ps['alpha'].shape[0]
