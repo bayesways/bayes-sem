@@ -38,21 +38,7 @@ data = load_obj("stan_data", log_dir)
 ps = load_obj('ps', log_dir)
 
 
-def ff (yy, model_mu, model_Sigma, p=15, q=5):
-    sample_S = np.cov(yy, rowvar=False)
-    sample_m = np.mean(yy, axis=0)
-    n_data = yy.shape[0]
-
-    term1 = np.log(det(model_Sigma))
-    term2 = inv(model_Sigma) @ (sample_S + (sample_m - model_mu) @  (sample_m - model_mu))
-    term3 = np.log(det(sample_S)) + p + q
-
-    ff = 0.5 * n_data * ( term1 + np.trace(term2)) - term3
-
-    return ff
-
-
-def ff2(yy, model_mu, model_Sigma, p=15, q=5):
+def ff2(yy, model_mu, model_Sigma, p):
     sample_S = np.cov(yy, rowvar=False)
     ldS = np.log(det(sample_S))
     iSigma = inv(model_Sigma)
@@ -63,14 +49,17 @@ def ff2(yy, model_mu, model_Sigma, p=15, q=5):
 
 
 def compute_D(mcmc_iter, pred=True):
+    p = ps['alpha'][mcmc_iter].shape[0]
     if pred == True:
         y_pred=multivariate_normal.rvs(mean= ps['alpha'][mcmc_iter],
                         cov=ps['Marg_cov'][mcmc_iter],
                        size = data['yy'].shape[0])
-        return ff2(y_pred, ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter])
+        return ff2(y_pred, ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter],
+            p = p)
 
     else:
-        return ff2(data['yy'], ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter])
+        return ff2(data['yy'], ps['alpha'][mcmc_iter], ps['Marg_cov'][mcmc_iter],
+            p = p)
 
 
 mcmc_length = ps['alpha'].shape[0]
