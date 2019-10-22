@@ -8,7 +8,8 @@ data {
 }
 
 transformed data{
-  vector[J] zeros = rep_vector(0, J);
+  vector[J] zeros_J = rep_vector(0, J);
+  vector[K] zeros_K = rep_vector(0, K);
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
   real<lower=0> c0 = 2.5;
@@ -60,7 +61,10 @@ model {
   Phi_cov ~ inv_wishart(J+4, I_K);
   Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N){
-    to_vector(uu[n,]) ~ multi_normal(zeros, Omega);
+    to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
+  }
+  for (n in 1:N){
+    to_vector(uu[n,]) ~ multi_normal(zeros_J, Omega);
   }
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
