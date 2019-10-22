@@ -11,10 +11,10 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
-parser.add_argument("num_chains", help="number of MCMC chains", type=int, default=1)
-parser.add_argument("gender", help="run men or women", type=str, default="men")
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
+parser.add_argument("-gender","--gender", help="run men or women", type=str, default="women")
+parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-std", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
@@ -86,29 +86,9 @@ if args.existing_directory is None:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     elif args.stan_model == 3 :
-        with open('./codebase/stan_code/cont/CFA/model2_u.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model3.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha', 'Theta', 'uu', 'Omega']
-    elif args.stan_model == 4 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 5 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 6 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior3.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 7 :
-        with open('./codebase/stan_code/cont/CFA/model1_prior1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
@@ -138,19 +118,7 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     elif args.stan_model == 3 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
-            'alpha', 'Theta', 'uu', 'Omega']
-    elif args.stan_model == 4 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 5 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 6 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 7 :
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
 
