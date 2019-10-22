@@ -75,6 +75,26 @@ script. It works as follows
     ```
     kfold_results.py <log_dir_benchmark_model> <log_dir_proposed_model> 
     ```
+    
+
+* To run a 2-factor and 6 manifest variables  model simulation run `run_sim_exp1.py`. The command runs as follows
+
+  ```
+  run_sim_exp1.py <num_warmup> <num_samples> <data_scenario> <model_code>
+  ```
+
+  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`),`-num_chains` (`--num_chains`), `-seed` (`--random_seed`), `-nd` (`--nsim_data`)  and
+  `-xdir` (`--existing_directory`). The results are saved in
+  `src/log/<date-time>_<task_handle>`.
+  
+  To choose which model to run use the `<model_code>` option as follows:
+  "1:no u's exact zeros, 2: full factor model"
+  
+  If an existing directory is given then the script looks for an existing compiled
+  stan model to load and run with the new number of iterations.
+  
+  The results are processed using `model-results.py`
+
 
 ### On Fabian
 
@@ -85,12 +105,6 @@ We installed pystan version 2.19 which should run the same scripts as local corr
     ```
     module add apps/anaconda3
     source activate pystan-dev
-    ```
-    
-2. Use `python3` at front and use the fabian version of any script (ends in `_fabian.py`). For example
-
-    ```
-    python3 run_muthen_exp1_fabian.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
     ```
 
 ## Results:
