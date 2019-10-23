@@ -1,0 +1,54 @@
+---
+title: "Factor Models in R"
+author: "Konstantinos Vamvourellis"
+date: "10/23/2019"
+output:
+  html_document:
+    df_print: paged
+    fig_caption: yes
+    fig_height: 10
+    fig_width: 10
+    number_sections: no
+    theme: lumen
+    toc: yes
+    toc_depth: 1
+    toc_float: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(readr)
+library(dplyr)
+```
+## Load data
+
+```{r}
+df<- read_csv("../women_std.csv")
+names(df) <- paste0('x', seq(1:15))
+glimpse(df)
+```
+
+## CFA with `lavaan`
+
+```{r}
+library('lavaan')
+model <- ' v1  =~ x1 + x2 + x3 
+              v2 =~ x4 + x5 + x6
+              v3 =~ x7 + x8 + x9 
+              v4 =~ x10 + x11 + x12 
+              v5 =~ x13 + x14 + x15 '
+fit <- cfa(model, data=df)
+summary(fit, fit.measures=TRUE, standardized = T)
+```
+
+
+```{r}
+# base R command
+# fit<- factanal(df, 5, rotation = 'promax')
+# fit
+```
+
