@@ -15,31 +15,25 @@ transformed data{
 parameters {
   vector<lower=0>[J] sigma_square;
   vector[J] alpha;
-  matrix[J-1,K] beta_free; // 2 free eleements per factor
+  matrix[J,K] beta;
   cov_matrix [K] Phi_cov;
   matrix[N,K] zz;
 }
 
 transformed parameters{
   cov_matrix[J] Theta;
-  matrix[J,K] beta;
   matrix[N,J] yy;
 
   Theta = diag_matrix(sigma_square);
-
-  beta[1, 1] = 1;
-  // set the free elements
-  beta[2:J, 1] = beta_free[1:(J-1),1];
 
   for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta';
 }
 
 model {
-  to_vector(beta_free) ~ normal(0, 1);
+  to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
   for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/3);
-  Phi_cov ~ inv_wishart(J+4, I_K);
-  for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
+  for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, I_K);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
 
