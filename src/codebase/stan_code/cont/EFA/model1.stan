@@ -21,7 +21,6 @@ parameters {
 transformed parameters{
   cov_matrix[J] Theta;
   cov_matrix[J] Marg_cov;
-  
   Theta = diag_matrix(sigma_square);
   Marg_cov = beta * beta'+ Theta;
 }
@@ -38,4 +37,3 @@ model {
 generated quantities{
   vector<lower=0>[J] sigma = sqrt(sigma_square);
 }
-
