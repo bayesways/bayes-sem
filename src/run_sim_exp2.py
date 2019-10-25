@@ -84,12 +84,11 @@ if args.existing_directory is None:
     elif args.stan_model == 1 :
         with open('./codebase/stan_code/discr/CFA/model1.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = ['beta', 'Phi_cov', 'alpha']
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/discr/CFA/model2.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega', 'zz' , 'uu']
+        param_names = ['beta', 'Phi_cov', 'alpha', 'Omega', 'zz' , 'uu']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:exact zeros no u's, 2: full factor model}")
 
@@ -112,10 +111,9 @@ else:
     if args.stan_model == 0 :
         param_names = ['alpha']
     elif args.stan_model == 1 :
-        param_names = [ 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = [ 'beta', 'Phi_cov', 'alpha']
     elif args.stan_model == 2 :
-        param_names = ['beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega', 'zz' , 'uu']
+        param_names = ['beta', 'Phi_cov', 'alpha', 'Omega', 'zz' , 'uu']
     else:
         print("Choose stan model {0:benchmark saturated model, 1:exact zeros no u's, 2: full factor model}")
 
