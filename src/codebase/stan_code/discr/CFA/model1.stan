@@ -3,19 +3,15 @@ data {
   int<lower=1> K;
   int<lower=1> J;
   int<lower=0, upper=1> DD[N, J];
-  vector[J] sigma_prior;
-
 }
 
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
-  cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
   real<lower=0> c0 = 2.5;
 }
 
 parameters {
-  vector<lower=0>[J] sigma_square;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
@@ -24,11 +20,8 @@ parameters {
 }
 
 transformed parameters{
-  cov_matrix[J] Theta;
   matrix[J,K] beta;
   matrix[N,J] yy;
-
-  Theta = diag_matrix(sigma_square);
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -45,14 +38,7 @@ transformed parameters{
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/sigma_prior[j]);
   Phi_cov ~ inv_wishart(J+4, I_K);
   for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
-
-generated quantities{
-  vector<lower=0>[J] sigma = sqrt(sigma_square);
-}
-
-
