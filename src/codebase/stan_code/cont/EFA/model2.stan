@@ -3,38 +3,40 @@ data {
   int<lower=1> K;
   int<lower=1> J;
   matrix[N,J] yy;
+  vector[J] sigma_prior;
 }
 
 transformed data{
-  real<lower=0> c = 0.01;
-  vector[J] zeros = rep_vector(0, J);
-  cov_matrix[J] I_c = diag_matrix(rep_vector(c, J));
+  cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
+  real<lower=0> c0 = 2.5;
 }
 
 parameters {
-  vector<lower=0>[J] sigma;
+  vector<lower=0>[J] sigma_square;
   vector[J] alpha;
   matrix[J,K] beta;
-  matrix[N,J] uu;
-
+  cov_matrix[J] Omega;
 }
 
 transformed parameters{
-  cov_matrix[J] Sigma_epsilon = diag_matrix(square(sigma));
-  cov_matrix[J] Omega = beta * beta'+ Sigma_epsilon;
+  cov_matrix[J] Theta;
+  cov_matrix[J] Marg_cov;
+  
+  Theta = diag_matrix(sigma_square);
+  Marg_cov = beta * beta'+ Theta + Omega;
+
 }
 
 model {
-  to_row_vector(beta) ~ normal(0, 1);
-  to_row_vector(alpha) ~ normal(0, 1);
+  to_vector(beta) ~ normal(0, 1);
+  to_vector(alpha) ~ normal(0, 10);
+  for(j in 1:J) sigma_square[j] ~ inv_gamma(c0, (c0-1)/sigma_prior[j]);
+  Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N){
-    to_vector(uu[n,]) ~ multi_normal(zeros, I_c);
-  }
-  for (n in 1:N){
-    yy[n, ] ~ multi_normal(alpha + to_vector(uu[n,]),  Omega);
+    yy[n, ] ~ multi_normal(alpha,  Marg_cov);
   }
 }
 
 generated quantities{
-  matrix [J, J] Omega_beta = beta * beta';
+  vector<lower=0>[J] sigma = sqrt(sigma_square);
 }
