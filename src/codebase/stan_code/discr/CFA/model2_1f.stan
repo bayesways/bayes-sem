@@ -16,7 +16,6 @@ transformed data{
 parameters {
   vector[J] alpha;
   matrix[J,K] beta;
-  cov_matrix [K] Phi_cov;
   cov_matrix[J] Omega;
   matrix[N,K] zz;
   matrix[N,J] uu;

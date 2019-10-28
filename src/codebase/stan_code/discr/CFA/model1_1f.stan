@@ -15,12 +15,10 @@ transformed data{
 parameters {
   vector[J] alpha;
   matrix[J,K] beta;
-  cov_matrix [K] Phi_cov;
   matrix[N,K] zz;
 }
 
 transformed parameters{
-  cov_matrix[J] Theta;
   matrix[N,J] yy;
   for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta';
 }
