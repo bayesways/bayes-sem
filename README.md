@@ -27,13 +27,16 @@ Convert `a.ipynb` to `a.py`:
 
 ## How to use:
 
+### CFA
+
 * To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
 
   ```
-  run_muthen_exp1.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+  run_muthen_exp1.py <num_warmup> <num_samples> <model_code>
   ```
 
-  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), and
+  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), (`--num_chains`), 
+  (`--gender`) and
   `-xdir` (`--existing_directory`). The results are saved in
   `src/log/<date-time>_<task_handle>`.
   
@@ -96,6 +99,19 @@ script. It works as follows
   The results are processed using `model-results.py`
 
 
+### EFA 
+
+* To run the Muthen model run `run_muthen_efa.py`. The command runs as follows
+
+  ```
+  run_muthen_efa.py <num_warmup> <num_samples> <model_code>
+  ```
+
+  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), (`--num_chains`), 
+  (`--gender`) and `-xdir` (`--existing_directory`). The results are saved in
+  `src/log/<date-time>_<task_handle>`.
+  
+
 ### On Fabian
 
 We installed pystan version 2.19 which should run the same scripts as local correctly.
@@ -125,3 +141,6 @@ on the server, collect the results and visualize them locally with
 
 * ~~Compare PPP values for `model1` and `model2`~~
 * ~~Compare k-fold PPP for `model1` and `model2`~~
+* Run EFA (model 1) for all simulated scenarios including kfold
+* Run EFA (model 2) for all simulated scenarios including kfold
+* Clean data from Irini to run binary model

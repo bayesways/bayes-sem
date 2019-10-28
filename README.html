@@ -383,10 +383,12 @@ $ source activate bayes-sem</code></pre>
 </div>
 <div id="how-to-use" class="section level2">
 <h2>How to use:</h2>
+<div id="cfa" class="section level3">
+<h3>CFA</h3>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
-<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre>
-<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
+<pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
+<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), (<code>--num_chains</code>), (<code>--gender</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:benchmark saturated model, 1:no u’s, 2: full factor model”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>model-results.py</code></p></li>
@@ -406,6 +408,15 @@ $ source activate bayes-sem</code></pre>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>model-results.py</code></p></li>
 </ul>
+</div>
+<div id="efa" class="section level3">
+<h3>EFA</h3>
+<ul>
+<li><p>To run the Muthen model run <code>run_muthen_efa.py</code>. The command runs as follows</p>
+<pre><code>run_muthen_efa.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
+<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), (<code>--num_chains</code>), (<code>--gender</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p></li>
+</ul>
+</div>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
 <p>We installed pystan version 2.19 which should run the same scripts as local correctly.</p>
@@ -430,6 +441,9 @@ source activate pystan-dev</code></pre></li>
 <ul>
 <li><del>Compare PPP values for <code>model1</code> and <code>model2</code></del></li>
 <li><del>Compare k-fold PPP for <code>model1</code> and <code>model2</code></del></li>
+<li>Run EFA (model 1) for all simulated scenarios including kfold</li>
+<li>Run EFA (model 2) for all simulated scenarios including kfold</li>
+<li>Clean data from Irini to run binary model</li>
 </ul>
 </div>
 </div>
