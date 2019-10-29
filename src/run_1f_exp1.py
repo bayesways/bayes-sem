@@ -12,6 +12,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
+parser.add_argument("sim_case", help="simulation case number", type=int, default=1)
 parser.add_argument("stan_model", help="1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
 parser.add_argument("-sim_case", "--sim_case", help="simulation case number", type=int, default=0)
@@ -51,6 +52,15 @@ if args.existing_directory is None:
         data['K'] = 1
         data['J'] = df.shape[1]
         data['D'] = df.values.astype(int)
+    elif args.sim_case == 1 :
+        print("\n\nReading data for case %s"%args.sim_case)
+        df = pd.read_csv('../dat/irinis_test_data.csv')
+        data = dict()
+        data['N'] = df.shape[0]
+        data['K'] = 1
+        data['J'] = df.shape[1]-2
+        data['D'] = df.iloc[:,2:].astype(int).values
+        data['flag'] = df.iloc[:,:2]
     else:
         print("Choose sim case {0:LSAT data")
 
