@@ -144,3 +144,4 @@ on the server, collect the results and visualize them locally with
 * Run EFA (model 1) for all simulated scenarios including kfold
 * Run EFA (model 2) for all simulated scenarios including kfold
 * Clean data from Irini to run binary model
+* Undersand why Model 2 in binary simulation fails
