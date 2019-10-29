@@ -90,10 +90,6 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
-    elif args.stan_model == 3 :
-        with open('./codebase/stan_code/cont/EFA/model0.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'alpha']
     elif args.stan_model == 4 :
         with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
             model_code = file.read()
@@ -103,7 +99,7 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0 CFA/3 EFA:benchmark saturated model," \
+        print("Choose stan model {0:benchmark saturated model," \
             "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
     if bool(args.print_model):
@@ -129,14 +125,12 @@ else:
     elif args.stan_model == 2 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
-    elif args.stan_model == 3 :
-        param_names = ['Marg_cov', 'alpha']
     elif args.stan_model == 4 :
         param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 5 :
         param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0 CFA/3 EFA:benchmark saturated model," \
+        print("Choose stan model {0 :benchmark saturated model," \
             "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
 ############################################################

@@ -383,8 +383,6 @@ $ source activate bayes-sem</code></pre>
 </div>
 <div id="how-to-use" class="section level2">
 <h2>How to use:</h2>
-<div id="cfa" class="section level3">
-<h3>CFA</h3>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
 <pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
@@ -392,10 +390,10 @@ $ source activate bayes-sem</code></pre>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u’s, 2 CFA/5 EFA: full factor model”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>model-results.py</code></p></li>
-<li><p>The same model but replacing 10% of the data with 10’s <code>run_muthen_exp2.py</code>. The command runs as follows</p>
-<pre><code>run_muthen_exp2.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt;</code></pre></li>
-<li><p>Script <code>run_exp1_ppp_kfold.py</code> runs a kfold version of the <code>run_muthen_exp1</code> script. It works as follows</p>
-<pre><code>run_exp1_ppp_kfold.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre>
+<li><p>The same model but replacing 10% of the data with 10’s <code>run_muthen_extreme_exp.py</code>. The command runs as follows</p>
+<pre><code>run_muthen_extreme_exp.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt;</code></pre></li>
+<li><p>Script <code>run_muthen_kfold.py</code> runs a kfold version of the <code>run_muthen_exp1</code> script. It works as follows</p>
+<pre><code>run_muthen_kfold.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;num_chains&gt; &lt;men/women&gt; &lt;model_code&gt;</code></pre>
 <p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), <code>-nfl</code> (<code>n_splits</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
 <p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u’s, 2 CFA/5 EFA: full factor model”</p>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
@@ -409,15 +407,6 @@ $ source activate bayes-sem</code></pre>
 <p>The results are processed using <code>model-results.py</code></p></li>
 <li><p>To run a 2-factor and 6 manifest variables model simulation with kfold splits run <code>run_kfold_sim.py</code> with similar options as above.</p></li>
 </ul>
-</div>
-<div id="efa" class="section level3">
-<h3>EFA</h3>
-<ul>
-<li><p>To run the Muthen model run <code>run_muthen_efa.py</code>. The command runs as follows</p>
-<pre><code>run_muthen_efa.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
-<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>), (<code>--num_chains</code>), (<code>--gender</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p></li>
-</ul>
-</div>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
 <p>We installed pystan version 2.19 which should run the same scripts as local correctly.</p>

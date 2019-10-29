@@ -27,8 +27,6 @@ Convert `a.ipynb` to `a.py`:
 
 ## How to use:
 
-### CFA
-
 * To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
 
   ```
@@ -48,18 +46,18 @@ Convert `a.ipynb` to `a.py`:
   
   The results are processed using `model-results.py`
 
-* The same model but replacing 10% of the data with 10's `run_muthen_exp2.py`.
+* The same model but replacing 10% of the data with 10's `run_muthen_extreme_exp.py`.
 The command runs as follows
 
     ```
-    run_muthen_exp2.py <num_warmup> <num_samples> <num_chains> <men/women>
+    run_muthen_extreme_exp.py <num_warmup> <num_samples> <num_chains> <men/women>
     ```
 
-* Script `run_exp1_ppp_kfold.py` runs a kfold version of the `run_muthen_exp1`
+* Script `run_muthen_kfold.py` runs a kfold version of the `run_muthen_exp1`
 script. It works as follows
 
     ```
-    run_exp1_ppp_kfold.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
+    run_muthen_kfold.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
     ```
 
   with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
@@ -100,18 +98,6 @@ script. It works as follows
 
 * To run a 2-factor and 6 manifest variables  model simulation with kfold splits run `run_kfold_sim.py` with similar options as above. 
 
-### EFA 
-
-* To run the Muthen model run `run_muthen_efa.py`. The command runs as follows
-
-  ```
-  run_muthen_efa.py <num_warmup> <num_samples> <model_code>
-  ```
-
-  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), (`--num_chains`), 
-  (`--gender`) and `-xdir` (`--existing_directory`). The results are saved in
-  `src/log/<date-time>_<task_handle>`.
-  
 
 ### On Fabian
 

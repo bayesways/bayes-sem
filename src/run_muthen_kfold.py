@@ -61,7 +61,7 @@ if args.existing_directory is None:
         data['y'] = preprocessing.scale(df.values)
     else:
         data['y'] = df.values
-        
+
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
     X = data['y']
@@ -127,26 +127,16 @@ if args.existing_directory is None:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha', 'Theta', 'uu', 'Omega']
     elif args.stan_model == 4 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior1.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
+        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 5 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior2.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/EFA/model2.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 6 :
-        with open('./codebase/stan_code/cont/CFA/model2_prior3.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 7 :
-        with open('./codebase/stan_code/cont/CFA/model1_prior1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
+        print("Choose stan model {0:benchmark saturated model," \
+            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
     if bool(args.print_model):
         print(model_code)
@@ -177,18 +167,12 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
             'alpha', 'Theta', 'uu', 'Omega']
     elif args.stan_model == 4 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
+        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 5 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 6 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 7 :
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0:benchmark saturated model, 1:no u's, 2: full factor model}")
+        print("Choose stan model {0:benchmark saturated model," \
+            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
 
 
