@@ -42,7 +42,7 @@ else:
 ############################################################
 ################ Create Data or Load ##########
 if args.existing_directory is None:
-    print("\n\nGenerating data for case %s"%args.sim_case)
+    print("\n\nReading LSAT data case %s"%args.sim_case)
     if args.sim_case == 0 :
         print("\n\nReading data for case %s"%args.sim_case)
         df = pd.read_csv("../dat/LSAT.csv")

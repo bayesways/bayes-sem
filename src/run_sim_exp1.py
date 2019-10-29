@@ -42,7 +42,7 @@ else:
 ############################################################
 ################ Create Data or Load ##########
 if args.existing_directory is None:
-    print("\n\nGenerating data for case %s"%args.sim_case)
+    print("\n\nGenerating Continuous data for case %s"%args.sim_case)
     if args.sim_case == 0 :
         data = gen_data(args.nsim_data, off_diag_residual=False,
             random_seed = args.random_seed)
