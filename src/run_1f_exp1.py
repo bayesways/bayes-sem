@@ -52,9 +52,11 @@ if args.existing_directory is None:
         data['K'] = 1
         data['J'] = df.shape[1]
         data['D'] = df.values.astype(int)
+
     elif args.sim_case == 1 :
         print("\n\nReading data for case %s"%args.sim_case)
         df = pd.read_csv('../dat/irinis_test_data.csv')
+        df = df.iloc[:,1:21]
         data = dict()
         data['N'] = df.shape[0]
         data['K'] = 1
