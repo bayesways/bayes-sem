@@ -41,7 +41,7 @@ Convert `a.ipynb` to `a.py`:
   `src/log/<date-time>_<task_handle>`.
   
   To choose which model to run use the `<model_code>` option as follows:
-  "0:benchmark saturated model, 1:no u's, 2: full factor model"
+  "0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model"
   
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
@@ -67,7 +67,7 @@ script. It works as follows
   `src/log/<date-time>_<task_handle>`.
   
   To choose which model to run use the `<model_code>` option as follows:
-  "0:benchmark saturated model, 1:no u's, 2: full factor model"
+  "0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model"
   
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
@@ -91,13 +91,14 @@ script. It works as follows
   `src/log/<date-time>_<task_handle>`.
   
   To choose which model to run use the `<model_code>` option as follows:
-  "1:no u's exact zeros, 2: full factor model"
+  "0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model"
   
   If an existing directory is given then the script looks for an existing compiled
   stan model to load and run with the new number of iterations.
   
   The results are processed using `model-results.py`
 
+* To run a 2-factor and 6 manifest variables  model simulation with kfold splits run `run_kfold_sim.py` with similar options as above. 
 
 ### EFA 
 
@@ -141,7 +142,7 @@ on the server, collect the results and visualize them locally with
 
 * ~~Compare PPP values for `model1` and `model2`~~
 * ~~Compare k-fold PPP for `model1` and `model2`~~
-* Run EFA (model 1) for all simulated scenarios including kfold
-* Run EFA (model 2) for all simulated scenarios including kfold
+* ~~Run EFA (model 1) for all simulated scenarios including kfold~~
+* ~~Run EFA (model 2) for all simulated scenarios including kfold~~
 * Clean data from Irini to run binary model
 * Undersand why Model 2 in binary simulation fails

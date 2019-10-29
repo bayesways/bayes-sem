@@ -63,7 +63,7 @@ if args.existing_directory is None:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \
             2:Noisy loadings}")
-            
+
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
     X = data['y']
@@ -124,9 +124,17 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
+    elif args.stan_model == 4 :
+        with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+    elif args.stan_model == 5 :
+        with open('./codebase/stan_code/cont/EFA/model2.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0:benchmark saturated model, 1:exact zeros no u's, 2: full factor model}")
-
+        print("Choose stan model {0:benchmark saturated model," \
+            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
     if bool(args.print_model):
         print(model_code)
@@ -152,8 +160,13 @@ else:
     elif args.stan_model == 2 :
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
+    elif args.stan_model == 4 :
+        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+    elif args.stan_model == 5 :
+        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
     else:
-        print("Choose stan model {0:benchmark saturated model, 1:exact zeros no u's, 2: full factor model}")
+        print("Choose stan model {0:benchmark saturated model," \
+            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
 ############################################################
 ################ Fit Model ##########
