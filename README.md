@@ -130,5 +130,6 @@ on the server, collect the results and visualize them locally with
 * ~~Compare k-fold PPP for `model1` and `model2`~~
 * ~~Run EFA (model 1) for all simulated scenarios including kfold~~
 * ~~Run EFA (model 2) for all simulated scenarios including kfold~~
-* Clean data from Irini to run binary model
-* Undersand why adding approximate zeros to `beta` in Binary model fails. 
+* ~~Clean data from Irini to run binary model~~
+* Run 1 factor model for the processed data of Irini
+* Undersand why adding approximate zeros to `beta` in Binary model fails. (Try 8 variables and 2 factors)
