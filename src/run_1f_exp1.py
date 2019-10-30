@@ -55,18 +55,17 @@ if args.existing_directory is None:
 
     elif args.sim_case == 1 :
         print("\n\nReading data for case %s"%args.sim_case)
-        df = pd.read_csv('../dat/irinis_test_data.csv')
-        df = df.iloc[:,1:21]
+        df = pd.read_csv("../dat/clean_iri_data.csv")
         data = dict()
         data['N'] = df.shape[0]
         data['K'] = 1
-        data['J'] = df.shape[1]-2
-        data['D'] = df.iloc[:,2:].astype(int).values
-        data['flag'] = df.iloc[:,:2]
+        data['subj_id'] = df.iloc[:,0]
+        data['J'] = df.shape[1]-1
+        data['D'] = df.iloc[:,1:].astype(int).values
     else:
         print("Choose sim case {0:LSAT data")
 
-    print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K']))
+    print("\n\nN=%d, J=%d, K=%d"%(data['N'],data['J'], data['K']))
     stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
         DD = data['D'])
 
