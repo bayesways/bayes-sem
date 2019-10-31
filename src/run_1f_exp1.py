@@ -43,7 +43,7 @@ else:
 ############################################################
 ################ Create Data or Load ##########
 if args.existing_directory is None:
-    print("\n\nReading LSAT data case %s"%args.sim_case)
+    print("\n\nReading data case %s"%args.sim_case)
     if args.sim_case == 0 :
         print("\n\nReading data for case %s"%args.sim_case)
         df = pd.read_csv("../dat/LSAT.csv")
@@ -63,16 +63,17 @@ if args.existing_directory is None:
         data['D'] = df.iloc[:,2:].astype(int).values
     elif args.sim_case == 2 :
         print("\n\nReading data for case %s"%args.sim_case)
-        df = pd.read_csv('../dat/irinis_test_data.csv')
-        df = df.iloc[:,1:21]
+        df = pd.read_csv("../dat/clean_sample_iri_data.csv")
         data = dict()
         data['N'] = df.shape[0]
         data['K'] = 1
+        data['subj_id'] = df.iloc[:,0]
         data['J'] = df.shape[1]-2
         data['D'] = df.iloc[:,2:].astype(int).values
-        data['flag'] = df.iloc[:,:2]
     else:
-        print("Choose sim case {0:LSAT data")
+        print("Choose sim case {0:LSAT data"
+        "1: Irini's dataset"
+        "2: Irini's dataset (sample)")
 
     print("\n\nN=%d, J=%d, K=%d"%(data['N'],data['J'], data['K']))
     stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
@@ -104,6 +105,10 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/model2_1f_2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 4 :
+        with open('./codebase/stan_code/discr/CFA/model2_1f_3.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
@@ -127,6 +132,8 @@ else:
     elif args.stan_model == 2 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 3 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 4 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
