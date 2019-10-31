@@ -13,6 +13,7 @@ library('readr')
 library('readxl')
 library('tidyr')
 library('stringr')
+library('forcats')
 ```
 
 
@@ -59,6 +60,8 @@ dfres <- dfres_all %>%
   filter(!subj_id %in% zero_respone_subj_ids)
 ```
 
+arrange subjects by flag 
+
 ```{r}
 clean_subj_df <- dfres %>% filter(subj_flag == 0) %>% distinct(subj_id)
 clean_subj <- unique(clean_subj_df$subj_id)
@@ -80,9 +83,57 @@ item_flag_df <- df2 %>%
          item_flag = Flagged) %>%
   select(item_id, item_flag) %>%
   filter(grepl("score.",item_id)) %>%
-  mutate(item_id = str_replace(item_id, 'score.', ''))
+  mutate(item_id = str_replace(item_id, 'score.', '')) %>%
+  arrange(item_flag)
   
 ```
+
+create order of items based on the above flag order
+```{r}
+item_order <- as.character(item_flag_df$item_id)
+dfres_ordered<- dfres %>% 
+  arrange(subj_flag, factor(item_id, levels = item_order ))
+
+df<- dfres_ordered %>% left_join(item_flag_df, by='item_id')
+
+```
+
+
+## Save complete reodered dataset
+The final response binary data 
+```{r}
+final_response_df <- df %>%
+  select(subj_id, subj_flag, item_id, res) %>%
+  spread(item_id, res) %>%
+  select(subj_id, subj_flag, item_order) %>%
+  arrange(subj_flag)
+
+
+write_csv(final_response_df, "../dat/clean_iri_data.csv")
+
+head(final_response_df)
+
+```
+
+The final flag indicators data 
+```{r}
+final_flag_df <- df %>%
+  select(subj_id, item_id, item_flag) %>%
+  spread(item_id, item_flag) %>%
+  left_join(df %>% select(subj_id, subj_flag) %>% distinct(), by ='subj_id') %>%
+    select(subj_id, subj_flag, item_order) %>%
+  arrange(subj_flag)
+
+write_csv(final_flag_df, "../dat/clean_iri_flag_data.csv")
+head(final_flag_df)
+```
+
+Check that the columns of the two datasets correspond correctly
+```{r}
+names(final_response_df) == names(final_flag_df)
+```
+
+### Subsample the data
 
 ```{r}
 clean_items_df <- item_flag_df %>% filter(item_flag == 0) %>% distinct(item_id)
@@ -97,9 +148,8 @@ flagged_items <- unique(flagged_items_df$item_id)
 Sample 500 non-compromised subjects and all the flagged subjects. Also choose 10 non-compromised items and 10 flagged items.
 ```{r}
 set.seed(4)
-final_subj_ids <- sort(c(sample(clean_subj, 500), flagged_subj))
-final_item_ids <- sort(c(sample(clean_items, 10), sample(flagged_items, 10)))
-
+final_subj_ids <- c(sample(clean_subj, 500), flagged_subj)
+final_item_ids <- c(sample(clean_items, 10), sample(flagged_items, 10))
 
 df<- dfres %>% left_join(item_flag_df, by='item_id') %>%
   filter(subj_id %in% final_subj_ids,
@@ -108,11 +158,23 @@ df
 
 ```
 
+```{r}
+df<- dfres %>% left_join(item_flag_df, by='item_id') %>%
+  arrange(subj_flag, item_flag)
+
+
+subj_order_df <- df %>% distinct(subj_id)
+subj_order
+```
+
+
 The final response binary data 
 ```{r}
-final_response_df <- df %>% select(subj_id, item_id, res) %>%
+final_response_df <- df %>%
+  arrange(subj_flag, item_flag) %>%
+  select(subj_id, item_id, res) %>%
   spread(item_id, res)
-write_csv(final_response_df, "../dat/clean_iri_data.csv")
+write_csv(final_response_df, "../dat/clean_sample_iri_data.csv")
 
 head(final_response_df)
 
@@ -120,12 +182,14 @@ head(final_response_df)
 
 The final flag indicators data 
 ```{r}
-final_flag_df <- df %>% select(subj_id, item_id, item_flag) %>%
+final_flag_df <- df %>%
+  arrange(subj_flag, item_flag) %>%
+  select(subj_id, item_id, item_flag) %>%
   spread(item_id, item_flag) %>%
   left_join(df %>% select(subj_id, subj_flag) %>% distinct(), by ='subj_id') %>%
     select(subj_id,subj_flag, everything()) 
 
-write_csv(final_flag_df, "../dat/clean_iri_flag_data.csv")
+write_csv(final_flag_df, "../dat/clean_sample_iri_flag_data.csv")
 head(final_flag_df)
 ```
 
