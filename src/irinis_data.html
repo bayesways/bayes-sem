@@ -550,8 +550,8 @@ flagged_items &lt;- unique(flagged_items_df$item_id)</code></pre>
 <h2>Construct Final Dataset</h2>
 <p>Sample 500 non-compromised subjects and all the flagged subjects.</p>
 <pre class="r"><code>set.seed(4)
-final_subj_ids &lt;- c(sample(clean_subj, 300), flagged_subj)
-final_item_ids &lt;- c(sample(clean_items, 50), sample(flagged_items, 20))
+final_subj_ids &lt;- c(sample(clean_subj, 200), flagged_subj)
+final_item_ids &lt;- c(sample(clean_items, 5), sample(flagged_items, 3))
 
 final_item_ids_ordered &lt;- item_order[item_order%in% final_item_ids]
 
@@ -560,56 +560,30 @@ subsample_final_response_df &lt;- final_response_df %&gt;%
   select(subj_id, subj_flag, final_item_ids_ordered)
 write_csv(subsample_final_response_df, &quot;../dat/clean_sample_iri_data.csv&quot;)
 head(subsample_final_response_df)</code></pre>
-<pre><code>## # A tibble: 6 x 72
-##   subj_id subj_flag   `2`  `18`  `28`  `37`  `39`  `42`  `47`  `49`  `52`
-##     &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1       6         0     1     0     1     1     0     1     1     0     0
-## 2      14         0     1     0     0     1     0     0     1     0     1
-## 3      15         0     0     0     1     1     0     0     1     0     1
-## 4      20         0     1     0     1     1     0     1     0     0     1
-## 5      38         0     1     0     1     0     0     0     1     0     1
-## 6      40         0     0     0     1     1     0     1     1     1     1
-## # … with 61 more variables: `57` &lt;dbl&gt;, `63` &lt;dbl&gt;, `64` &lt;dbl&gt;,
-## #   `65` &lt;dbl&gt;, `66` &lt;dbl&gt;, `70` &lt;dbl&gt;, `71` &lt;dbl&gt;, `78` &lt;dbl&gt;,
-## #   `79` &lt;dbl&gt;, `80` &lt;dbl&gt;, `82` &lt;dbl&gt;, `83` &lt;dbl&gt;, `85` &lt;dbl&gt;,
-## #   `88` &lt;dbl&gt;, `91` &lt;dbl&gt;, `93` &lt;dbl&gt;, `95` &lt;dbl&gt;, `100` &lt;dbl&gt;,
-## #   `103` &lt;dbl&gt;, `104` &lt;dbl&gt;, `105` &lt;dbl&gt;, `108` &lt;dbl&gt;, `109` &lt;dbl&gt;,
-## #   `115` &lt;dbl&gt;, `124` &lt;dbl&gt;, `125` &lt;dbl&gt;, `130` &lt;dbl&gt;, `131` &lt;dbl&gt;,
-## #   `132` &lt;dbl&gt;, `133` &lt;dbl&gt;, `138` &lt;dbl&gt;, `139` &lt;dbl&gt;, `142` &lt;dbl&gt;,
-## #   `143` &lt;dbl&gt;, `148` &lt;dbl&gt;, `149` &lt;dbl&gt;, `156` &lt;dbl&gt;, `158` &lt;dbl&gt;,
-## #   `166` &lt;dbl&gt;, `167` &lt;dbl&gt;, `168` &lt;dbl&gt;, `21` &lt;dbl&gt;, `22` &lt;dbl&gt;,
-## #   `50` &lt;dbl&gt;, `53` &lt;dbl&gt;, `58` &lt;dbl&gt;, `61` &lt;dbl&gt;, `72` &lt;dbl&gt;,
-## #   `75` &lt;dbl&gt;, `96` &lt;dbl&gt;, `98` &lt;dbl&gt;, `128` &lt;dbl&gt;, `129` &lt;dbl&gt;,
-## #   `134` &lt;dbl&gt;, `136` &lt;dbl&gt;, `140` &lt;dbl&gt;, `152` &lt;dbl&gt;, `154` &lt;dbl&gt;,
-## #   `162` &lt;dbl&gt;, `164` &lt;dbl&gt;, `165` &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   subj_id subj_flag  `11`  `27`  `77` `102` `138`   `1`  `22` `145`
+##     &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1      14         0     1     1     0     0     1     1     1     0
+## 2      15         0     0     0     0     1     0     0     1     1
+## 3      40         0     1     1     0     1     0     1     1     1
+## 4      41         0     0     1     0     1     0     0     1     1
+## 5      46         0     1     0     0     1     0     1     1     0
+## 6      48         0     1     1     0     1     0     1     1     1</code></pre>
 <pre class="r"><code>subsample_final_flag_df &lt;- final_flag_df %&gt;%
    filter(subj_id %in% final_subj_ids) %&gt;%
   select(subj_id, subj_flag, final_item_ids_ordered)
 
 write_csv(subsample_final_flag_df, &quot;../dat/clean_sample_iri_flag_data.csv&quot;)
 head(subsample_final_flag_df)</code></pre>
-<pre><code>## # A tibble: 6 x 72
-##   subj_id subj_flag   `2`  `18`  `28`  `37`  `39`  `42`  `47`  `49`  `52`
-##     &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1       6         0     0     0     0     0     0     0     0     0     0
-## 2      14         0     0     0     0     0     0     0     0     0     0
-## 3      15         0     0     0     0     0     0     0     0     0     0
-## 4      20         0     0     0     0     0     0     0     0     0     0
-## 5      38         0     0     0     0     0     0     0     0     0     0
-## 6      40         0     0     0     0     0     0     0     0     0     0
-## # … with 61 more variables: `57` &lt;dbl&gt;, `63` &lt;dbl&gt;, `64` &lt;dbl&gt;,
-## #   `65` &lt;dbl&gt;, `66` &lt;dbl&gt;, `70` &lt;dbl&gt;, `71` &lt;dbl&gt;, `78` &lt;dbl&gt;,
-## #   `79` &lt;dbl&gt;, `80` &lt;dbl&gt;, `82` &lt;dbl&gt;, `83` &lt;dbl&gt;, `85` &lt;dbl&gt;,
-## #   `88` &lt;dbl&gt;, `91` &lt;dbl&gt;, `93` &lt;dbl&gt;, `95` &lt;dbl&gt;, `100` &lt;dbl&gt;,
-## #   `103` &lt;dbl&gt;, `104` &lt;dbl&gt;, `105` &lt;dbl&gt;, `108` &lt;dbl&gt;, `109` &lt;dbl&gt;,
-## #   `115` &lt;dbl&gt;, `124` &lt;dbl&gt;, `125` &lt;dbl&gt;, `130` &lt;dbl&gt;, `131` &lt;dbl&gt;,
-## #   `132` &lt;dbl&gt;, `133` &lt;dbl&gt;, `138` &lt;dbl&gt;, `139` &lt;dbl&gt;, `142` &lt;dbl&gt;,
-## #   `143` &lt;dbl&gt;, `148` &lt;dbl&gt;, `149` &lt;dbl&gt;, `156` &lt;dbl&gt;, `158` &lt;dbl&gt;,
-## #   `166` &lt;dbl&gt;, `167` &lt;dbl&gt;, `168` &lt;dbl&gt;, `21` &lt;dbl&gt;, `22` &lt;dbl&gt;,
-## #   `50` &lt;dbl&gt;, `53` &lt;dbl&gt;, `58` &lt;dbl&gt;, `61` &lt;dbl&gt;, `72` &lt;dbl&gt;,
-## #   `75` &lt;dbl&gt;, `96` &lt;dbl&gt;, `98` &lt;dbl&gt;, `128` &lt;dbl&gt;, `129` &lt;dbl&gt;,
-## #   `134` &lt;dbl&gt;, `136` &lt;dbl&gt;, `140` &lt;dbl&gt;, `152` &lt;dbl&gt;, `154` &lt;dbl&gt;,
-## #   `162` &lt;dbl&gt;, `164` &lt;dbl&gt;, `165` &lt;dbl&gt;</code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   subj_id subj_flag  `11`  `27`  `77` `102` `138`   `1`  `22` `145`
+##     &lt;int&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1      14         0     0     0     0     0     0     1     1     1
+## 2      15         0     0     0     0     0     0     1     1     1
+## 3      40         0     0     0     0     0     0     1     1     1
+## 4      41         0     0     0     0     0     0     1     1     1
+## 5      46         0     0     0     0     0     0     1     1     1
+## 6      48         0     0     0     0     0     0     1     1     1</code></pre>
 </div>
 
 
