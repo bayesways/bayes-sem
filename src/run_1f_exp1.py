@@ -132,7 +132,7 @@ else:
     elif args.stan_model == 2 :
         param_names = ['beta', 'alpha', 'uu' ]
     elif args.stan_model == 3 :
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
         param_names = ['beta', 'alpha', 'uu' ]
     else:
