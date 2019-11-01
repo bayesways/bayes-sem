@@ -104,7 +104,7 @@ if args.existing_directory is None:
     elif args.stan_model == 3 :
         with open('./codebase/stan_code/discr/CFA/model2_1f_2.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
         with open('./codebase/stan_code/discr/CFA/model2_1f_3.stan', 'r') as file:
             model_code = file.read()
