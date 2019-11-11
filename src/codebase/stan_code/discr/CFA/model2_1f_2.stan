@@ -29,7 +29,7 @@ transformed parameters{
 model {
   to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, I_K);
+  to_vector(zz) ~ normal(0,1);
   for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, c*I_J);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }

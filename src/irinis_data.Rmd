@@ -148,8 +148,8 @@ flagged_items <- unique(flagged_items_df$item_id)
 Sample 500 non-compromised subjects and all the flagged subjects. 
 ```{r}
 set.seed(4)
-final_subj_ids <- c(sample(clean_subj, 200), flagged_subj)
-final_item_ids <- c(sample(clean_items, 30), sample(flagged_items, 10))
+final_subj_ids <- c(sample(clean_subj, 500), flagged_subj)
+final_item_ids <- c(sample(clean_items, 50), sample(flagged_items, 20))
 
 final_item_ids_ordered <- item_order[item_order%in% final_item_ids]
 

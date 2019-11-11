@@ -96,11 +96,11 @@ if args.existing_directory is None:
     if args.stan_model == 1 :
         with open('./codebase/stan_code/discr/CFA/model1_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz']
+        param_names = ['beta', 'alpha']
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/discr/CFA/model2_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'uu' ]
     elif args.stan_model == 3 :
         with open('./codebase/stan_code/discr/CFA/model2_1f_2.stan', 'r') as file:
             model_code = file.read()
@@ -108,7 +108,7 @@ if args.existing_directory is None:
     elif args.stan_model == 4 :
         with open('./codebase/stan_code/discr/CFA/model2_1f_3.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
@@ -128,13 +128,13 @@ else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
     if args.stan_model == 1 :
-        param_names = ['beta', 'alpha', 'zz']
+        param_names = ['beta', 'alpha']
     elif args.stan_model == 2 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'uu' ]
     elif args.stan_model == 3 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
