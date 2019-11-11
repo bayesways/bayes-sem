@@ -21,13 +21,13 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-library(readr)
-library(dplyr)
+library('readr')
+library('dplyr')
 ```
 ## Load data
 
 ```{r}
-df<- read_csv("../women_std.csv")
+df<- read_csv("../dat/muthen_women.csv")
 names(df) <- paste0('x', seq(1:15))
 glimpse(df)
 ```

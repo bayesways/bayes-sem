@@ -1665,113 +1665,113 @@ summary {
 </div>
 
 
-<pre class="r"><code>library(readr)
-library(dplyr)</code></pre>
+<pre class="r"><code>library(&#39;readr&#39;)
+library(&#39;dplyr&#39;)</code></pre>
 <pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
 ## 
 ##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <div id="load-data" class="section level2">
 <h2>Load data</h2>
-<pre class="r"><code>df&lt;- read_csv(&quot;../women_std.csv&quot;)</code></pre>
+<pre class="r"><code>df&lt;- read_csv(&quot;../dat/muthen_women.csv&quot;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
-##   `0` = col_double(),
-##   `1` = col_double(),
-##   `2` = col_double(),
-##   `3` = col_double(),
-##   `4` = col_double(),
-##   `5` = col_double(),
-##   `6` = col_double(),
-##   `7` = col_double(),
-##   `8` = col_double(),
-##   `9` = col_double(),
-##   `10` = col_double(),
-##   `11` = col_double(),
-##   `12` = col_double(),
-##   `13` = col_double(),
-##   `14` = col_double()
+##   y1 = col_double(),
+##   y2 = col_double(),
+##   y3 = col_double(),
+##   y4 = col_double(),
+##   y5 = col_double(),
+##   y6 = col_double(),
+##   y7 = col_double(),
+##   y8 = col_double(),
+##   y9 = col_double(),
+##   y10 = col_double(),
+##   y11 = col_double(),
+##   y12 = col_double(),
+##   y13 = col_double(),
+##   y14 = col_double(),
+##   y15 = col_double()
 ## )</code></pre>
-<pre class="r"><code>names(df) &lt;- paste0('x', seq(1:15))
+<pre class="r"><code>names(df) &lt;- paste0(&#39;x&#39;, seq(1:15))
 glimpse(df)</code></pre>
-<pre><code>## Observations: 677
+<pre><code>## Observations: 691
 ## Variables: 15
-## $ x1  &lt;dbl&gt; -1.6407261, -0.8501413, -1.6407261, -1.6407261, -0.8501413, …
-## $ x2  &lt;dbl&gt; -1.5279099, -2.2048699, -0.8509498, -0.1739897, 0.5029703, 1…
-## $ x3  &lt;dbl&gt; -2.0584896, -0.5211510, -1.2898203, 1.0161876, 0.2475183, 1.…
-## $ x4  &lt;dbl&gt; -0.8786810, -1.4856882, 0.3353334, -2.6997026, 0.9423406, 0.…
-## $ x5  &lt;dbl&gt; 0.9239407, -0.9544613, -0.9544613, -1.5805953, 0.9239407, 0.…
-## $ x6  &lt;dbl&gt; 1.1929772, -0.3984426, -0.3984426, 1.1929772, -0.3984426, 1.…
-## $ x7  &lt;dbl&gt; -0.9939210, -1.5821067, 0.7706363, 0.1824505, -0.4057352, -1…
-## $ x8  &lt;dbl&gt; -1.7321340, -0.4799667, -0.4799667, -1.1060503, -0.4799667, …
-## $ x9  &lt;dbl&gt; -0.01613083, -0.01613083, 0.62625586, -1.94329093, -1.300904…
-## $ x10 &lt;dbl&gt; 1.5146188, -0.1802522, -0.1802522, 0.3847048, 0.9496618, -1.…
-## $ x11 &lt;dbl&gt; -1.64582562, 0.05527964, -0.51175545, -1.64582562, -1.078790…
-## $ x12 &lt;dbl&gt; 0.71865480, 0.71865480, 0.04850425, -0.62164630, 0.04850425,…
-## $ x13 &lt;dbl&gt; -0.680365668, -0.680365668, -0.006962807, -2.027171392, 1.33…
-## $ x14 &lt;dbl&gt; -0.3026502, -0.3026502, -0.3026502, -1.4973684, 1.4894271, 1…
-## $ x15 &lt;dbl&gt; 0.8300428, 0.1422350, 0.1422350, -0.5455728, 0.8300428, 0.14…</code></pre>
+## $ x1  &lt;dbl&gt; 4, 5, 4, 4, 5, 7, 6, 6, 7, 6, 6, 6, 5, 6, 7, 6, 6, 6, 7, 7...
+## $ x2  &lt;dbl&gt; 3, 2, 4, 5, 6, 7, 6, 6, 7, 3, 7, 6, 6, 6, 7, 7, 7, 6, 5, 1...
+## $ x3  &lt;dbl&gt; 3, 5, 4, 7, 6, 7, 6, 5, 7, 5, 6, 6, 6, 7, 7, 7, 7, 5, 6, 7...
+## $ x4  &lt;dbl&gt; 4, 3, 6, 1, 7, 7, 6, 7, 7, 6, 4, 6, 3, 7, 7, 6, 1, 6, 7, 7...
+## $ x5  &lt;dbl&gt; 7, 4, 4, 3, 7, 7, 7, 3, 7, 7, 3, 7, 5, 6, 7, 6, 7, 6, 5, 4...
+## $ x6  &lt;dbl&gt; 7, 5, 5, 7, 5, 7, 6, 6, 6, 6, 4, 6, 6, 7, 7, 7, 7, 7, 6, 7...
+## $ x7  &lt;dbl&gt; 3, 2, 6, 5, 4, 2, 6, 5, 6, 4, 5, 2, 7, 5, 7, 6, 7, 4, 6, 3...
+## $ x8  &lt;dbl&gt; 2, 4, 4, 3, 4, 2, 4, 2, 7, 3, 5, 4, 7, 3, 6, 7, 7, 3, 5, 4...
+## $ x9  &lt;dbl&gt; 4, 4, 5, 1, 2, 2, 3, 2, 4, 4, 4, 4, 6, 1, 1, 5, 7, 2, 6, 1...
+## $ x10 &lt;dbl&gt; 7, 4, 4, 5, 6, 2, 2, 6, 4, 4, 3, 2, 3, 6, 7, 6, 5, 5, 2, 7...
+## $ x11 &lt;dbl&gt; 1, 4, 3, 1, 2, 6, 3, 5, 3, 4, 4, 1, 5, 6, 1, 2, 3, 4, 1, 1...
+## $ x12 &lt;dbl&gt; 5, 5, 4, 3, 4, 3, 3, 5, 5, 4, 3, 5, 4, 5, 1, 1, 3, 6, 2, 1...
+## $ x13 &lt;dbl&gt; 3, 3, 4, 1, 6, 5, 3, 5, 5, 7, 2, 4, 5, 3, 6, 4, 5, 5, 5, 1...
+## $ x14 &lt;dbl&gt; 4, 4, 4, 2, 7, 7, 1, 5, 4, 7, 4, 6, 7, 7, 6, 4, 6, 6, 6, 1...
+## $ x15 &lt;dbl&gt; 6, 5, 5, 4, 6, 5, 3, 6, 5, 5, 3, 4, 7, 3, 7, 7, 6, 6, 6, 3...</code></pre>
 </div>
 <div id="cfa-with-lavaan" class="section level2">
 <h2>CFA with <code>lavaan</code></h2>
-<pre class="r"><code>library('lavaan')</code></pre>
+<pre class="r"><code>library(&#39;lavaan&#39;)</code></pre>
 <pre><code>## This is lavaan 0.6-5</code></pre>
 <pre><code>## lavaan is BETA software! Please report any bugs.</code></pre>
-<pre class="r"><code>model &lt;- ' v1  =~ x1 + x2 + x3 
+<pre class="r"><code>model &lt;- &#39; v1  =~ x1 + x2 + x3 
               v2 =~ x4 + x5 + x6
               v3 =~ x7 + x8 + x9 
               v4 =~ x10 + x11 + x12 
-              v5 =~ x13 + x14 + x15 '
+              v5 =~ x13 + x14 + x15 &#39;
 fit &lt;- cfa(model, data=df)
 summary(fit, fit.measures=TRUE, standardized = T)</code></pre>
-<pre><code>## lavaan 0.6-5 ended normally after 68 iterations
+<pre><code>## lavaan 0.6-5 ended normally after 80 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
 ##   Number of free parameters                         40
 ##                                                       
-##   Number of observations                           677
+##   Number of observations                           691
 ##                                                       
 ## Model Test User Model:
 ##                                                       
-##   Test statistic                               529.327
+##   Test statistic                               473.969
 ##   Degrees of freedom                                80
 ##   P-value (Chi-square)                           0.000
 ## 
 ## Model Test Baseline Model:
 ## 
-##   Test statistic                              2344.770
+##   Test statistic                              1979.349
 ##   Degrees of freedom                               105
 ##   P-value                                        0.000
 ## 
 ## User Model versus Baseline Model:
 ## 
-##   Comparative Fit Index (CFI)                    0.799
-##   Tucker-Lewis Index (TLI)                       0.737
+##   Comparative Fit Index (CFI)                    0.790
+##   Tucker-Lewis Index (TLI)                       0.724
 ## 
 ## Loglikelihood and Information Criteria:
 ## 
-##   Loglikelihood user model (H0)             -13501.599
-##   Loglikelihood unrestricted model (H1)     -13236.936
+##   Loglikelihood user model (H0)             -19142.462
+##   Loglikelihood unrestricted model (H1)     -18905.478
 ##                                                       
-##   Akaike (AIC)                               27083.198
-##   Bayesian (BIC)                             27263.905
-##   Sample-size adjusted Bayesian (BIC)        27136.901
+##   Akaike (AIC)                               38364.924
+##   Bayesian (BIC)                             38546.450
+##   Sample-size adjusted Bayesian (BIC)        38419.443
 ## 
 ## Root Mean Square Error of Approximation:
 ## 
-##   RMSEA                                          0.091
-##   90 Percent confidence interval - lower         0.084
-##   90 Percent confidence interval - upper         0.099
+##   RMSEA                                          0.084
+##   90 Percent confidence interval - lower         0.077
+##   90 Percent confidence interval - upper         0.092
 ##   P-value RMSEA &lt;= 0.05                          0.000
 ## 
 ## Standardized Root Mean Square Residual:
 ## 
-##   SRMR                                           0.085
+##   SRMR                                           0.073
 ## 
 ## Parameter Estimates:
 ## 
@@ -1782,65 +1782,68 @@ summary(fit, fit.measures=TRUE, standardized = T)</code></pre>
 ## Latent Variables:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   v1 =~                                                                 
-##     x1                1.000                               0.184    0.184
-##     x2                2.513    0.581    4.328    0.000    0.463    0.463
-##     x3                5.075    1.169    4.341    0.000    0.935    0.935
+##     x1                1.000                               0.257    0.183
+##     x2                2.327    0.598    3.889    0.000    0.597    0.358
+##     x3                5.102    1.275    4.002    0.000    1.309    0.857
 ##   v2 =~                                                                 
-##     x4                1.000                               0.546    0.546
-##     x5                0.494    0.079    6.244    0.000    0.270    0.270
-##     x6                1.689    0.146   11.565    0.000    0.922    0.922
+##     x4                1.000                               0.870    0.473
+##     x5                0.459    0.091    5.042    0.000    0.399    0.235
+##     x6                1.386    0.142    9.756    0.000    1.206    0.811
 ##   v3 =~                                                                 
-##     x7                1.000                               0.669    0.669
-##     x8                1.059    0.101   10.471    0.000    0.709    0.709
-##     x9                0.328    0.070    4.660    0.000    0.219    0.219
+##     x7                1.000                               1.175    0.686
+##     x8                0.955    0.094   10.157    0.000    1.123    0.696
+##     x9                0.303    0.065    4.633    0.000    0.356    0.217
 ##   v4 =~                                                                 
-##     x10               1.000                               0.673    0.673
-##     x11               1.043    0.103   10.092    0.000    0.701    0.701
-##     x12               0.829    0.083   10.026    0.000    0.558    0.558
+##     x10               1.000                               1.221    0.686
+##     x11               0.990    0.116    8.536    0.000    1.209    0.684
+##     x12               0.634    0.075    8.422    0.000    0.774    0.467
 ##   v5 =~                                                                 
-##     x13               1.000                               0.726    0.726
-##     x14               0.829    0.070   11.855    0.000    0.602    0.602
-##     x15               0.910    0.073   12.410    0.000    0.661    0.661
+##     x13               1.000                               1.096    0.699
+##     x14               0.963    0.088   10.938    0.000    1.055    0.556
+##     x15               0.928    0.078   11.910    0.000    1.017    0.652
 ## 
 ## Covariances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
 ##   v1 ~~                                                                 
-##     v2                0.068    0.017    3.944    0.000    0.676    0.676
-##     v3                0.048    0.013    3.693    0.000    0.390    0.390
-##     v4                0.005    0.006    0.771    0.441    0.039    0.039
-##     v5                0.028    0.009    3.014    0.003    0.207    0.207
+##     v2                0.170    0.046    3.670    0.000    0.763    0.763
+##     v3                0.104    0.031    3.354    0.001    0.346    0.346
+##     v4                0.014    0.017    0.801    0.423    0.044    0.044
+##     v5                0.078    0.025    3.154    0.002    0.276    0.276
 ##   v2 ~~                                                                 
-##     v3                0.133    0.023    5.730    0.000    0.365    0.365
-##     v4               -0.016    0.018   -0.865    0.387   -0.043   -0.043
-##     v5                0.148    0.024    6.133    0.000    0.374    0.374
+##     v3                0.379    0.071    5.328    0.000    0.370    0.370
+##     v4                0.037    0.059    0.629    0.529    0.035    0.035
+##     v5                0.472    0.072    6.520    0.000    0.495    0.495
 ##   v3 ~~                                                                 
-##     v4               -0.090    0.027   -3.362    0.001   -0.201   -0.201
-##     v5                0.283    0.035    8.113    0.000    0.582    0.582
+##     v4               -0.214    0.085   -2.530    0.011   -0.149   -0.149
+##     v5                0.785    0.094    8.307    0.000    0.609    0.609
 ##   v4 ~~                                                                 
-##     v5               -0.108    0.028   -3.863    0.000   -0.222   -0.222
+##     v5               -0.217    0.077   -2.806    0.005   -0.162   -0.162
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
-##    .x1                0.966    0.053   18.302    0.000    0.966    0.966
-##    .x2                0.785    0.047   16.865    0.000    0.785    0.785
-##    .x3                0.125    0.075    1.673    0.094    0.125    0.125
-##    .x4                0.702    0.043   16.303    0.000    0.702    0.702
-##    .x5                0.927    0.051   18.159    0.000    0.927    0.927
-##    .x6                0.149    0.056    2.680    0.007    0.149    0.149
-##    .x7                0.552    0.049   11.200    0.000    0.552    0.552
-##    .x8                0.497    0.051    9.674    0.000    0.497    0.497
-##    .x9                0.952    0.053   18.006    0.000    0.952    0.952
-##    .x10               0.547    0.051   10.751    0.000    0.547    0.547
-##    .x11               0.508    0.053    9.655    0.000    0.508    0.508
-##    .x12               0.689    0.047   14.522    0.000    0.689    0.689
-##    .x13               0.473    0.044   10.790    0.000    0.473    0.473
-##    .x14               0.637    0.044   14.544    0.000    0.637    0.637
-##    .x15               0.564    0.043   13.035    0.000    0.564    0.564
-##     v1                0.034    0.015    2.258    0.024    1.000    1.000
-##     v2                0.298    0.044    6.844    0.000    1.000    1.000
-##     v3                0.448    0.060    7.481    0.000    1.000    1.000
-##     v4                0.453    0.061    7.366    0.000    1.000    1.000
-##     v5                0.527    0.060    8.842    0.000    1.000    1.000</code></pre>
+##    .x1                1.901    0.103   18.397    0.000    1.901    0.967
+##    .x2                2.422    0.138   17.551    0.000    2.422    0.872
+##    .x3                0.618    0.207    2.983    0.003    0.618    0.265
+##    .x4                2.628    0.156   16.828    0.000    2.628    0.776
+##    .x5                2.730    0.150   18.257    0.000    2.730    0.945
+##    .x6                0.759    0.126    6.037    0.000    0.759    0.343
+##    .x7                1.550    0.151   10.300    0.000    1.550    0.529
+##    .x8                1.341    0.135    9.925    0.000    1.341    0.516
+##    .x9                2.570    0.141   18.188    0.000    2.570    0.953
+##    .x10               1.679    0.188    8.913    0.000    1.679    0.530
+##    .x11               1.661    0.185    8.979    0.000    1.661    0.532
+##    .x12               2.142    0.134   15.955    0.000    2.142    0.782
+##    .x13               1.261    0.109   11.518    0.000    1.261    0.512
+##    .x14               2.491    0.162   15.333    0.000    2.491    0.691
+##    .x15               1.398    0.107   13.062    0.000    1.398    0.575
+##     v1                0.066    0.031    2.130    0.033    1.000    1.000
+##     v2                0.757    0.133    5.712    0.000    1.000    1.000
+##     v3                1.381    0.183    7.533    0.000    1.000    1.000
+##     v4                1.491    0.220    6.790    0.000    1.000    1.000
+##     v5                1.201    0.143    8.426    0.000    1.000    1.000</code></pre>
+<pre class="r"><code># base R command
+# fit&lt;- factanal(df, 5, rotation = &#39;promax&#39;)
+# fit</code></pre>
 </div>
 
 
