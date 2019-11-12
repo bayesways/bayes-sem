@@ -59,10 +59,14 @@ if args.existing_directory is None:
     elif args.sim_case == 2 :
         data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=False,
             random_seed = args.random_seed)
+    elif args.sim_case == 3 :
+        data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=True,
+            random_seed = args.random_seed)
     else:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \
-            2:Noisy loadings}")
+            2:Noisy loadings\
+            3:1+2}")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 

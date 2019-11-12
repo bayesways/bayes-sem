@@ -121,8 +121,13 @@ if args.existing_directory is None:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
-    print("\n\nSaving compiled model in directory %s"%log_dir)
-    save_obj(sm, 'sm', log_dir)
+    try:
+        print("\n\nSaving compiled model in directory %s"%log_dir)
+        save_obj(sm, 'sm', log_dir)
+    except:
+        # Print error message
+        print("could not save the stan model")
+
 
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
@@ -146,8 +151,13 @@ fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
     warmup=args.num_warmup, chains=args.num_chains)
 
-print("\n\nSaving fitted model in directory %s"%log_dir)
-save_obj(fit_run, 'fit', log_dir)
+try:
+    print("\n\nSaving fitted model in directory %s"%log_dir)
+    save_obj(fit_run, 'fit', log_dir)
+except:
+    # Print error message
+    print("could not save the fit object")
+
 
 print("\n\nSaving posterior samples in %s"%log_dir)
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
@@ -158,4 +168,9 @@ if args.num_chains ==1:
         ps[name] = np.squeeze(stan_samples[name])
 else:
     ps = stan_samples
-save_obj(ps, 'ps', log_dir)
+
+try:
+    save_obj(ps, 'ps', log_dir)
+except:
+    # Print error message
+    print("could not save the posterior samples")
