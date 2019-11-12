@@ -43,24 +43,36 @@ def C_to_R(M):
 
 def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.2,
-             noisy_loadings = False, random_seed=None):
+             noisy_loadings = False, noisy_loadings_level = 2,
+             random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
     alpha = np.zeros(J)
     if noisy_loadings:
-        # beta = np.array([[1,0.2],
-        #                  [b, -0.3],
-        #                  [b,-.05],
-        #                  [-0.2,1],
-        #                  [-.08,b],
-        #                  [0.15,b]], dtype=float)
-        beta = np.array([[1, 0],
-                         [b, 0],
-                         [b, .4],
-                         [.4, 1],
-                         [0, b],
-                         [0, b]], dtype=float)
+        if noisy_loadings_level == 1:
+            beta = np.array([[1,0.2],
+                             [b, -0.3],
+                             [b,-.05],
+                             [-0.2,1],
+                             [-.08,b],
+                             [0.15,b]], dtype=float)
+        elif noisy_loadings_level == 2:
+            beta = np.array([[1, 0],
+                             [b, 0],
+                             [b, .4],
+                             [.4, 1],
+                             [0, b],
+                             [0, b]], dtype=float)
+        elif noisy_loadings_level == 3:
+            beta = np.array([[1, 0],
+                             [b, .5],
+                             [b, .5],
+                             [.5, 1],
+                             [.5, b],
+                             [0, b]], dtype=float)
+        else:
+            print('Noisy Level should be in [1,2,3]')
 
     else:
         beta = np.array([[1,0],
