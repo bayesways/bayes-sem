@@ -16,7 +16,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 ```
 
 
@@ -27,7 +27,7 @@ library('dplyr')
 ## Load data
 
 ```{r}
-df<- read_csv("../dat/muthen_women.csv")
+df<- read_csv("../dat/muthen_women_std.csv")
 names(df) <- paste0('x', seq(1:15))
 glimpse(df)
 ```
