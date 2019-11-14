@@ -18,7 +18,7 @@ parser.add_argument("sim_case", help="simulation case number", type=int, default
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
-parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=2)
+parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=20)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=500)
 parser.add_argument("-off", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
