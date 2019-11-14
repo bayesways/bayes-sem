@@ -17,7 +17,6 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-noisy_loadings_level
 parser.add_argument("-nll","--noisy_loadings_level", help="option level for cross loading magnitude", type=int, default=3)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=20)
@@ -161,6 +160,8 @@ for iter_k in range(args.btstr_nsim):
 
     stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
         yy = data['y'], sigma_prior = data['sigma_prior'])
+
+    save_obj(data, 'data_seed'+str(iter_k), log_dir)
 
     ############################################################
     ################ Fit Model ##########
