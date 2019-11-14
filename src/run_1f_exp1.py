@@ -149,7 +149,7 @@ else:
 print("\n\nFitting model.... \n\n")
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
+    warmup=args.num_warmup, chains=args.num_chains, init = 0)
 
 try:
     print("\n\nSaving fitted model in directory %s"%log_dir)

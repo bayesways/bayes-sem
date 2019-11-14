@@ -41,7 +41,8 @@ else:
 
 ############################################################
 ################ Create Data or Load ##########
-if args.existing_directory is None:
+# if args.existing_directory is None:
+if True:
     print("\n\nGenerating Continuous data for case %s"%args.sim_case)
     if args.sim_case == 0 :
         data = gen_data(args.nsim_data, off_diag_residual=False,
@@ -142,7 +143,7 @@ print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
+    warmup=args.num_warmup, chains=args.num_chains, init = 0)
 
 print("\n\nSaving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)

@@ -100,7 +100,7 @@ if args.existing_directory is None:
     else:
         print("Choose stan model {0 CFA/3 EFA:benchmark saturated model," \
             "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
-            
+
     if bool(args.print_model):
         print(model_code)
     file = open(log_dir+"model.txt", "w")
@@ -142,7 +142,7 @@ print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
+    warmup=args.num_warmup, chains=args.num_chains, init = 0)
 
 print("\n\nSaving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)

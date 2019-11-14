@@ -166,7 +166,8 @@ for iter_k in range(args.btstr_nsim):
 
     fit_run = sm.sampling(data=stan_data,
         iter=args.num_samples + args.num_warmup,
-        warmup=args.num_warmup, chains=args.num_chains)
+        warmup=args.num_warmup, chains=args.num_chains,
+        init = 0)
 
     stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
