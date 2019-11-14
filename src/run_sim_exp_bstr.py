@@ -4,6 +4,8 @@ import pystan
 import datetime
 import sys
 import os
+from scipy.stats import norm, multivariate_normal, invwishart, invgamma
+from numpy.linalg import det, inv
 
 from codebase.file_utils import save_obj, load_obj
 from codebase.data import gen_data
@@ -16,7 +18,7 @@ parser.add_argument("sim_case", help="simulation case number", type=int, default
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
-parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=20)
+parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=2)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=500)
 parser.add_argument("-off", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
@@ -37,7 +39,7 @@ def ff2(yy, model_mu, model_Sigma, p):
     return ff2
 
 
-def compute_D(mcmc_iter, pred=True):
+def compute_D(mcmc_iter, data, pred=True):
     J = ps['alpha'][mcmc_iter].shape[0]
     if pred == True:
         y_pred=multivariate_normal.rvs(mean= ps['alpha'][mcmc_iter],
@@ -179,12 +181,16 @@ for iter_k in range(args.btstr_nsim):
     mcmc_length = ps['alpha'].shape[0]
     Ds = np.empty((mcmc_length,2))
     for mcmc_iter in range(mcmc_length):
-        Ds[mcmc_iter,0] = compute_D(mcmc_iter, pred=False)
-        Ds[mcmc_iter,1] = compute_D(mcmc_iter, pred=True)
+        Ds[mcmc_iter,0] = compute_D(mcmc_iter, stan_data, pred=False)
+        Ds[mcmc_iter,1] = compute_D(mcmc_iter, stan_data, pred=True)
 
 
     result =np.sum(Ds[:,0] < Ds[:,1]) / mcmc_length
     bstr_results[iter_k] = result
-    print("PPP = %d %%"%np.round(100*result,0))
+    print("\n\n\n#######\n\nPPP = %d %%\n\n\n"%np.round(100*result,0))
 
-np.save(log_dir+"model.txt", "w", x)
+    np.save(log_dir+"bstr_results", bstr_results)
+
+print("\n\n\n####### Final Average #######\n\nAverage PPP = %d %%\n\n\n"%np.round(100*np.mean(bstr_results),0))
+
+np.save(log_dir+"bstr_results", bstr_results)
