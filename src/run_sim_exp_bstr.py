@@ -17,6 +17,8 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
+noisy_loadings_level
+parser.add_argument("-nll","--noisy_loadings_level", help="option level for cross loading magnitude", type=int, default=3)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=20)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=500)
@@ -144,10 +146,10 @@ for iter_k in range(args.btstr_nsim):
             random_seed = iter_k)
     elif args.sim_case == 2 :
         data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=False,
-            noisy_loadings_level = 3, random_seed = iter_k)
+            noisy_loadings_level = args.noisy_loadings_level, random_seed = iter_k)
     elif args.sim_case == 3 :
         data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=True,
-            noisy_loadings_level = 3, random_seed = iter_k)
+            noisy_loadings_level = args.noisy_loadings_level, random_seed = iter_k)
     else:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \
@@ -191,6 +193,8 @@ for iter_k in range(args.btstr_nsim):
     print("\n\n\n#######\n\nPPP = %d %%\n\n\n"%np.round(100*result,0))
 
     np.save(log_dir+"bstr_results", bstr_results)
+    save_obj(ps, 'ps_seed'+str(iter_k), log_dir)
+
 
 print("\n\n\n####### Final Average #######\n\nAverage PPP = %d %%\n\n\n"%np.round(100*np.mean(bstr_results),0))
 
