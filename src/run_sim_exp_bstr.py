@@ -19,7 +19,7 @@ parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no app
 # Optional arguments
 parser.add_argument("-nll","--noisy_loadings_level", help="option level for cross loading magnitude", type=int, default=3)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
-parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=20)
+parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=10)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=500)
 parser.add_argument("-off", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
