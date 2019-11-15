@@ -70,10 +70,19 @@ if args.existing_directory is None:
         data['subj_id'] = df.iloc[:,0]
         data['J'] = df.shape[1]-2
         data['D'] = df.iloc[:,2:].astype(int).values
+    elif args.sim_case == 3 :
+        print("\n\nReading data for case %s"%args.sim_case)
+        df = pd.read_csv("../dat/WIRS.csv")
+        data = dict()
+        data['N'] = df.shape[0]
+        data['K'] = 1
+        data['J'] = df.shape[1]
+        data['D'] = df.astype(int).values
     else:
         print("Choose sim case {0:LSAT data"
-        "1: Irini's dataset"
-        "2: Irini's dataset (sample)")
+        "1: Irini's cheating dataset"
+        "2: Irini's cheating dataset (sample)"
+        "3: Irini's WIRS dataset")
 
     print("\n\nN=%d, J=%d, K=%d"%(data['N'],data['J'], data['K']))
     stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
@@ -100,7 +109,7 @@ if args.existing_directory is None:
     elif args.stan_model == 2 :
         with open('./codebase/stan_code/discr/CFA/model2_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 3 :
         with open('./codebase/stan_code/discr/CFA/model2_1f_2.stan', 'r') as file:
             model_code = file.read()
@@ -139,7 +148,7 @@ else:
     if args.stan_model == 1 :
         param_names = ['beta', 'alpha']
     elif args.stan_model == 2 :
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 3 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
