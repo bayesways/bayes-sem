@@ -106,11 +106,15 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
-        with open('./codebase/stan_code/discr/CFA/model2_1f_3.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/model2_1f_4.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz' ]
+    elif args.stan_model == 5 :
+        with open('./codebase/stan_code/discr/CFA/model2_1f_5.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
-        print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
+        print("Choose from 1:5}")
 
     if bool(args.print_model):
         print(model_code)
@@ -139,7 +143,9 @@ else:
     elif args.stan_model == 3 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
-        param_names = ['beta', 'alpha', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz' ]
+    elif args.stan_model == 5 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
