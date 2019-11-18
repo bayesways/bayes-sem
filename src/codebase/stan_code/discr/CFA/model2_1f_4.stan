@@ -11,7 +11,7 @@ transformed data{
 
 parameters {
   vector[J] alpha;
-  real beta;
+  vector[K] beta;
   matrix[N,K] zz;
   matrix[N,J] uu;
 }
@@ -22,7 +22,7 @@ transformed parameters{
 }
 
 model {
-  beta ~ normal(0, 1);
+ to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
   to_vector(zz) ~ normal(0,1);
   to_vector(uu) ~ normal(0, c);
