@@ -13,30 +13,24 @@ import argparse
 ############################################################
 ###### MCMC Auxiliary Functions ############################
 
-init_values = dict()
+# init_values = dict()
+#
+# def set_initial_values(params):
+#     global init_values    # Needed to modify global copy of globvar
+#     init_values = params
+#
+#
+# def initf1():
+#     return init_values
 
-def set_initial_values(params):
-    global init_values    # Needed to modify global copy of globvar
-    init_values = params
 
-
-def initf1():
-    return init_values
-
-
-def mcmc(stan_data, params, stepsize, inv_metric, control, nsim):
+def mcmc(stan_data, init_values, stepsize, inv_metric, control, nsim):
     sm = load_obj('sm', log_dir)
     set_initial_values(params)
 
     fit_run = sm.sampling(data=stan_data,
-                      warmup=0,
-                      chains=args.num_chains,
-                      iter=args.num_samples,
-                      chains=1,
-                      init=initf1,
-                      control=control,
-                      warmup=0,
-                      check_hmc_diagnostics=False)
+                      warmup=0, iter=args.num_samples, chains=1,
+                      init=init_values, control=control, check_hmc_diagnostics=False)
 
     print("\n\nSaving posterior samples in %s"%log_dir)
     stan_samples= fit_run.extract(permuted=False, pars=param_names, inc_warmup = False )  # return a dictionary of arrays
@@ -226,6 +220,7 @@ fit_warmup = sm.sampling(data=stan_data,
 
 stepsize = fit_warmup.get_stepsize()
 inv_metric = fit_warmup.get_inv_metric(as_dict=True)
+init = fit.get_last_position()
 
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 if args.num_chains==1:
@@ -251,7 +246,7 @@ control={"stepsize":stepsize,
             }
 
 for k in range(2):
-    ps = mcmc(stan_data, ps, stepsize, inv_metric, control)
+    ps = mcmc(stan_data, init_values, stepsize, inv_metric, control, nsim = args.num_samples)
     try:
         save_obj(ps, 'ps_'+str(k), log_dir)
     except:
