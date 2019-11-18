@@ -5,13 +5,6 @@ data {
   int<lower=0, upper=1> DD[N, J];
 }
 
-transformed data{
-  vector[K] zeros_K = rep_vector(0, K);
-  cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
-  cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
-  real<lower=0> c0 = 2.5;
-}
-
 parameters {
   vector[J] alpha;
   matrix[J,K] beta;
@@ -26,6 +19,6 @@ transformed parameters{
 model {
   to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, I_K);
+  to_vector(zz) ~ normal(0, 1);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
