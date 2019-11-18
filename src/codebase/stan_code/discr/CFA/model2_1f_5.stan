@@ -11,7 +11,7 @@ transformed data{
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
   real<lower=0> c0 = 2.5;
-  real<lower=0> c = 0.15;
+  real<lower=0> c = 0.4;
 }
 
 parameters {
@@ -30,6 +30,6 @@ model {
   to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
   to_vector(zz) ~ normal(0,1);
-  for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, c*I_J);
+  to_vector(uu) ~ normal(0, c);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
