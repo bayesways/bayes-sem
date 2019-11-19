@@ -86,9 +86,10 @@ if args.existing_directory is None:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     elif args.stan_model == 3 :
-        with open('./codebase/stan_code/cont/CFA/model3.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2_u.stan', 'r') as file:
             model_code = file.read()
-            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', 'Theta', 'uu', 'Omega']
     elif args.stan_model == 4 :
         with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
             model_code = file.read()
@@ -127,7 +128,8 @@ else:
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
     elif args.stan_model == 3 :
-            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma',
+            'alpha', 'Theta', 'uu', 'Omega']
     elif args.stan_model == 4 :
         param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 5 :
