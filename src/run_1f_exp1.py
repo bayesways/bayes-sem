@@ -106,12 +106,12 @@ if args.existing_directory is None:
         #no u's
         with open('./codebase/stan_code/discr/CFA/model1_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha']
+        param_names = ['beta', 'alpha', 'zz']
     elif args.stan_model == 2 :
         #with u's and full covariance matrix of u's
         with open('./codebase/stan_code/discr/CFA/model2_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
     elif args.stan_model == 3 :
         #with u's and identity covariance matrix
         with open('./codebase/stan_code/discr/CFA/model2_1f_2.stan', 'r') as file:
@@ -125,6 +125,11 @@ if args.existing_directory is None:
     elif args.stan_model == 5 :
         # positive u's
         with open('./codebase/stan_code/discr/CFA/model2_1f_5.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 6 :
+        #with u's and identity covariance matrix with higher variance
+        with open('./codebase/stan_code/discr/CFA/model2_1f_6.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
@@ -151,7 +156,7 @@ else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
     if args.stan_model == 1 :
-        param_names = ['beta', 'alpha']
+        param_names = ['beta', 'alpha', 'zz']
     elif args.stan_model == 2 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 3 :
@@ -159,6 +164,8 @@ else:
     elif args.stan_model == 4 :
         param_names = ['beta', 'alpha', 'zz' , 'uu']
     elif args.stan_model == 5 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 6 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
@@ -169,7 +176,7 @@ else:
 print("\n\nFitting model.... \n\n")
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains, init = 0)
+    warmup=args.num_warmup, chains=args.num_chains)
 
 try:
     print("\n\nSaving fitted model in directory %s"%log_dir)

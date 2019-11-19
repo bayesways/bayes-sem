@@ -10,7 +10,6 @@ transformed data{
   vector[K] zeros_K = rep_vector(0, K);
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
-  real<lower=0> c0 = 2.5;
   real<lower=0> c = 0.2;
 }
 
