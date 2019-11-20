@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pystan
-from scipy.stats import multivariate_normal, bernoulli
+from scipy.stats import norm, multivariate_normal, bernoulli
 from scipy.special import expit
 
 
@@ -193,6 +193,38 @@ def gen_data_binary(nsim_data, J=8, K=2, rho =0.2, c=0.65, b=0.8,
     data['Marg_cov'] = Marg_cov
     data['Theta'] = Theta
     data['sigma'] = sigma
+    data['y'] = yy
+    data['D'] = DD
+
+    return(data)
+
+
+def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
+        random_seed=None):
+    if random_seed is not None:
+        np.random.seed(random_seed)
+
+    alpha = np.array([-0.53,  0.35, -1.4 , -1.4 , -0.96, -2.33])
+    beta = np.array([0.9, 0.7, 1.71  , 1.018, 1.96, 1.37])
+
+
+    zz = norm.rvs(size=nsim_data)
+    yy = alpha + np.outer(zz, beta)
+    DD = bernoulli.rvs(p=expit(yy))
+
+    if noise:
+        noisy_col = bernoulli.rvs(p=0.5, size=nsim_data)
+        DD[:,0] = noisy_col
+
+    data = dict()
+    data['noise'] = noise
+    data['random_seed'] = random_seed
+    data['N'] = nsim_data
+    data['K'] = K
+    data['J'] = J
+    data['alpha'] = alpha
+    data['beta'] = beta
+    data['z'] = zz
     data['y'] = yy
     data['D'] = DD
 
