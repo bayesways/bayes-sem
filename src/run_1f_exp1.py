@@ -132,6 +132,11 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/model2_1f_6.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 7 :
+        #with u's and identity covariance matrix with higher variance
+        with open('./codebase/stan_code/discr/CFA/model2_1f_7.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
     else:
         print("Choose from 1:5}")
 
@@ -158,7 +163,7 @@ else:
     if args.stan_model == 1 :
         param_names = ['beta', 'alpha', 'zz']
     elif args.stan_model == 2 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' ]
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
     elif args.stan_model == 3 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 4 :
@@ -167,6 +172,8 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 6 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
+    elif args.stan_model == 7 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
