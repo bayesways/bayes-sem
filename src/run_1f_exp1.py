@@ -208,7 +208,9 @@ try:
 except:
     # Print error message
     print("could not save the posterior samples")
-
-pd.DataFrame(np.mean(ps['zz'], axis=0)).to_csv(log_dir+"mz.csv", index=False)
+try:
+    pd.DataFrame(np.mean(ps['zz'], axis=0)).to_csv(log_dir+"mz.csv", index=False)
+except:
+    print("No z's")
 pd.DataFrame(np.mean(ps['uu'], axis=0)).to_csv(log_dir+"mu.csv", index=False)
 pd.DataFrame(np.mean(ps['uu']**2, axis=0)).to_csv(log_dir+"mu2.csv", index=False)
