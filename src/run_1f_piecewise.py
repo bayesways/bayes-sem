@@ -13,24 +13,14 @@ import argparse
 ############################################################
 ###### MCMC Auxiliary Functions ############################
 
-# init_values = dict()
-#
-# def set_initial_values(params):
-#     global init_values    # Needed to modify global copy of globvar
-#     init_values = params
-#
-#
-# def initf1():
-#     return init_values
 
-
-def mcmc(stan_data, init_values, stepsize, inv_metric, control, nsim):
+def mcmc(stan_data, init_vals, stepsize, inv_metric, control, nsim):
     sm = load_obj('sm', log_dir)
     set_initial_values(params)
 
     fit_run = sm.sampling(data=stan_data,
                       warmup=0, iter=args.num_samples, chains=1,
-                      init=init_values, control=control, check_hmc_diagnostics=False)
+                      init=init_vals, control=control, check_hmc_diagnostics=False)
 
     print("\n\nSaving posterior samples in %s"%log_dir)
     stan_samples= fit_run.extract(permuted=False, pars=param_names, inc_warmup = False )  # return a dictionary of arrays
@@ -42,7 +32,9 @@ def mcmc(stan_data, init_values, stepsize, inv_metric, control, nsim):
     else:
         ps = stan_samples
 
-    return ps
+    output_init_values = fit_run.get_last_position()
+
+    return ps, output_init_values
 
 ############################################################
 ################
@@ -126,6 +118,9 @@ if args.existing_directory is None:
     print("\n\nN=%d, J=%d, K=%d"%(data['N'],data['J'], data['K']))
     stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
         DD = data['D'])
+######### #### #########
+    # stan_data = dict(N=10, y=[0, 1, 0, 1, 0, 1, 0, 1, 1, 1])
+######### #### #########
 
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)
@@ -178,6 +173,24 @@ if args.existing_directory is None:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
+    ######### TEST #########
+    # model_code = """
+    #     data {
+    #       int<lower=0> N;
+    #       int<lower=0,upper=1> y[N];
+    #     }
+    #     parameters {
+    #       real<lower=0,upper=1> theta;
+    #     }
+    #     model {
+    #       theta ~ beta(0.5, 0.5);  // Jeffreys' prior
+    #       for (n in 1:N)
+    #         y[n] ~ bernoulli(theta);
+    #     }
+    # """
+    # sm = pystan.StanModel(model_code=model_code, verbose=False)
+    ######### #### #########
+
     try:
         print("\n\nSaving compiled model in directory %s"%log_dir)
         save_obj(sm, 'sm', log_dir)
@@ -206,10 +219,10 @@ else:
 ############################################################
 ################ Fit Model ##########
 
+# param_names = ['theta']
 print("\n\nRunning warm up.... \n\n")
 fit_warmup = sm.sampling(data=stan_data,
-            iter=args.num_warmup,
-            warmup=args.num_warmup, chains=args.num_chains,
+            iter=args.num_warmup, chains=args.num_chains,
             check_hmc_diagnostics=False,
             control={
                 # "metric" : "diag_e",
@@ -218,11 +231,17 @@ fit_warmup = sm.sampling(data=stan_data,
                   "adapt_engaged" : True,
                      })
 
+# stepsize = fit_warmup.get_stepsize()
+# inv_metric = fit_warmup.get_inv_metric(as_dict=True)
+# init_vals = fit_warmup.get_last_position()
+
 stepsize = fit_warmup.get_stepsize()
 inv_metric = fit_warmup.get_inv_metric(as_dict=True)
-init = fit.get_last_position()
+init = fit_warmup.get_last_position()
 
-stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
+import pdb; pdb.set_trace();
+
+stan_samples= fit_warmup.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 if args.num_chains==1:
     ps = dict()
     for name in param_names:
@@ -245,8 +264,41 @@ control={"stepsize":stepsize,
              "max_treedepth" : 13,
             }
 
+# for k in range(2):
+#     ps, init_vals = mcmc(stan_data, init_vals, stepsize, inv_metric, control, nsim = args.num_samples)
+#     try:
+#         save_obj(ps, 'ps_'+str(k), log_dir)
+#     except:
+#         # Print error message
+#         print("could not save the posterior samples")
+
+
 for k in range(2):
-    ps = mcmc(stan_data, init_values, stepsize, inv_metric, control, nsim = args.num_samples)
+    fit = sm.sampling(data=stan_data,
+                       warmup=0, iter=args.num_samples, chains=1,
+                       control=control,
+                       init=init)
+
+
+    stepsize = fit.get_stepsize()
+    inv_metric = fit.get_inv_metric(as_dict=True)
+    init = fit.get_last_position()
+
+    pdb.set_trace();
+
+
+    control = {"stepsize" : stepsize,
+               "inv_metric" : inv_metric,
+               "adapt_engaged" : False
+               }
+
+    stan_samples= fit.extract(permuted=False, pars=param_names, inc_warmup = False)  # return a dictionary of arrays
+    if args.num_chains==1:
+        ps = dict()
+        for name in param_names:
+            ps[name] = np.squeeze(stan_samples[name])
+    else:
+        ps = stan_samples
     try:
         save_obj(ps, 'ps_'+str(k), log_dir)
     except:
