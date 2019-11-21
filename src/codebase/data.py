@@ -200,7 +200,7 @@ def gen_data_binary(nsim_data, J=8, K=2, rho =0.2, c=0.65, b=0.8,
 
 
 def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
-        random_seed=None):
+        cheaters = False, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
@@ -210,14 +210,18 @@ def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
 
     zz = norm.rvs(size=nsim_data)
     yy = alpha + np.outer(zz, beta)
+    if cheaters: # add cheaters
+        yy[900:]= yy[900:] + 0.2
+
     DD = bernoulli.rvs(p=expit(yy))
 
-    if noise:
+    if noise: # replace noisy column
         noisy_col = bernoulli.rvs(p=0.5, size=nsim_data)
         DD[:,0] = noisy_col
 
     data = dict()
     data['noise'] = noise
+    data['cheaters'] = cheaters
     data['random_seed'] = random_seed
     data['N'] = nsim_data
     data['K'] = K

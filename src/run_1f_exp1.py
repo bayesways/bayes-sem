@@ -133,10 +133,10 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 7 :
-        #with u's and identity covariance matrix with higher variance
+        #with marginal formula 10
         with open('./codebase/stan_code/discr/CFA/model2_1f_7.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
+        param_names = ['beta', 'alpha', 'yy', 'Omega', 'Marg_cov']
     else:
         print("Choose from 1:7}")
 
@@ -173,7 +173,7 @@ else:
     elif args.stan_model == 6 :
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 7 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Omega']
+        param_names = ['beta', 'alpha', 'yy', 'Omega', 'Marg_cov']
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
@@ -183,7 +183,7 @@ else:
 print("\n\nFitting model.... \n\n")
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
+    warmup=args.num_warmup, chains=args.num_chains, init=0)
 
 try:
     print("\n\nSaving fitted model in directory %s"%log_dir)
