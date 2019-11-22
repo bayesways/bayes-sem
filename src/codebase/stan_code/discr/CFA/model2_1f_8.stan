@@ -14,25 +14,20 @@ transformed data{
 
 parameters {
   vector[J] alpha;
-  matrix<lower=0>[1,K] beta1;
-  matrix[J-1,K] beta2;
-  cov_matrix[J] Omega;
-  matrix[N,J] yy;
+  matrix[J,K] beta;
+  matrix[N,K] zz;
+  matrix<lower=0>[N,J] uu;
 }
 
 transformed parameters{
-  cov_matrix[J] Marg_cov;
-  matrix[J,K] beta;
-  beta[1,] = beta1[1,];
-  for (j in 2:J) beta[j,] = beta2[(j-1),];
-  Marg_cov = beta * beta' + Omega;
+  matrix[N,J] yy;
+  for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta' + uu[n,];
 }
 
 model {
-  to_vector(beta1) ~ normal(0, 1);
-  to_vector(beta2) ~ normal(0, 1);
+  to_vector(beta) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  Omega ~ inv_wishart(J+6, I_J);
-  for (n in 1:N) yy[n, ] ~ multi_normal(alpha,  Marg_cov);
+  to_vector(zz) ~ normal(0,1);
+  to_vector(uu) ~ exponential(7.5);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }

@@ -105,10 +105,15 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 7 :
-        #with u's and identity covariance matrix with higher variance
+        #with marginal formula 10
         with open('./codebase/stan_code/discr/CFA/model2_1f_7.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'yy', 'Omega', 'Marg_cov']
+    elif args.stan_model == 8 :
+        #with u's and identity covariance matrix
+        with open('./codebase/stan_code/discr/CFA/model2_1f_8.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose from 1:7}")
 
@@ -141,6 +146,8 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'uu' ]
     elif args.stan_model == 7 :
         param_names = ['beta', 'alpha', 'yy', 'Omega', 'Marg_cov']
+    elif args.stan_model == 8 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' ]
     else:
         print("Choose stan model {1:exact zeros no u's, 2: full factor model}")
 
