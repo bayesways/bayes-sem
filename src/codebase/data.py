@@ -211,7 +211,7 @@ def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
     zz = norm.rvs(size=nsim_data)
     yy = alpha + np.outer(zz, beta)
     if cheaters: # add cheaters
-        yy[900:]= yy[900:] + 0.2
+        yy[900:]= yy[900:] + 0.5
 
     DD = bernoulli.rvs(p=expit(yy))
 
