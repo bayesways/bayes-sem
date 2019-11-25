@@ -85,7 +85,8 @@ if args.existing_directory is None:
         data['N'] = df.shape[0]
         data['K'] = 1
         data['J'] = df.shape[1]-1
-        data['D'] =.astype(int).values[:,1:]
+        data['D'] = np.delete(df.astype(int).values, 0, 1) # delete 1st column
+        data['D'] = np.delete(df.astype(int).values, 1, 1) # delete 2nd column
     else:
         print("Choose sim case {0:LSAT data"
         "1: Irini's cheating dataset"
