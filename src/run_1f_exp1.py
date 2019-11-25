@@ -78,6 +78,14 @@ if args.existing_directory is None:
         data['K'] = 1
         data['J'] = df.shape[1]
         data['D'] = df.astype(int).values
+    elif args.sim_case == 4 :
+        print("\n\nReading data for case %s"%args.sim_case)
+        df = pd.read_csv("../dat/WIRS.csv")
+        data = dict()
+        data['N'] = df.shape[0]
+        data['K'] = 1
+        data['J'] = df.shape[1]-1
+        data['D'] =.astype(int).values[:,1:]
     else:
         print("Choose sim case {0:LSAT data"
         "1: Irini's cheating dataset"
