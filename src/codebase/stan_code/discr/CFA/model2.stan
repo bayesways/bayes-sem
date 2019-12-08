@@ -18,7 +18,6 @@ parameters {
   matrix[2,K] beta_free; // 2 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cov_matrix [K] Phi_cov;
-  // cov_matrix[J] Omega;
   matrix[N,K] zz;
   matrix[N,J] uu;
 }
@@ -46,9 +45,7 @@ model {
   to_vector(beta_zeros) ~ normal(0, 0.01);
   to_vector(alpha) ~ normal(0, 10);
   Phi_cov ~ inv_wishart(J+4, I_K);
-  // Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
-  // for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, Omega);
   to_vector(uu) ~ normal(0, c);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
