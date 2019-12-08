@@ -14,7 +14,6 @@ transformed data{
 }
 
 parameters {
-  vector<lower=0>[J] sigma_square;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
   cov_matrix [K] Phi_cov;

@@ -32,7 +32,7 @@ transformed parameters{
 
   for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta';
 }
-
+  
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
