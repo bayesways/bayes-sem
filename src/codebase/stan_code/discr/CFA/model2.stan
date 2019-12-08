@@ -10,14 +10,15 @@ transformed data{
   vector[J] zeros_J = rep_vector(0, J);
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
+  real<lower=0> c = 0.2;
 }
 
 parameters {
-  vector<lower=0>[J] sigma_square;
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
+  matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cov_matrix [K] Phi_cov;
-  cov_matrix[J] Omega;
+  // cov_matrix[J] Omega;
   matrix[N,K] zz;
   matrix[N,J] uu;
 }
@@ -33,16 +34,21 @@ transformed parameters{
   for (k in 1:K) beta[1+3*(k-1), k] = 1;
   // set the free elements
   for (k in 1:K) beta[2+3*(k-1) : 3+3*(k-1), k] = beta_free[1:2,k];
+  // set the zero elements
+  beta[4:J, 1] = beta_zeros[1:(J-3), 1];
+  beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
 
   for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta' + uu[n,];
 }
 
 model {
   to_vector(beta_free) ~ normal(0, 1);
+  to_vector(beta_zeros) ~ normal(0, 0.01);
   to_vector(alpha) ~ normal(0, 10);
   Phi_cov ~ inv_wishart(J+4, I_K);
-  Omega ~ inv_wishart(J+6, I_J);
+  // Omega ~ inv_wishart(J+6, I_J);
   for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
-  for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, Omega);
+  // for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, Omega);
+  to_vector(uu) ~ normal(0, c);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
