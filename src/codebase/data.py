@@ -184,7 +184,7 @@ def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
         np.random.seed(random_seed)
 
     alpha = np.array([-0.53,  0.35, -1.4 , -1.4 , -0.96, -2.33])
-    beta = np.array([0.9, 0.7, 1.71  , 1.018, 1.96, 1.37])
+    beta = np.array([1, 0.7, 1.71  , 1.018, 1.96, 1.37])
 
 
     zz = norm.rvs(size=nsim_data)
