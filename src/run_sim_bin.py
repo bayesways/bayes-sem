@@ -98,7 +98,7 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     else:
-        print("Choose from 1:3}")
+        print("Choose from 1:4}")
 
     if bool(args.print_model):
         print(model_code)
