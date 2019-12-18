@@ -42,7 +42,7 @@ def to_nparray_data(yresp):
         return res
 
 
-def all_possible_patterns(n):
+def get_all_possible_patterns(n):
     lst = list(map(list, itertools.product([0, 1], repeat=n)))
     return to_str_pattern(lst)
 
@@ -75,27 +75,80 @@ def get_prob_pred_data(data, ps, m):
     return bernoulli.rvs(pistr)
 
 
-
-def get_Ds(data, piavg):
-
-    data_ptrn = to_str_pattern(data)
+def get_Ey(data_ptrn, piavg, N):
     distinct_patterns = np.unique(data_ptrn)
-
-    N = data.shape[0]
     ## compute E_y(theta) for a specific pattern y
     Ey = dict()
     for ptrn in distinct_patterns:
-        Ey[ptrn] = N * np.prod(bernoulli.pmf(k=to_nparray_data(ptrn), p = piavg));
+        Ey[ptrn] = N * np.prod(bernoulli.pmf(k=to_nparray_data(ptrn), p = piavg))
+    return Ey
 
+
+def get_Oy(data_ptrn):
+    distinct_patterns = np.unique(data_ptrn)
     # compute observed pattern occurences
     Oy = dict()
     for ptrn in distinct_patterns:
         Oy[ptrn] = np.count_nonzero(data_ptrn == ptrn)
+    return Oy
 
+
+def get_Dy(Oy, Ey, data_ptrn):
+    distinct_patterns = np.unique(data_ptrn)
     # compute the discrepancy D
     Dy = dict()
     for ptrn in distinct_patterns:
         Dy[ptrn] = Oy[ptrn] * np.log(Oy[ptrn]/Ey[ptrn])
 
-    return Ey, Oy, Dy
-# sum(Dy.values())
+    return Dy
+
+
+
+def get_PPP(data, ps,  nsim_N = 10):
+
+    PPP_vals = np.empty((nsim_N, 2))
+    for m_ind in tqdm(range(nsim_N)):
+        m = 100*m_ind
+        # compute Dy
+        piavg =  get_avg_probs(data, ps, m)
+        data_ptrn = to_str_pattern(data['D'])
+        all_possible_patterns = get_all_possible_patterns(data['J'])
+        Oy = get_Oy(data_ptrn)
+        Ey = get_Ey(data_ptrn, piavg, data['N'])
+        Dy = get_Dy(Oy, Ey, data_ptrn)
+
+        # complete any missing patterns with 0's
+        new_patterns = set(all_possible_patterns) - set(data_ptrn)
+        if new_patterns == set():
+            pass
+    #         print('no new patterns')
+        else:
+            for ptrn in new_patterns:
+                Oy[ptrn] = 0.
+                Dy[ptrn] = 0.
+
+        # compute Dy
+        ppdata = get_prob_pred_data(data, ps, m)
+        ppddata_ptrn = to_str_pattern(ppdata)
+
+        Oystr = get_Oy(ppddata_ptrn)
+        Eystr = get_Ey(ppddata_ptrn, piavg, data['N'])
+        Dystr = get_Dy(Oystr, Eystr, ppddata_ptrn)
+
+        # complete any missing patterns with 0's
+        new_patterns = set(all_possible_patterns) - set(ppddata_ptrn)
+        if new_patterns == set():
+            pass
+    #         print('no new patterns')
+
+        else:
+            for ptrn in new_patterns:
+                Oystr[ptrn] = 0.
+                Dystr[ptrn] = 0.
+
+
+
+        PPP_vals[m_ind,0] = sum(Dy.values())
+        PPP_vals[m_ind,1] = sum(Dystr.values())
+
+    return PPP_vals
