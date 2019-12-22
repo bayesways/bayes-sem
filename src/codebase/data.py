@@ -178,16 +178,17 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     return(data)
 
 
-def gen_data_binary_1factor(nsim_data, J=6, K=1, noise=False,
+def gen_data_binary_1factor(nsim_data, J=6, K=1, c=1, noise=False,
         cheaters = False, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
-    alpha = np.array([-0.53,  0.35, -1.4 , -1.4 , -0.96, -2.33])
+    # alpha = np.array([-0.53,  0.35, -1.4 , -1.4 , -0.96, -2.33])
+    alpha = np.zeros(J)
     beta = np.array([1, 0.7, 1.71  , 1.018, 1.96, 1.37])
 
 
-    zz = norm.rvs(size=nsim_data)
+    zz = norm.rvs(scale = c, size=nsim_data)
     yy = alpha + np.outer(zz, beta)
     if cheaters: # add cheaters
         yy[900:,3:]= yy[900:,3:] + 0.5
