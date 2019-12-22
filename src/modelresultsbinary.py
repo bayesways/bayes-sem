@@ -6,7 +6,7 @@ import sys
 import os
 import itertools
 
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
 import argparse
@@ -51,28 +51,63 @@ def get_avg_probs(data, ps, m):
     ## compute the pi's for the the m-th posterior sample
     N = data['N']
     L = 1000
-    z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L);
+    z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
     ystr = np.empty((L, data['J']))
     for l in range(L):
         ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
     pistr = expit(ystr)
-    piavg = np.mean(pistr,0)
+    # piavg = np.mean(pistr,0)
+    return pistr
 
-    return piavg
+def get_avg_probs(data, ps, m):
+    ## compute the pi's for the the m-th posterior sample
+    N = data['N']
+    L = 1
+    z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
+
+    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
+    pistr = expit(ystr)
+    # piavg = np.mean(pistr,0)
+    return pistr
+
+# def get_avg_probs(data, ps, m):
+#     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
+#     pistr = expit(ystr)
+#     piavg = np.mean(pistr, axis=0)
+#     return piavg
+
+
+# def get_prob_pred_data(data, ps, m):
+#     N = data['N']
+#     L = 1000
+#     pistr = np.empty((N, data['J']))
+#
+#     for subj_i in range(N):
+#         z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
+#         ystr = np.empty((L,data['J']))
+#         for l in range(L):
+#             ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+#         pistr[subj_i] =  np.mean(expit(ystr),0)
+#     return bernoulli.rvs(pistr)
 
 
 def get_prob_pred_data(data, ps, m):
     N = data['N']
-    L = 1000
+    L = 1
     pistr = np.empty((N, data['J']))
 
     for subj_i in range(N):
-        z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L);
-        ystr = np.empty((L,data['J']))
-        for l in range(L):
-            ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+        z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
+        ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
         pistr[subj_i] =  np.mean(expit(ystr),0)
     return bernoulli.rvs(pistr)
+
+
+# def get_prob_pred_data(data, ps, m):
+#     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
+#     pistr = expit(ystr)
+#     return bernoulli.rvs(pistr)
+
 
 
 def get_Ey(data_ptrn, piavg, N):
@@ -104,11 +139,11 @@ def get_Dy(Oy, Ey, data_ptrn):
 
 
 
-def get_PPP(data, ps,  nsim_N = 10):
+def get_PPP(data, ps, nsim_N = 1000):
 
     PPP_vals = np.empty((nsim_N, 2))
     for m_ind in tqdm(range(nsim_N)):
-        m = 100*m_ind
+        m = 10*m_ind
         # compute Dy
         piavg =  get_avg_probs(data, ps, m)
         data_ptrn = to_str_pattern(data['D'])
@@ -146,9 +181,7 @@ def get_PPP(data, ps,  nsim_N = 10):
                 Oystr[ptrn] = 0.
                 Dystr[ptrn] = 0.
 
-
-
         PPP_vals[m_ind,0] = sum(Dy.values())
         PPP_vals[m_ind,1] = sum(Dystr.values())
 
-    return PPP_vals
+    return PPP_vals, Dy, Dystr
