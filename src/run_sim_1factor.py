@@ -78,7 +78,7 @@ if args.existing_directory is None:
         #no u's
         with open('./codebase/stan_code/discr/CFA/model1_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz']
+        param_names = ['beta', 'alpha', 'zz', 'sigma']
     elif args.stan_model == 2 :
         #with u's and full covariance matrix of u's
         with open('./codebase/stan_code/discr/CFA/model2_1f.stan', 'r') as file:

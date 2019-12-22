@@ -208,6 +208,7 @@ def gen_data_binary_1factor(nsim_data, J=6, K=1, c=1, noise=False,
     data['J'] = J
     data['alpha'] = alpha
     data['beta'] = beta
+    data['sigma'] = c
     data['z'] = zz
     data['y'] = yy
     data['D'] = DD
