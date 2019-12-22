@@ -185,7 +185,7 @@ def gen_data_binary_1factor(nsim_data, J=6, K=1, c=1, noise=False,
 
     # alpha = np.array([-0.53,  0.35, -1.4 , -1.4 , -0.96, -2.33])
     alpha = np.zeros(J)
-    beta = np.array([1, 0.7, 1.71  , 1.018, 1.96, 1.37])
+    beta = np.array([1, 0.7, .8  , .5, .9, .6])
 
 
     zz = norm.rvs(scale = c, size=nsim_data)
