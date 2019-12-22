@@ -47,34 +47,21 @@ def get_all_possible_patterns(n):
     return to_str_pattern(lst)
 
 
-def get_avg_probs(data, ps, m):
+def get_avg_probs(data, ps, m, c=0.2):
     ## compute the pi's for the the m-th posterior sample
     N = data['N']
-    L = 1000
+    L = 100
     z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
+    if 'uu' in ps.keys():
+        u_mc = multivariate_normal.rvs(np.zeros(data['J']), np.eye(data['J'])*c**2, size = L)
     ystr = np.empty((L, data['J']))
     for l in range(L):
         ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+        if 'uu' in ps.keys():
+            ystr[l] = ystr[l] + u_mc[l]
     pistr = expit(ystr)
-    # piavg = np.mean(pistr,0)
-    return pistr
-
-def get_avg_probs(data, ps, m):
-    ## compute the pi's for the the m-th posterior sample
-    N = data['N']
-    L = 1
-    z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
-
-    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
-    pistr = expit(ystr)
-    # piavg = np.mean(pistr,0)
-    return pistr
-
-# def get_avg_probs(data, ps, m):
-#     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-#     pistr = expit(ystr)
-#     piavg = np.mean(pistr, axis=0)
-#     return piavg
+    piavg = np.mean(pistr,0)
+    return piavg
 
 
 # def get_prob_pred_data(data, ps, m):
@@ -91,22 +78,17 @@ def get_avg_probs(data, ps, m):
 #     return bernoulli.rvs(pistr)
 
 
-def get_prob_pred_data(data, ps, m):
+def get_prob_pred_data(data, ps, m, c=0.2):
     N = data['N']
-    L = 1
     pistr = np.empty((N, data['J']))
-
-    for subj_i in range(N):
-        z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
-        ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
-        pistr[subj_i] =  np.mean(expit(ystr),0)
+    z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = N)
+    if 'uu' in ps.keys():
+        u_mc = multivariate_normal.rvs(np.zeros(data['J']), np.eye(data['J'])*c**2, size = N)
+    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
+    if 'uu' in ps.keys():
+        ystr = ystr + u_mc
+    pistr = expit(ystr)
     return bernoulli.rvs(pistr)
-
-
-# def get_prob_pred_data(data, ps, m):
-#     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-#     pistr = expit(ystr)
-#     return bernoulli.rvs(pistr)
 
 
 
