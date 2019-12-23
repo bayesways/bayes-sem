@@ -6,7 +6,7 @@ import sys
 import os
 
 from codebase.file_utils import save_obj, load_obj
-from codebase.data import gen_data_binary
+from codebase.data import gen_data_binary, gen_data_binary_1factor
 import argparse
 
 parser = argparse.ArgumentParser()
