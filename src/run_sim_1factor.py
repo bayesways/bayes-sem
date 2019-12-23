@@ -6,7 +6,7 @@ import sys
 import os
 
 from codebase.file_utils import save_obj, load_obj
-from codebase.data import gen_data_binary_1factor
+from codebase.data import gen_data_binary_1factor, gen_data_binary
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -53,6 +53,9 @@ if args.existing_directory is None:
     if args.sim_case == 2 :
         data = gen_data_binary_1factor(args.nsim_data, noise = False,
                     cheaters = True, random_seed = args.random_seed)
+    if args.sim_case == 3 :
+        data = gen_data_binary(args.nsim_data,
+            random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data")
 
