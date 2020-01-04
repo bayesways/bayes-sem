@@ -51,7 +51,8 @@ if args.existing_directory is None:
         data = gen_data_binary_1factor(args.nsim_data,
             random_seed = args.random_seed)
     else:
-        print("Choose simulation case 0:Clean data")
+        print("Choose simulation case 0:Clean data (2 factors)")
+        print("Choose simulation case 1:Clean data (1 factor)")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
