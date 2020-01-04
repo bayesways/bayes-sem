@@ -50,18 +50,12 @@ if args.existing_directory is None:
     if args.sim_case == 1 :
         data = gen_data_binary_1factor(args.nsim_data,
             random_seed = args.random_seed)
-    # if args.sim_case == 1 :
-    #     data = gen_data_binary(args.nsim_data, noise = True,
-            # random_seed = args.random_seed)
-    # if args.sim_case == 2 :
-    #     data = gen_data_binary(args.nsim_data, noise = False,
-    #                 cheaters = True, random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
-    stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
+    stan_data = dict(N = data['N'], K = 2, J = data['J'],
         DD = data['D'])
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)

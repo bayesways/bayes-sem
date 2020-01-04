@@ -61,7 +61,7 @@ if args.existing_directory is None:
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
-    stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
+    stan_data = dict(N = data['N'], K =1, J = data['J'],
         DD = data['D'])
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)

@@ -122,6 +122,8 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['Theta'] = Theta
     data['sigma'] = sigma
     data['y'] = yy
+    data['off_diag_residual'] = off_diag_residual
+    data['noisy_loadings'] = noisy_loadings
 
     return(data)
 
@@ -174,6 +176,8 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['Phi_cov'] = Phi_cov
     data['y'] = yy
     data['D'] = DD
+    data['off_diag_residual'] = off_diag_residual
+    data['noisy_loadings'] = noisy_loadings
 
     return(data)
 
