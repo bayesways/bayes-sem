@@ -25,7 +25,7 @@ parameters {
 transformed parameters{
   matrix[J,K] beta;
   matrix[N,J] yy;
-  
+
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
   }
@@ -42,7 +42,7 @@ transformed parameters{
 
 model {
   to_vector(beta_free) ~ normal(0, 1);
-  to_vector(beta_zeros) ~ normal(0, 0.01);
+  to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
   Phi_cov ~ inv_wishart(J+4, I_K);
   for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);

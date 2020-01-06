@@ -73,22 +73,22 @@ if args.existing_directory is None:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 1 :
-        #no u's
+        #no u's, exact zeros
         with open('./codebase/stan_code/discr/CFA/t_model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
-        #with u's of identity covariance and beta_zeros
+        #with u's of identity covariance and approx zeros
         with open('./codebase/stan_code/discr/CFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 3 :
-        #no u's, beta_zeros
+        #no u's, approx zeros
         with open('./codebase/stan_code/discr/CFA/model3.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz' , 'Phi_cov', 'yy']
     elif args.stan_model == 4 :
-        #with u's and beta to exact zeros
+        #with u's (of identity covariance), exact zeros
         with open('./codebase/stan_code/discr/CFA/model4.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
