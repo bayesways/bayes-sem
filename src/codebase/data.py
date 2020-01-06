@@ -43,28 +43,28 @@ def C_to_R(M):
 
 def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.2,
-             noisy_loadings = False, noisy_loadings_level = 2,
+             cross_loadings = False, cross_loadings_level = 2,
              random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
     alpha = np.zeros(J)
-    if noisy_loadings:
-        if noisy_loadings_level == 1:
+    if cross_loadings:
+        if cross_loadings_level == 1:
             beta = np.array([[1,0.2],
                              [b, -0.3],
                              [b,-.05],
                              [-0.2,1],
                              [-.08,b],
                              [0.15,b]], dtype=float)
-        elif noisy_loadings_level == 2:
+        elif cross_loadings_level == 2:
             beta = np.array([[1, 0],
                              [b, 0],
                              [b, .4],
                              [.4, 1],
                              [0, b],
                              [0, b]], dtype=float)
-        elif noisy_loadings_level == 3:
+        elif cross_loadings_level == 3:
             beta = np.array([[1, 0],
                              [b, .5],
                              [b, .5],
@@ -123,19 +123,19 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['sigma'] = sigma
     data['y'] = yy
     data['off_diag_residual'] = off_diag_residual
-    data['noisy_loadings'] = noisy_loadings
+    data['cross_loadings'] = cross_loadings
 
     return(data)
 
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.2,
-             noisy_loadings = False, random_seed=None):
+             cross_loadings = False, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
     alpha = np.zeros(J)
-    if noisy_loadings:
+    if cross_loadings:
         beta = np.array([[1, 0],
                          [b, 0],
                          [b,.5],
@@ -159,10 +159,19 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     Phi_corr[1,0] = rho
     Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
 
-    zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
-    yy = alpha + zz @ beta.T
+    Theta = np.eye(J)
+    if off_diag_residual:
+        for i in [1,2,5]:
+            for j in [3,4]:
+                Theta[i,j] = off_diag_corr
+                Theta[j,i] = off_diag_corr
 
-    DD = bernoulli.rvs(p=expit(yy))
+    zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
+    ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+    yy = alpha + zz @ beta.T + ee
+    DD = (yy>0).astype(int)
+
+    # DD = bernoulli.rvs(p=expit(yy))
 
     data = dict()
     data['random_seed'] = random_seed
@@ -171,13 +180,15 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['J'] = J
     data['alpha'] = alpha
     data['beta'] = beta
+    data['Theta'] = Theta
+    data['e'] = ee
     data['sigma_z'] = sigma_z
     data['Phi_corr'] = Phi_corr
     data['Phi_cov'] = Phi_cov
     data['y'] = yy
     data['D'] = DD
     data['off_diag_residual'] = off_diag_residual
-    data['noisy_loadings'] = noisy_loadings
+    data['cross_loadings'] = cross_loadings
 
     return(data)
 
