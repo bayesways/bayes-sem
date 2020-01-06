@@ -74,7 +74,7 @@ if args.existing_directory is None:
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 1 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/t_model1.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
