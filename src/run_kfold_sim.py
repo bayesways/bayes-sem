@@ -57,11 +57,11 @@ if args.existing_directory is None:
         data = gen_data(args.nsim_data, off_diag_residual=True,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
-        data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=False,
-            noisy_loadings_level = 3, random_seed = args.random_seed)
+        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=False,
+            cross_loadings_level = 3, random_seed = args.random_seed)
     elif args.sim_case == 3 :
-        data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=True,
-            noisy_loadings_level = 3, random_seed = args.random_seed)
+        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=True,
+            cross_loadings_level = 3, random_seed = args.random_seed)
     else:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \

@@ -18,7 +18,7 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-parser.add_argument("-nll","--noisy_loadings_level", help="option level for cross loading magnitude", type=int, default=3)
+parser.add_argument("-nll","--cross_loadings_level", help="option level for cross loading magnitude", type=int, default=3)
 parser.add_argument("-bnsim","--btstr_nsim", help="random seed for data generation", type=int, default=10)
 parser.add_argument("-nfl", "--n_splits", help="number of folds", type=int, default=3)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
@@ -121,11 +121,11 @@ for iter_k in range(args.btstr_nsim):
         data = gen_data(args.nsim_data, off_diag_residual=True,
             random_seed = iter_k)
     elif args.sim_case == 2 :
-        data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=False,
-            noisy_loadings_level = args.noisy_loadings_level, random_seed = iter_k)
+        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=False,
+            cross_loadings_level = args.cross_loadings_level, random_seed = iter_k)
     elif args.sim_case == 3 :
-        data = gen_data(args.nsim_data, noisy_loadings=True, off_diag_residual=True,
-            noisy_loadings_level = args.noisy_loadings_level, random_seed = iter_k)
+        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=True,
+            cross_loadings_level = args.cross_loadings_level, random_seed = iter_k)
     else:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \
