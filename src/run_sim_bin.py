@@ -59,6 +59,8 @@ if args.existing_directory is None:
     else:
         print("Choose simulation case 0:Clean data (2 factors)")
         print("Choose simulation case 1:Clean data (1 factor)")
+        print("Choose simulation case 2:Cross loadings (2 factors)")
+        print("Choose simulation case 2:Off-diag residuals (2 factors)")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
