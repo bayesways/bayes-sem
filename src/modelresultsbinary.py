@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import multivariate_normal, bernoulli
+from scipy.stats import multivariate_normal, bernoulli, norm
 import datetime
 import sys
 import os
@@ -9,6 +9,7 @@ import itertools
 from tqdm.notebook import tqdm
 from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
+from scipy.special import ndtri
 import argparse
 
 
@@ -59,14 +60,15 @@ def get_avg_probs(data, ps, m, c=0.2):
         ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
         if 'uu' in ps.keys():
             ystr[l] = ystr[l] + u_mc[l]
-    pistr = expit(ystr)
+    # pistr = expit(ystr)
+    pistr = norm.cdf(ystr)
     piavg = np.mean(pistr,0)
     return piavg
 
 
 # def get_prob_pred_data(data, ps, m):
 #     N = data['N']
-#     L = 1000
+#     L = 20
 #     pistr = np.empty((N, data['J']))
 #
 #     for subj_i in range(N):
@@ -74,7 +76,8 @@ def get_avg_probs(data, ps, m, c=0.2):
 #         ystr = np.empty((L,data['J']))
 #         for l in range(L):
 #             ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
-#         pistr[subj_i] =  np.mean(expit(ystr),0)
+#         # pistr[subj_i] =  np.mean(expit(ystr),0)
+#         pistr[subj_i] =  np.mean(norm.cdf(ystr),0)
 #     return bernoulli.rvs(pistr)
 
 
@@ -87,8 +90,10 @@ def get_prob_pred_data(data, ps, m, c=0.2):
     ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
     if 'uu' in ps.keys():
         ystr = ystr + u_mc
-    pistr = expit(ystr)
+    # pistr = expit(ystr)
+    pistr = norm.cdf(ystr)
     return bernoulli.rvs(pistr)
+    # return (ystr>0).astype(int)
 
 
 
