@@ -167,11 +167,19 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
                 Theta[j,i] = off_diag_corr
 
     zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
+    yy = alpha + zz @ beta.T
+    ee = None
+
+    # logit method
+    # DD = bernoulli.rvs(p=expit(yy))
+
+    # probit method
+    # DD = bernoulli.rvs(p=norm.cdf(yy))
+
     ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
     yy = alpha + zz @ beta.T + ee
     DD = (yy>0).astype(int)
 
-    # DD = bernoulli.rvs(p=expit(yy))
 
     data = dict()
     data['random_seed'] = random_seed

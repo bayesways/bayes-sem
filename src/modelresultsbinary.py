@@ -60,7 +60,10 @@ def get_avg_probs(data, ps, m, c=0.2):
         ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
         if 'uu' in ps.keys():
             ystr[l] = ystr[l] + u_mc[l]
+    # logit
     # pistr = expit(ystr)
+
+    # probit
     pistr = norm.cdf(ystr)
     piavg = np.mean(pistr,0)
     return piavg
@@ -90,10 +93,14 @@ def get_prob_pred_data(data, ps, m, c=0.2):
     ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
     if 'uu' in ps.keys():
         ystr = ystr + u_mc
+
+    # logit
     # pistr = expit(ystr)
+
+    # probit
     pistr = norm.cdf(ystr)
     return bernoulli.rvs(pistr)
-    # return (ystr>0).astype(int)
+
 
 
 
