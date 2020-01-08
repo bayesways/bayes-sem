@@ -91,7 +91,12 @@ else:
 if args.existing_directory is None:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
-    if args.stan_model == 1 :
+    if args.stan_model == 0 :
+        #no u's, exact zeros
+        with open('./codebase/stan_code/discr/CFA/logit/t_model1.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+    elif args.stan_model == 1 :
         #no u's, exact zeros
         with open('./codebase/stan_code/discr/CFA/logit/model1.stan', 'r') as file:
             model_code = file.read()
@@ -129,7 +134,9 @@ if args.existing_directory is None:
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
-    if args.stan_model == 1 :
+    if args.stan_model == 0 :
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+    elif args.stan_model == 1 :
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
