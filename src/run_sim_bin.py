@@ -61,6 +61,10 @@ if args.existing_directory is None:
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 2,
             random_seed = args.random_seed)
+    if args.sim_case == 5 :
+        data = gen_data_binary(args.nsim_data,
+            cross_loadings = True, cross_loadings_level = 0,
+            random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data ")
         print("Choose simulation case 1:Clean data 1 factor")
