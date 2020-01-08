@@ -70,18 +70,22 @@ def get_avg_probs(data, ps, m, c=0.2):
     return piavg
 
 
-# def get_prob_pred_data(data, ps, m):
+# def get_prob_pred_data(data, ps, m, c=0.2):
 #     N = data['N']
-#     L = 20
+#     L = 100
 #     pistr = np.empty((N, data['J']))
 #
 #     for subj_i in range(N):
 #         z_mc = multivariate_normal.rvs(np.zeros(data['K']), ps['Phi_cov'][m], size = L)
+#         if 'uu' in ps.keys():
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']), np.eye(data['J'])*c**2, size = L)
 #         ystr = np.empty((L,data['J']))
 #         for l in range(L):
 #             ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
-#         # pistr[subj_i] =  np.mean(expit(ystr),0)
-#         pistr[subj_i] =  np.mean(norm.cdf(ystr),0)
+#             if 'uu' in ps.keys():
+#                     ystr[l] = ystr[l] + u_mc[l]
+#         pistr[subj_i] =  np.mean(expit(ystr),0)
+#         # pistr[subj_i] =  np.mean(norm.cdf(ystr),0)
 #     return bernoulli.rvs(pistr)
 
 

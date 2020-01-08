@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pystan
 from scipy.stats import norm, multivariate_normal, bernoulli
-from scipy.special import expit
+from scipy.special import expit, logit
 
 
 def flatten_df(df0, val_name, var_name = 'K'):
@@ -105,7 +105,6 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
         Theta = np.diag(sigma_sq)
 
     Marg_cov = beta @ Phi_cov @ beta.T + Theta
-    Marg_cov
     yy = multivariate_normal.rvs(mean = alpha, cov=Marg_cov, size=nsim_data)
 
     data = dict()
@@ -186,17 +185,18 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
     yy = alpha + zz @ beta.T
-    ee = None
 
+    # ee = None
     # logit method
-    DD = bernoulli.rvs(p=expit(yy))
+    # DD = bernoulli.rvs(p=expit(yy))
 
     # probit method
     # DD = bernoulli.rvs(p=norm.cdf(yy))
 
-    # ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
-    # yy = alpha + zz @ beta.T + ee
-    # DD = (yy>0).astype(int)
+    ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+    ee = logit(norm.cdf(ee_seed))
+    yy = alpha + zz @ beta.T + ee
+    DD = (yy>0).astype(int)
 
 
     data = dict()
