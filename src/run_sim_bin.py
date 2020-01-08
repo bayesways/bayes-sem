@@ -52,16 +52,19 @@ if args.existing_directory is None:
             random_seed = args.random_seed)
     if args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 2,
-            random_seed = args.random_seed)
+            cross_loadings = True, cross_loadings_level = 1,
     if args.sim_case == 3 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True, random_seed = args.random_seed)
+    if args.sim_case == 4 :
+        data = gen_data_binary(args.nsim_data,
+            cross_loadings = True, cross_loadings_level = 2,
+            random_seed = args.random_seed)
     else:
-        print("Choose simulation case 0:Clean data (2 factors)")
-        print("Choose simulation case 1:Clean data (1 factor)")
-        print("Choose simulation case 2:Cross loadings (2 factors)")
-        print("Choose simulation case 2:Off-diag residuals (2 factors)")
+        print("Choose simulation case 0:Clean data ")
+        print("Choose simulation case 1:Clean data 1 factor")
+        print("Choose simulation case 2:Cross loadings")
+        print("Choose simulation case 3:Off-diag residuals")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
