@@ -137,12 +137,12 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     alpha = np.zeros(J)
     if cross_loadings:
         if cross_loadings_level == 0:
-            beta = np.array([[1, 0],
-                             [b, 0],
-                             [b,.2],
-                             [0, 1],
-                             [0,b],
-                             [.2, b]], dtype=float)
+            beta = np.array([[1,0.2],
+                             [b, -0.3],
+                             [b,-.05],
+                             [-0.2,1],
+                             [-.08,b],
+                             [0.15,b]], dtype=float)
         elif cross_loadings_level == 1:
             beta = np.array([[1, 0],
                              [b, 0],
