@@ -130,7 +130,7 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.2,
              cross_loadings = False, cross_loadings_level = 1,
-             random_seed=None):
+             method = 1, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
@@ -186,20 +186,30 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
     yy = alpha + zz @ beta.T
 
-    # ee = None
-    # logit method
-    # DD = bernoulli.rvs(p=expit(yy))
+    if method == 1: # logit method
+        ee = None
+        DD = bernoulli.rvs(p=expit(yy))
+    elif method == 2: # probit method
+        ee = None
+        DD = bernoulli.rvs(p=norm.cdf(yy))
+    elif method == 3: # logit2 method
+        ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+        ee = logit(norm.cdf(ee_seed))
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    elif method == 4: # probit2 method
+        ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    else:
+        print("method must be in [1,2,3,4]")
 
-    # probit method
-    # DD = bernoulli.rvs(p=norm.cdf(yy))
-
-    # ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
-    # ee = logit(norm.cdf(ee_seed))
-
-    ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
-    yy = alpha + zz @ beta.T + ee
-    DD = (yy>0).astype(int)
-
+    if method == 1 or method == 3:
+        model_type = 'logit'
+    elif method == 2 or method == 4:
+        model_type = 'probit'
+    else:
+        print("data method must be in [1,2,3,4]")
 
     data = dict()
     data['random_seed'] = random_seed
@@ -217,6 +227,8 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['D'] = DD
     data['off_diag_residual'] = off_diag_residual
     data['cross_loadings'] = cross_loadings
+    data['method'] = method
+    data['model_type'] = model_type
 
     return(data)
 
