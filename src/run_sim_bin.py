@@ -93,27 +93,27 @@ if args.existing_directory is None:
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/logit/t_model1.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/probit/t_model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 1 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/logit/model1.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/probit/model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/logit/model2.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/probit/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 3 :
         #no u's, approx zeros
-        with open('./codebase/stan_code/discr/CFA/logit/model3.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/probit/model3.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz' , 'Phi_cov', 'yy']
     elif args.stan_model == 4 :
         #with u's (of identity covariance), exact zeros
-        with open('./codebase/stan_code/discr/CFA/logit/model4.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/probit/model4.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     else:
