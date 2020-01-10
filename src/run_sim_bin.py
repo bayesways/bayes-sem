@@ -137,6 +137,11 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/%s/model1_prm2.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'Phi_corr', 'yy']
+    elif args.stan_model == 6 :
+        #no u's, exact zeros
+        with open('./codebase/stan_code/discr/CFA/%s/model1_prm3.stan' % model_type, 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'Phi_corr', 'yy']
     else:
         print("Choose from 1:4}")
 
@@ -168,6 +173,8 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 5 :
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'Phi_corr', 'yy']
+    elif args.stan_model == 6 :
+        param_names = ['beta', 'alpha', 'zz', 'Phi_corr', 'yy']
     else:
         print("Choose from 1:4}")
 
