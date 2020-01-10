@@ -182,18 +182,19 @@ else:
 ################ Fit Model ##########
 print("\n\nFitting model.... \n\n")
 
-# def set_initial_values(params):
-#     global init_values    # Needed to modify global copy of globvar
-#     init_values = params
+init_values = dict()
 
-init_values = dict(
+def set_initial_values(params):
+    global init_values    # Needed to modify global copy of globvar
+    init_values = params
+
+set_initial_values(dict(
     beta_pos = np.ones(stan_data['K']),
-    beta_free = np.ones((stan_data['K'],stan_data['K'])))
-# set_initial_values(data)
+    beta_free = np.ones((stan_data['K'],stan_data['K']))
+    ))
 
 def initf1():
     return init_values
-
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
