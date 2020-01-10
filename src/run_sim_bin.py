@@ -184,7 +184,7 @@ print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains, init=0)
+    warmup=args.num_warmup, chains=args.num_chains)
 
 print("\n\nSaving fitted model in directory %s"%log_dir)
 save_obj(fit_run, 'fit', log_dir)
