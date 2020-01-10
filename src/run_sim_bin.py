@@ -60,25 +60,25 @@ if args.existing_directory is None:
         data = gen_data_binary(args.nsim_data,
             method = args.data_method,
             random_seed = args.random_seed)
-    if args.sim_case == 1 :
+    elif args.sim_case == 1 :
         data = gen_data_binary_1factor(args.nsim_data,
             random_seed = args.random_seed)
-    if args.sim_case == 2 :
+    elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 1,
             method = args.data_method,
             random_seed = args.random_seed)
-    if args.sim_case == 3 :
+    elif args.sim_case == 3 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
             method = args.data_method,
             random_seed = args.random_seed)
-    if args.sim_case == 4 :
+    elif args.sim_case == 4 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 2,
             method = args.data_method,
             random_seed = args.random_seed)
-    if args.sim_case == 5 :
+    elif args.sim_case == 5 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 0,
             method = args.data_method,
@@ -132,8 +132,14 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/%s/model4.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    elif args.stan_model == 5 :
+        #no u's, exact zeros
+        with open('./codebase/stan_code/discr/CFA/%s/model1_prm2.stan' % model_type, 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'Phi_corr', 'yy']
     else:
         print("Choose from 1:4}")
+
 
     if bool(args.print_model):
         print(model_code)
@@ -160,6 +166,8 @@ else:
         param_names = ['beta', 'alpha', 'zz' , 'Phi_cov', 'yy']
     elif args.stan_model == 4 :
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    elif args.stan_model == 5 :
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'Phi_corr', 'yy']
     else:
         print("Choose from 1:4}")
 

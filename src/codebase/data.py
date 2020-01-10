@@ -170,7 +170,7 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     alpha = np.zeros(J)
 
-    sigma_z = np.repeat(np.sqrt(c), K)
+    sigma_z = np.repeat(1, K)
     Phi_corr = np.eye(K)
     Phi_corr[0,1] = rho
     Phi_corr[1,0] = rho
