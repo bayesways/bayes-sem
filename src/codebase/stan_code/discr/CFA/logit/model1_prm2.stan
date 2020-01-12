@@ -40,7 +40,6 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   L_R ~ lkj_corr_cholesky(2);
   sigma_z ~ cauchy(0,2.5);
-  // for (n in 1:N) to_vector(zz[n,]) ~ multi_normal(zeros_K, Phi_cov);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, diag_pre_multiply(sigma_z, L_R));
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
   
