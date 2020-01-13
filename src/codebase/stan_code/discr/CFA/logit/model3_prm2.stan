@@ -59,7 +59,7 @@ model {
 generated quantities{
   corr_matrix[K] Phi_corr = multiply_lower_tri_self_transpose(L_R);
   cov_matrix[K] Phi_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_z, L_R));
-  corr_matrix[K] Omega_corr = multiply_lower_tri_self_transpose(L_R_u);
-  cov_matrix[K] Omega_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_u, L_R_u));
+  corr_matrix[J] Omega_corr = multiply_lower_tri_self_transpose(L_R_u);
+  cov_matrix[J] Omega_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_u, L_R_u));
 }
 
