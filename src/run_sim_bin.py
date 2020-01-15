@@ -154,8 +154,8 @@ if args.existing_directory is None:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
-    print("\n\nSaving compiled model in directory %s"%log_dir)
-    save_obj(sm, 'sm', log_dir)
+    # print("\n\nSaving compiled model in directory %s"%log_dir)
+    # save_obj(sm, 'sm', log_dir)
 
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
@@ -201,8 +201,8 @@ fit_run = sm.sampling(data=stan_data,
     init = 0)
     # init=initf1)
 
-print("\n\nSaving fitted model in directory %s"%log_dir)
-save_obj(fit_run, 'fit', log_dir)
+# print("\n\nSaving fitted model in directory %s"%log_dir)
+# save_obj(fit_run, 'fit', log_dir)
 
 print("\n\nSaving posterior samples in %s"%log_dir)
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
