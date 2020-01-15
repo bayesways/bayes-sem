@@ -17,9 +17,8 @@ parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no app
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
-parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=1)
+parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
-parser.add_argument("-off", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
@@ -61,16 +60,18 @@ if args.existing_directory is None:
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 1 :
-        data = gen_data_binary_1factor(args.nsim_data,
+        data = gen_data_binary(args.nsim_data,
+            off_diag_residual = True,
+            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 1,
+            cross_loadings = True, cross_loadings_level = 0,
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 3 :
         data = gen_data_binary(args.nsim_data,
-            off_diag_residual = True,
+            cross_loadings = True, cross_loadings_level = 1,
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 4 :
@@ -79,9 +80,7 @@ if args.existing_directory is None:
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 5 :
-        data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 0,
-            method = args.data_method,
+        data = gen_data_binary_1factor(args.nsim_data,
             random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data ")
@@ -114,12 +113,12 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 1 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model1.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 3 :

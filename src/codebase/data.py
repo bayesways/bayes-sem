@@ -178,6 +178,10 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     Theta = np.eye(J)
     if off_diag_residual:
+        Theta[0,2] = off_diag_corr
+        Theta[2,0] = off_diag_corr
+        Theta[0,5] = off_diag_corr
+        Theta[5,0] = off_diag_corr
         for i in [1,2,5]:
             for j in [3,4]:
                 Theta[i,j] = off_diag_corr
