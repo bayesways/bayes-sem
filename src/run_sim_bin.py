@@ -84,9 +84,9 @@ if args.existing_directory is None:
             random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data ")
-        print("Choose simulation case 1:Clean data 1 factor")
-        print("Choose simulation case 2:Cross loadings")
-        print("Choose simulation case 3:Off-diag residuals")
+        print("Choose simulation case 1:Off-diag residuals")
+        print("Choose simulation case 2-4:Cross loadings")
+        print("Choose simulation case 5:1 factor")
 
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
@@ -111,7 +111,7 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/%s/t_model1.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 1 :
+    if args.stan_model == 1 :
         #no u's, exact zeros
         with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
             model_code = file.read()
