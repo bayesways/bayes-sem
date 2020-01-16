@@ -48,7 +48,7 @@ def get_all_possible_patterns(n):
     return to_str_pattern(lst)
 
 
-def get_avg_probs(data, ps, m, c=0.4):
+def get_avg_probs(data, ps, m, c=0.2):
     ## compute the pi's for the the m-th posterior sample
     N = data['N']
     L = 100
@@ -96,7 +96,7 @@ def get_avg_probs(data, ps, m, c=0.4):
 #     return bernoulli.rvs(pistr)
 
 
-def get_prob_pred_data(data, ps, m, c=0.4):
+def get_prob_pred_data(data, ps, m, c=0.2):
     N = data['N']
     pistr = np.empty((N, data['J']))
     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
@@ -154,7 +154,7 @@ def get_PPP(data, ps, nsim_N = 1000):
 
     PPP_vals = np.empty((nsim_N, 2))
     for m_ind in tqdm(range(nsim_N)):
-        m = 2*m_ind
+        m = 20*m_ind
         # compute Dy
         piavg =  get_avg_probs(data, ps, m)
         data_ptrn = to_str_pattern(data['D'])
