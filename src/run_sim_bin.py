@@ -18,7 +18,7 @@ parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no app
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
-parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=2000)
+parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
