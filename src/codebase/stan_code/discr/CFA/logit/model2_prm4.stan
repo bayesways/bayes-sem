@@ -7,7 +7,7 @@ data {
 
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
-  real<lower=0> c = 0.2;
+  real<lower=0> c = 0.8;
 }
 
 parameters {
