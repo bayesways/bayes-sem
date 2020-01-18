@@ -14,6 +14,7 @@ parser.add_argument("num_warmup", help="number of warm up iterations", type=int,
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.35)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
@@ -61,6 +62,7 @@ if args.existing_directory is None:
     elif args.sim_case == 1 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
+            off_diag_corr = args.off_corr,
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
@@ -126,20 +128,30 @@ if args.existing_directory is None:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz' ,'uu' , 'Omega_cov', 'Phi_cov', 'yy']
     elif args.stan_model == 4 :
-        #with u's (of identity covariance), exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model4.stan' % model_type, 'r') as file:
+        #with u's of identity covariance and approx zeros
+        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4_2.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 5 :
-        #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'yy']
-    elif args.stan_model == 6 :
-        #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
+        #with u's of identity covariance and approx zeros
+        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4_3.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    # elif args.stan_model == 4 :
+    #     #with u's (of identity covariance), exact zeros
+    #     with open('./codebase/stan_code/discr/CFA/%s/model4.stan' % model_type, 'r') as file:
+    #         model_code = file.read()
+    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    # elif args.stan_model == 5 :
+    #     #no u's, exact zeros
+    #     with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
+    #         model_code = file.read()
+    #     param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'yy']
+    # elif args.stan_model == 6 :
+    #     #no u's, exact zeros
+    #     with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
+    #         model_code = file.read()
+    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     else:
         print("Choose from 1:4}")
 
@@ -170,9 +182,9 @@ else:
     elif args.stan_model == 4 :
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 5 :
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'yy']
-    elif args.stan_model == 6 :
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    # elif args.stan_model == 6 :
+    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     else:
         print("Choose from 1:4}")
 
