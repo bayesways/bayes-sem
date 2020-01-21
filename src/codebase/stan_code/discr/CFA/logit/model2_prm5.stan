@@ -7,7 +7,6 @@ data {
 
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
-  real<lower=0> c = 1;
 }
 
 parameters {
@@ -17,6 +16,8 @@ parameters {
   cholesky_factor_corr[K] L_R;
   matrix[N,K] zz;
   matrix[N,J] uu;
+  real<lower=0> c;
+
 }
 
 transformed parameters{
@@ -39,6 +40,7 @@ model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
+  c ~ normal(0,0.5);
   L_R ~ lkj_corr_cholesky(2);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_R);
   to_vector(uu) ~ normal(0, c);

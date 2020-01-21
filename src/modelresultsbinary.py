@@ -48,9 +48,9 @@ def get_all_possible_patterns(n):
     return to_str_pattern(lst)
 
 
-def get_avg_probs(data, ps, m, c=0.2):
+def get_avg_probs(data, ps, m, c=.4):
     ## compute the pi's for the the m-th posterior sample
-    N = data['N']
+    # N = data['N']
     L = 100
     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
         ps['Phi_cov'][m], size = L)
@@ -58,6 +58,9 @@ def get_avg_probs(data, ps, m, c=0.2):
         if 'Omega_cov' in ps.keys():
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
                 ps['Omega_cov'][m], size = L)
+        elif 'c' in ps.keys():
+            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+                    np.eye(data['J'])*ps['c'][m]**2, size = L)
         else:
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
                 np.eye(data['J'])*c**2, size = L)
@@ -96,21 +99,22 @@ def get_avg_probs(data, ps, m, c=0.2):
 #     return bernoulli.rvs(pistr)
 
 
-def get_prob_pred_data(data, ps, m, c=0.2):
+def get_prob_pred_data(data, ps, m, c=.4):
     N = data['N']
     pistr = np.empty((N, data['J']))
     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
         ps['Phi_cov'][m], size = N)
+    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
     if 'uu' in ps.keys():
         if 'Omega_cov' in ps.keys():
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
                 ps['Omega_cov'][m], size = N)
+        elif 'c' in ps.keys():
+            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+                    np.eye(data['J'])*ps['c'][m]**2, size = N)
         else:
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
                 np.eye(data['J'])*c**2, size = N)
-
-    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
-    if 'uu' in ps.keys():
         ystr = ystr + u_mc
 
     # logit
@@ -150,11 +154,14 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, nsim_N = 1000):
+def get_PPP(data, ps, nsim = 100):
 
-    PPP_vals = np.empty((nsim_N, 2))
-    for m_ind in tqdm(range(nsim_N)):
-        m = 20*m_ind
+    nsim_N = ps['alpha'].shape[0]
+    skip_step = int(nsim_N/nsim)
+
+    PPP_vals = np.empty((nsim, 2))
+    for m_ind in tqdm(range(nsim)):
+        m = skip_step*m_ind
         # compute Dy
         piavg =  get_avg_probs(data, ps, m)
         data_ptrn = to_str_pattern(data['D'])
@@ -163,15 +170,15 @@ def get_PPP(data, ps, nsim_N = 1000):
         Ey = get_Ey(data_ptrn, piavg, data['N'])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
-        # complete any missing patterns with 0's
-        new_patterns = set(all_possible_patterns) - set(data_ptrn)
-        if new_patterns == set():
-            pass
-    #         print('no new patterns')
-        else:
-            for ptrn in new_patterns:
-                Oy[ptrn] = 0.
-                Dy[ptrn] = 0.
+    #     # complete any missing patterns with 0's
+    #     new_patterns = set(all_possible_patterns) - set(data_ptrn)
+    #     if new_patterns == set():
+    #         pass
+    # #         print('no new patterns')
+    #     else:
+    #         for ptrn in new_patterns:
+    #             Oy[ptrn] = 0.
+    #             Dy[ptrn] = 0.
 
         # compute Dy
         ppdata = get_prob_pred_data(data, ps, m)
@@ -181,16 +188,16 @@ def get_PPP(data, ps, nsim_N = 1000):
         Eystr = get_Ey(ppddata_ptrn, piavg, data['N'])
         Dystr = get_Dy(Oystr, Eystr, ppddata_ptrn)
 
-        # complete any missing patterns with 0's
-        new_patterns = set(all_possible_patterns) - set(ppddata_ptrn)
-        if new_patterns == set():
-            pass
-    #         print('no new patterns')
-
-        else:
-            for ptrn in new_patterns:
-                Oystr[ptrn] = 0.
-                Dystr[ptrn] = 0.
+    #     # complete any missing patterns with 0's
+    #     new_patterns = set(all_possible_patterns) - set(ppddata_ptrn)
+    #     if new_patterns == set():
+    #         pass
+    # #         print('no new patterns')
+    #
+    #     else:
+    #         for ptrn in new_patterns:
+    #             Oystr[ptrn] = 0.
+    #             Dystr[ptrn] = 0.
 
         PPP_vals[m_ind,0] = sum(Dy.values())
         PPP_vals[m_ind,1] = sum(Dystr.values())
