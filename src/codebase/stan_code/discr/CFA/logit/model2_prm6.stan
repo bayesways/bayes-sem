@@ -44,7 +44,7 @@ model {
   to_vector(mu_u) ~ normal(0,c);
   L_R ~ lkj_corr_cholesky(2);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_R);
-  to_vector(uu) ~ multi_normal(mu_u, square(c) * I_J) ;
+  for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(mu_u, square(c) * I_J) ;
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
 
