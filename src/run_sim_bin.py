@@ -138,6 +138,11 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/%s/model2_prm6.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
+    elif args.stan_model == 6 :
+        #with u's of identity covariance times parameter c and approx zeros
+        with open('./codebase/stan_code/discr/CFA/%s/model2_prm7.stan' % model_type, 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
     # elif args.stan_model == 4 :
     #     #with u's (of identity covariance), exact zeros
     #     with open('./codebase/stan_code/discr/CFA/%s/model4.stan' % model_type, 'r') as file:
@@ -184,8 +189,8 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 5 :
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
-    # elif args.stan_model == 6 :
-    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+    elif args.stan_model == 6 :
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
     else:
         print("Choose from 1:4}")
 
