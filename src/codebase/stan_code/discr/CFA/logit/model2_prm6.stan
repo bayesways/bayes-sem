@@ -7,7 +7,7 @@ data {
 
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
-  cov_matrix[K] I_J = diag_matrix(rep_vector(1, J));
+  cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   real<lower=0> c = 0.1;
 }
 
@@ -41,7 +41,7 @@ model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
-  to_vector(mu_u) ~ normal(0,c);
+  to_vector(mu_u)  ~ normal(0,c);
   L_R ~ lkj_corr_cholesky(2);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_R);
   for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(mu_u, square(c) * I_J) ;
