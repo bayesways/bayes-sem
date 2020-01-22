@@ -48,36 +48,78 @@ def get_all_possible_patterns(n):
     return to_str_pattern(lst)
 
 
-def get_avg_probs(data, ps, m, c=.4):
+### OLD form
+# def get_avg_probs(data, ps, m, c=.4):
+#     ## compute the pi's for the the m-th posterior sample
+#     # N = data['N']
+#     L = 100
+#     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
+#         ps['Phi_cov'][m], size = L)
+#     if 'uu' in ps.keys():
+#         if 'Omega_cov' in ps.keys():
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                 ps['Omega_cov'][m], size = L)
+#         elif 'c' in ps.keys():
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                     np.eye(data['J'])*ps['c'][m]**2, size = L)
+#         else:
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                 np.eye(data['J'])*c**2, size = L)
+#
+#     ystr = np.empty((L, data['J']))
+#     for l in range(L):
+#         ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+#         if 'uu' in ps.keys():
+#             ystr[l] = ystr[l] + u_mc[l]
+#     # logit
+#     pistr = expit(ystr)
+#
+#     # probit
+#     # pistr = norm.cdf(ystr)
+#
+#     piavg = np.mean(pistr,0)
+#     return piavg
+
+
+
+def get_probs(data, ps, m, c=.4):
     ## compute the pi's for the the m-th posterior sample
-    # N = data['N']
-    L = 100
+    N = 1
     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-        ps['Phi_cov'][m], size = L)
+        ps['Phi_cov'][m], size = N)
     if 'uu' in ps.keys():
         if 'Omega_cov' in ps.keys():
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                ps['Omega_cov'][m], size = L)
+                ps['Omega_cov'][m], size = N)
         elif 'c' in ps.keys():
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                    np.eye(data['J'])*ps['c'][m]**2, size = L)
+                    np.eye(data['J'])*ps['c'][m]**2, size = N)
         else:
             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                np.eye(data['J'])*c**2, size = L)
+                np.eye(data['J'])*c**2, size = N)
 
-    ystr = np.empty((L, data['J']))
-    for l in range(L):
-        ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
-        if 'uu' in ps.keys():
-            ystr[l] = ystr[l] + u_mc[l]
+    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
+    if 'uu' in ps.keys():
+        ystr = ystr + u_mc
+
     # logit
     pistr = expit(ystr)
 
     # probit
     # pistr = norm.cdf(ystr)
 
+    return pistr
+
+
+def get_avg_probs(data, ps, m, c=.4):
+    L = 100
+    pistr = np.empty((L, data['N'], data['J']))
+    for l in range(L):
+        pistr[l] = get_probs(data, ps, m, c)
+
     piavg = np.mean(pistr,0)
     return piavg
+
 
 
 # def get_prob_pred_data(data, ps, m, c=0.2):
@@ -99,31 +141,42 @@ def get_avg_probs(data, ps, m, c=.4):
 #     return bernoulli.rvs(pistr)
 
 
-def get_prob_pred_data(data, ps, m, c=.4):
-    N = data['N']
-    pistr = np.empty((N, data['J']))
-    z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-        ps['Phi_cov'][m], size = N)
-    ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
-    if 'uu' in ps.keys():
-        if 'Omega_cov' in ps.keys():
-            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                ps['Omega_cov'][m], size = N)
-        elif 'c' in ps.keys():
-            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                    np.eye(data['J'])*ps['c'][m]**2, size = N)
-        else:
-            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                np.eye(data['J'])*c**2, size = N)
-        ystr = ystr + u_mc
 
-    # logit
-    pistr = expit(ystr)
+## OLD form
+# def get_prob_pred_data(data, ps, m, c=.4):
+#     N = data['N']
+#     pistr = np.empty((N, data['J']))
+#     z_mc = multivariate_normal.rvs(np.zeros(data['K']),
+#         ps['Phi_cov'][m], size = N)
+#     ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
+#     if 'uu' in ps.keys():
+#         if 'Omega_cov' in ps.keys():
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                 ps['Omega_cov'][m], size = N)
+#         elif 'c' in ps.keys():
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                     np.eye(data['J'])*ps['c'][m]**2, size = N)
+#         else:
+#             u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+#                 np.eye(data['J'])*c**2, size = N)
+#         ystr = ystr + u_mc
+#
+#     # logit
+#     pistr = expit(ystr)
+#
+#     # probit
+#     # pistr = norm.cdf(ystr)
+#
+#     return bernoulli.rvs(pistr)
 
-    # probit
-    # pistr = norm.cdf(ystr)
 
-    return bernoulli.rvs(pistr)
+def get_prob_pred_data(data, ps, m, c=.4, L=100):
+    pistr = np.empty((L, data['N'], data['J']))
+    for l in range(L):
+        pistr[l] = get_probs(data, ps, m, c)
+
+    piavg = np.mean(pistr,0)
+    return bernoulli.rvs(piavg)
 
 
 def get_Ey(data_ptrn, piavg, N):
@@ -181,7 +234,7 @@ def get_PPP(data, ps, nsim = 100):
     #             Dy[ptrn] = 0.
 
         # compute Dy
-        ppdata = get_prob_pred_data(data, ps, m)
+        ppdata = get_prob_pred_data(data, ps, m, L=1)
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
