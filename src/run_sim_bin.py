@@ -14,11 +14,9 @@ parser.add_argument("num_warmup", help="number of warm up iterations", type=int,
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
-parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
-parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
@@ -31,9 +29,8 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') # ISO 8601 format
-    log_dir =  "./log/"+nowstr+"%s_sim%s_c%s_m%s/"%(args.task_handle,
+    log_dir =  "./log/"+nowstr+"%s_sim%s_m%s/"%(args.task_handle,
         args.sim_case,
-        args.off_corr,
         args.stan_model)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -43,12 +40,7 @@ else:
         print("\n\nAppending `/`-character at the end of directory")
         log_dir = log_dir+ "/"
 
-if args.data_method == 1 or args.data_method == 3:
-    model_type = 'logit'
-elif args.data_method == 2 or args.data_method == 4:
-    model_type = 'probit'
-else:
-    print("data method must be in [1,2,3,4]")
+model_type = 'logit'
 
 
 ############################################################
@@ -58,28 +50,23 @@ if args.existing_directory is None:
     print("\n\nGenerating Continuous data for case %s"%args.sim_case)
     if args.sim_case == 0 :
         data = gen_data_binary(args.nsim_data,
-            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 1 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
             off_diag_corr = args.off_corr,
-            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 0,
-            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 3 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 1,
-            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 4 :
         data = gen_data_binary(args.nsim_data,
             cross_loadings = True, cross_loadings_level = 2,
-            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 5 :
         data = gen_data_binary_1factor(args.nsim_data,
