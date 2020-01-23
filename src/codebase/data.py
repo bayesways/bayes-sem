@@ -129,7 +129,7 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.32,
-             cross_loadings = False, cross_loadings_level = 1, L = 100,
+             cross_loadings = False, cross_loadings_level = 1, L = 1,
              method = 1, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
@@ -201,6 +201,7 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['D'] = DD
     data['off_diag_residual'] = off_diag_residual
     data['cross_loadings'] = cross_loadings
+    data['L'] = L
 
     return(data)
 
