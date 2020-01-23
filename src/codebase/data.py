@@ -129,11 +129,12 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.32,
-             cross_loadings = False, cross_loadings_level = 1, L = 100,
+             cross_loadings = False, cross_loadings_level = 1,
              method = 1, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
+    alpha = np.zeros(J)
     if cross_loadings:
         if cross_loadings_level == 0:
             beta = np.array([[1,0.2],
@@ -175,16 +176,44 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     Phi_corr[1,0] = rho
     Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
 
-    ystr = np.empty((L, nsim_data, J))
-    for l in range(L):
-        z_mc = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
-        ystr[l] = alpha + z_mc @ beta.T
+    Theta = np.eye(J)
+    if off_diag_residual:
+        # Theta[0,2] = off_diag_corr
+        # Theta[2,0] = off_diag_corr
+        # Theta[0,5] = off_diag_corr
+        # Theta[5,0] = off_diag_corr
+        for i in [1,2,5]:
+            for j in [3,4]:
+                Theta[i,j] = off_diag_corr
+                Theta[j,i] = off_diag_corr
 
-    pistr = expit(ystr)
-    piavg = np.mean(pistr, 0)
+    zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
+    yy = alpha + zz @ beta.T
 
-    DD = bernoulli.rvs(p=piavg)
+    if method == 1: # logit method
+        ee = None
+        DD = bernoulli.rvs(p=expit(yy))
+    elif method == 2: # probit method
+        ee = None
+        DD = bernoulli.rvs(p=norm.cdf(yy))
+    elif method == 3: # logit2 method
+        ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+        ee = logit(norm.cdf(ee_seed))
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    elif method == 4: # probit2 method
+        ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    else:
+        print("method must be in [1,2,3,4]")
 
+    if method == 1 or method == 3:
+        model_type = 'logit'
+    elif method == 2 or method == 4:
+        model_type = 'probit'
+    else:
+        print("data method must be in [1,2,3,4]")
 
     data = dict()
     data['random_seed'] = random_seed
@@ -193,15 +222,17 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['J'] = J
     data['alpha'] = alpha
     data['beta'] = beta
+    data['Theta'] = Theta
+    data['e'] = ee
     data['sigma_z'] = sigma_z
     data['Phi_corr'] = Phi_corr
     data['Phi_cov'] = Phi_cov
-    data['y'] = ystr
-    data['piavg'] = piavg
+    data['y'] = yy
     data['D'] = DD
     data['off_diag_residual'] = off_diag_residual
     data['cross_loadings'] = cross_loadings
-    data['L'] = L
+    data['method'] = method
+    data['model_type'] = model_type
 
     return(data)
 
