@@ -55,7 +55,6 @@ if args.existing_directory is None:
     elif args.sim_case == 1 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
-            off_diag_corr = args.off_corr,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
