@@ -13,7 +13,6 @@ transformed data{
 parameters {
   vector[J] alpha;
   matrix[2,K] beta_free; // 2 free eleements per factor
-  matrix[J-3,K] beta_zeros; // 3 zero elements per factor
 }
 
 transformed parameters{
@@ -27,16 +26,12 @@ transformed parameters{
   for (k in 1:K) beta[1+3*(k-1), k] = 1;
   // set the free elements
   for (k in 1:K) beta[2+3*(k-1) : 3+3*(k-1), k] = beta_free[1:2,k];
-  // set the zero elements
-  beta[4:J, 1] = beta_zeros[1:(J-3), 1];
-  beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
-
+  
   for (n in 1:N) yy[n,] = to_row_vector(alpha) + zz[n,] * beta';
 }
 
 model {
   to_vector(beta_free) ~ normal(0, 1);
-  to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
