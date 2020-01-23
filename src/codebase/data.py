@@ -170,11 +170,13 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     alpha = np.zeros(J)
 
-    sigma_z = np.repeat(1, K)
+    # sigma_z = np.repeat(1, K)
     Phi_corr = np.eye(K)
-    Phi_corr[0,1] = rho
-    Phi_corr[1,0] = rho
-    Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
+    # Phi_corr[0,1] = rho
+    # Phi_corr[1,0] = rho
+    # Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
+    Phi_cov = np.eye(K)
+
 
     Theta = np.eye(J)
     if off_diag_residual:
@@ -224,10 +226,9 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['beta'] = beta
     data['Theta'] = Theta
     data['e'] = ee
-    data['sigma_z'] = sigma_z
-    data['Phi_corr'] = Phi_corr
     data['Phi_cov'] = Phi_cov
     data['y'] = yy
+    data['z'] = zz
     data['D'] = DD
     data['off_diag_residual'] = off_diag_residual
     data['cross_loadings'] = cross_loadings
