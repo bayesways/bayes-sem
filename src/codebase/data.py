@@ -129,7 +129,7 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
              off_diag_residual = False, off_diag_corr = 0.32,
-             cross_loadings = False, cross_loadings_level = 1, L = 100,
+             cross_loadings = False, cross_loadings_level = 1, L = 1000,
              method = 1, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
@@ -171,9 +171,10 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
     sigma_z = np.repeat(1, K)
     Phi_corr = np.eye(K)
-    Phi_corr[0,1] = rho
-    Phi_corr[1,0] = rho
-    Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
+    # Phi_corr[0,1] = rho
+    # Phi_corr[1,0] = rho
+    # Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
+    Phi_cov = Phi_corr
 
     ystr = np.empty((L, nsim_data, J))
     for l in range(L):

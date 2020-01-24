@@ -102,14 +102,14 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     if args.stan_model == 1 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/s_model1.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/s_model2.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #w u's (full covariance), approx zeros
         with open('./codebase/stan_code/discr/CFA/%s/model3_prm4.stan' % model_type, 'r') as file:
