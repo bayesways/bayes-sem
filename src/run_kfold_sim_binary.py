@@ -19,6 +19,7 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
+parser.add_argument("paramc", help="parameter c for modeling us", type=float, default=0.2)
 # Optional arguments
 parser.add_argument("-nfl", "--n_splits", help="number of folds", type=int, default=3)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
@@ -38,7 +39,7 @@ if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') # ISO 8601 format
     log_dir =  "./log/"+nowstr+"%s_sim%s_c%s_m%s/"%(args.task_handle,
         args.sim_case,
-        args.c,
+        args.paramc,
         args.stan_model)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -111,12 +112,12 @@ if args.existing_directory is None:
                                           K = data['K'],
                                           J = data['J'],
                                           DD = data_fold['D_train'],
-                                          c = args.off_corr )
+                                          c = args.paramc )
         test_data_fold = dict(N = data_fold['N_test'],
                                           K = data['K'],
                                           J = data['J'],
                                           DD = data_fold['D_test'],
-                                          c = args.off_corr)
+                                          c = args.paramc)
         complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
 
         fold_index += 1

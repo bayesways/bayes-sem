@@ -14,9 +14,12 @@ parser.add_argument("num_warmup", help="number of warm up iterations", type=int,
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
+parser.add_argument("paramc", help="parameter c for modeling us", type=float, default=0.2)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
+parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
@@ -40,8 +43,12 @@ else:
         print("\n\nAppending `/`-character at the end of directory")
         log_dir = log_dir+ "/"
 
-model_type = 'logit'
-
+if args.data_method == 1 or args.data_method == 3:
+    model_type = 'logit'
+elif args.data_method == 2 or args.data_method == 4:
+    model_type = 'probit'
+else:
+    print("data method must be in [1,2,3,4]")
 
 ############################################################
 ################ Create Data or Load ##########
@@ -55,6 +62,7 @@ if args.existing_directory is None:
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
             off_diag_corr = args.off_corr,
+            method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
@@ -80,7 +88,7 @@ if args.existing_directory is None:
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
     stan_data = dict(N = data['N'], K = 2, J = data['J'],
-        DD = data['D'])
+        DD = data['D'],c = args.paramc)
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)
     save_obj(data, 'data', log_dir)
@@ -102,14 +110,14 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     if args.stan_model == 1 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/s_model1.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/s_model2.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model2_0.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #w u's (full covariance), approx zeros
         with open('./codebase/stan_code/discr/CFA/%s/model3_prm4.stan' % model_type, 'r') as file:
