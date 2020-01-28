@@ -19,7 +19,6 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
-
 # Optional arguments
 parser.add_argument("-nfl", "--n_splits", help="number of folds", type=int, default=3)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
@@ -37,9 +36,9 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') # ISO 8601 format
-    log_dir =  "./log/"+nowstr+"%s_sim%s_d%s_m%s/"%(args.task_handle,
+    log_dir =  "./log/"+nowstr+"%s_sim%s_c%s_m%s/"%(args.task_handle,
         args.sim_case,
-        args.data_method,
+        args.c,
         args.stan_model)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -111,11 +110,13 @@ if args.existing_directory is None:
         stan_data[fold_index] = dict(N = data_fold['N_train'],
                                           K = data['K'],
                                           J = data['J'],
-                                          DD = data_fold['D_train'])
+                                          DD = data_fold['D_train'],
+                                          c = args.off_corr )
         test_data_fold = dict(N = data_fold['N_test'],
                                           K = data['K'],
                                           J = data['J'],
-                                          DD = data_fold['D_test'])
+                                          DD = data_fold['D_test'],
+                                          c = args.off_corr)
         complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
 
         fold_index += 1
@@ -147,7 +148,7 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model2_0.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     elif args.stan_model == 3 :

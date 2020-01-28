@@ -3,6 +3,7 @@ data {
   int<lower=1> K;
   int<lower=1> J;
   int<lower=0, upper=1> DD[N, J];
+  real<lower=0> c;
 }
 
 transformed data{
@@ -10,7 +11,6 @@ transformed data{
   vector[J] zeros_J = rep_vector(0, J);
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
   cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
-  real<lower=0> c = 0.2;
 }
 
 parameters {
