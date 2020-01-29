@@ -3,7 +3,6 @@ data {
   int<lower=1> K;
   int<lower=1> J;
   int<lower=0, upper=1> DD[N, J];
-  real<lower=0> c;
 }
 
 transformed data{
@@ -19,6 +18,7 @@ parameters {
   cholesky_factor_corr[J] L_Omega;
   matrix[N,K] zz;
   matrix[N,J] uu_tilde;
+  real<lower=0> c;
 }
 
 transformed parameters{
