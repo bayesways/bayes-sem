@@ -119,7 +119,7 @@ if args.existing_directory is None:
         #with u's of identity covariance and approx zeros
         with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'c', 'uu' , 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #w u's (full covariance), approx zeros
         with open('./codebase/stan_code/discr/CFA/%s/model3_prm4.stan' % model_type, 'r') as file:
