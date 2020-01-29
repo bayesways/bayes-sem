@@ -15,10 +15,10 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
-parser.add_argument("paramc", help="parameter c for modeling us", type=float, default=0.2)
+# parser.add_argument("paramc", help="parameter c for modeling us", type=float, default=0.2)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
-parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=None)
+parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
@@ -88,7 +88,9 @@ if args.existing_directory is None:
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
     stan_data = dict(N = data['N'], K = 2, J = data['J'],
-        DD = data['D'],c = args.paramc)
+        DD = data['D']
+        # ,c = args.paramc
+        )
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)
     save_obj(data, 'data', log_dir)
@@ -115,9 +117,9 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 2 :
         #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_0.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'uu' , 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'c', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #w u's (full covariance), approx zeros
         with open('./codebase/stan_code/discr/CFA/%s/model3_prm4.stan' % model_type, 'r') as file:
