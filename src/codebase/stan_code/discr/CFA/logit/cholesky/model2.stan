@@ -8,6 +8,7 @@ data {
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
   vector[J] zeros_J = rep_vector(0, J);
+  real<lower=0> c=0.2;
 }
 
 parameters {
@@ -15,7 +16,6 @@ parameters {
   matrix[3,K] beta_free; // 3 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cholesky_factor_corr[K] L_Phi;
-  real<lower=0> c;
   cholesky_factor_corr[J] L_Omega;
   matrix[N,K] zz;
   matrix[N,J] uu_tilde;
@@ -47,7 +47,7 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   L_Phi ~ lkj_corr_cholesky(2);
   to_vector(uu_tilde) ~ normal(0, 1);
-  c ~ cauchy(0,2.5);
+  // c ~ cauchy(0,2.5);
   L_Omega ~ lkj_corr_cholesky(10);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_Phi);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
