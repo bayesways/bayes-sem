@@ -13,7 +13,7 @@ transformed data{
 parameters {
   vector[J] alpha;
   matrix[3,K] beta_free; // 3 free eleements per factor
-  cholesky_factor_corr[K] L_R;
+  cholesky_factor_corr[K] L_Phi;
   matrix[N,K] zz;
 }
 
@@ -33,12 +33,12 @@ transformed parameters{
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);
-  L_R ~ lkj_corr_cholesky(2);
-  for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_R);
+  L_Phi ~ lkj_corr_cholesky(2);
+  for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_Phi);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
   
 }
 
 generated quantities{
-  corr_matrix[K] Phi_cov = multiply_lower_tri_self_transpose(L_R);
+  corr_matrix[K] Phi_cov = multiply_lower_tri_self_transpose(L_Phi);
 }

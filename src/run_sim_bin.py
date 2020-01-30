@@ -15,7 +15,6 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
-# parser.add_argument("paramc", help="parameter c for modeling us", type=float, default=0.2)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
@@ -57,7 +56,8 @@ if args.existing_directory is None:
     print("\n\nGenerating Continuous data for case %s"%args.sim_case)
     if args.sim_case == 0 :
         data = gen_data_binary(args.nsim_data,
-            random_seed = args.random_seed)
+            random_seed = args.random_seed,
+            method = args.data_method)
     elif args.sim_case == 1 :
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
@@ -88,9 +88,7 @@ if args.existing_directory is None:
     print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
     stan_data = dict(N = data['N'], K = 2, J = data['J'],
-        DD = data['D']
-        # ,c = args.paramc
-        )
+        DD = data['D'])
     print("\n\nSaving data to directory %s"% log_dir)
     save_obj(stan_data, 'stan_data', log_dir)
     save_obj(data, 'data', log_dir)
@@ -107,61 +105,21 @@ if args.existing_directory is None:
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
         #no u's, exact zeros
-        with open('./codebase/stan_code/discr/CFA/%s/t_model1.stan' % model_type, 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    if args.stan_model == 1 :
-        #no u's, exact zeros
         with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 2 :
-        #with u's of identity covariance and approx zeros
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+    elif args.stan_model == 1 :
+        #with u's of fixed var
         with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
-    elif args.stan_model == 3 :
-        #with u's of identity covariance and approx zeros
+    elif args.stan_model == 2 :
+        #with u's (full)
         with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2_c.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
-    # elif args.stan_model == 3 :
-    #     #w u's (full covariance), approx zeros
-    #     with open('./codebase/stan_code/discr/CFA/%s/model3_prm4.stan' % model_type, 'r') as file:
-    #         model_code = file.read()
-    #     param_names = ['beta', 'alpha', 'zz' ,'uu' , 'Omega_cov', 'Phi_cov', 'yy']
-    elif args.stan_model == 4 :
-        #with u's of identity covariance and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm4_2.stan' % model_type, 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
-    elif args.stan_model == 5 :
-        #with u's of identity covariance times parameter c and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm6.stan' % model_type, 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
-    elif args.stan_model == 6 :
-        #with u's of identity covariance times parameter c and approx zeros
-        with open('./codebase/stan_code/discr/CFA/%s/model2_prm7.stan' % model_type, 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
-    # elif args.stan_model == 4 :
-    #     #with u's (of identity covariance), exact zeros
-    #     with open('./codebase/stan_code/discr/CFA/%s/model4.stan' % model_type, 'r') as file:
-    #         model_code = file.read()
-    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
-    # elif args.stan_model == 5 :
-    #     #no u's, exact zeros
-    #     with open('./codebase/stan_code/discr/CFA/%s/model1_prm4.stan' % model_type, 'r') as file:
-    #         model_code = file.read()
-    #     param_names = ['beta', 'alpha', 'zz', 'Phi_cov',  'yy']
-    # elif args.stan_model == 6 :
-    #     #no u's, exact zeros
-    #     with open('./codebase/stan_code/discr/CFA/%s/model2_prm4.stan' % model_type, 'r') as file:
-    #         model_code = file.read()
-    #     param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
     else:
-        print("Choose from 1:4}")
+        print("Choose from 0:2}")
 
 
     if bool(args.print_model):
@@ -173,26 +131,15 @@ if args.existing_directory is None:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
-    # print("\n\nSaving compiled model in directory %s"%log_dir)
-    # save_obj(sm, 'sm', log_dir)
-
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
     if args.stan_model == 0 :
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 1 :
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
     elif args.stan_model == 2 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
-    elif args.stan_model == 3 :
-        param_names = ['beta', 'alpha', 'zz' , 'uu', 'Omega_cov', 'Phi_cov', 'yy']
-    elif args.stan_model == 4 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'Phi_cov', 'yy']
-    elif args.stan_model == 5 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
-    elif args.stan_model == 6 :
-        param_names = ['beta', 'alpha', 'zz', 'uu' , 'mu_u', 'Phi_cov', 'yy']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
     else:
         print("Choose from 1:4}")
 
@@ -200,28 +147,12 @@ else:
 ################ Fit Model ##########
 print("\n\nFitting model.... \n\n")
 
-# init_values = dict()
-#
-# def set_initial_values(params):
-#     global init_values    # Needed to modify global copy of globvar
-#     init_values = params
-#
-# set_initial_values(dict(
-#     beta_pos = np.ones(stan_data['K']),
-#     beta_free = np.ones((stan_data['K'],stan_data['K']))
-#     ))
-#
-# def initf1():
-#     return init_values
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
     warmup=args.num_warmup, chains=args.num_chains,
-    init = 0)
-    # init=initf1)
-
-# print("\n\nSaving fitted model in directory %s"%log_dir)
-# save_obj(fit_run, 'fit', log_dir)
+    init = 0,
+    control = {'max_treedepth':15, 'adapt_delta':0.99})
 
 print("\n\nSaving posterior samples in %s"%log_dir)
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays

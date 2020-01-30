@@ -411,10 +411,19 @@ $ source activate bayes-sem</code></pre>
 <h3>On Fabian</h3>
 <p>We installed pystan version 2.19 which should run the same scripts as local correctly.</p>
 <ol style="list-style-type: decimal">
-<li><p>Activate <code>apps/anaconda3</code> and use env <code>pystan-dev</code></p>
-<pre><code>module add apps/anaconda3
+<li>Remove <code>apps/anaconda3/5.0.0</code><br />
+</li>
+<li>Activate <code>apps/anaconda3/4.4.0</code></li>
+<li><p>Activate env <code>pystan-dev</code></p>
+<pre><code>module del apps/anaconda3/5.0.0
+module add apps/anaconda3/5.0.0
 source activate pystan-dev</code></pre></li>
 </ol>
+</div>
+<div id="on-local-system" class="section level3">
+<h3>On local system</h3>
+<p>To save storage space you can remove old pickled files with</p>
+<pre><code>find . type f -name '*.p' -delete</code></pre>
 </div>
 </div>
 <div id="results" class="section level2">
@@ -437,7 +446,7 @@ source activate pystan-dev</code></pre></li>
 <li><del>Run 1 factor model for the processed data of Irini (running)</del></li>
 <li><del>Undersand why adding approximate zeros to <code>beta</code> in Binary model fails. (Try 8 variables and 2 factors)</del></li>
 <li>Create PPP for 1 factor models</li>
-<li>Fix hard code issue of 100 n_sim PPP calculation</li>
+<li><del>Fix hard code issue of 100 n_sim PPP calculation</del></li>
 </ul>
 </div>
 </div>

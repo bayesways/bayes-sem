@@ -103,12 +103,23 @@ script. It works as follows
 
 We installed pystan version 2.19 which should run the same scripts as local correctly.
 
-1. Activate `apps/anaconda3` and use env `pystan-dev`
+1. Remove `apps/anaconda3/5.0.0`   
+2. Activate `apps/anaconda3/4.4.0` 
+3. Activate env `pystan-dev`    
+
 
     ```
-    module add apps/anaconda3
+    module del apps/anaconda3/5.0.0
+    module add apps/anaconda3/5.0.0
     source activate pystan-dev
     ```
+
+### On local system  
+
+To save storage space you can remove old pickled files with 
+
+    find . type f -name '*.p' -delete
+
 
 ## Results:
 
@@ -134,4 +145,4 @@ on the server, collect the results and visualize them locally with
 * ~~Run 1 factor model for the processed data of Irini (running)~~
 * ~~Undersand why adding approximate zeros to `beta` in Binary model fails. (Try 8 variables and 2 factors)~~
 * Create PPP for 1 factor models
-* Fix hard code issue of 100 n_sim PPP calculation
+* ~~Fix hard code issue of 100 n_sim PPP calculation~~
