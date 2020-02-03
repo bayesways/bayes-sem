@@ -14,11 +14,12 @@ parser.add_argument("num_warmup", help="number of warm up iterations", type=int,
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
-parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=0.25)
+parser.add_argument("off_corr", help="off_diag_corr for sim1", type=float, default=1)
+parser.add_argument("param_t", help="param_t for Omega", type=float, default=.2)
 # Optional arguments
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
-parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=3)
+parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=5)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
@@ -62,6 +63,7 @@ if args.existing_directory is None:
         data = gen_data_binary(args.nsim_data,
             off_diag_residual = True,
             off_diag_corr = args.off_corr,
+            param_t = args.param_t,
             method = args.data_method,
             random_seed = args.random_seed)
     elif args.sim_case == 2 :

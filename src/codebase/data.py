@@ -129,9 +129,10 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
-             off_diag_residual = False, off_diag_corr = 0.2,
+             off_diag_residual = False, off_diag_corr = 1,
+             param_t = 0.2,
              cross_loadings = False, cross_loadings_level = 1,
-             method = 3, random_seed=None):
+             method = 5, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
@@ -176,22 +177,32 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     Phi_corr[1,0] = rho
     # Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
     Phi_cov = Phi_corr
+    #
+    # Theta = np.eye(J)
+    # if off_diag_residual:
+    #     for i in [1,2,5]:
+    #         for j in [3,4]:
+    #             Theta[i,j] = off_diag_corr
+    #             Theta[j,i] = off_diag_corr
+    ee = None
 
-    Theta = np.eye(J)
+    Omega_corr = np.eye(J)
+    sigma_u = np.ones(J) * param_t**0.5
     if off_diag_residual:
         for i in [1,2,5]:
             for j in [3,4]:
-                Theta[i,j] = off_diag_corr
-                Theta[j,i] = off_diag_corr
+                Omega_corr[i,j] = off_diag_corr
+                Omega_corr[j,i] = off_diag_corr
+    Omega_cov = np.diag(sigma_u) @ Omega_corr @  np.diag(sigma_u)
+    uu = None
 
     zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov, size=nsim_data)
-    yy = alpha + zz @ beta.T
 
     if method == 1: # logit method
-        ee = None
+        yy = alpha + zz @ beta.T
         DD = bernoulli.rvs(p=expit(yy))
     elif method == 2: # probit method
-        ee = None
+        yy = alpha + zz @ beta.T
         DD = bernoulli.rvs(p=norm.cdf(yy))
     elif method == 3: # logit2 method
         ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
@@ -202,15 +213,19 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
         ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta, size=nsim_data)
         yy = alpha + zz @ beta.T + ee
         DD = (yy>0).astype(int)
+    elif method == 5: # logit method
+        uu = multivariate_normal.rvs(mean = np.zeros(J), cov=Omega_cov, size=nsim_data)
+        yy = alpha + zz @ beta.T + uu
+        DD = bernoulli.rvs(p=expit(yy))
     else:
         print("method must be in [1,2,3,4]")
 
-    if method == 1 or method == 3:
+    if method == 1 or method == 3 or method == 5:
         model_type = 'logit'
     elif method == 2 or method == 4:
         model_type = 'probit'
     else:
-        print("data method must be in [1,2,3,4]")
+        print("data method must be in [1,2,3,4,5]")
 
     data = dict()
     data['random_seed'] = random_seed
@@ -219,8 +234,11 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     data['J'] = J
     data['alpha'] = alpha
     data['beta'] = beta
-    data['Theta'] = Theta
+    data['Omega_cov'] = Omega_cov
+    data['Omega_corr'] = Omega_corr
     data['e'] = ee
+    data['u'] = uu
+    data['sigma_u'] = sigma_u
     data['sigma_z'] = sigma_z
     data['Phi_corr'] = Phi_corr
     data['Phi_cov'] = Phi_cov
