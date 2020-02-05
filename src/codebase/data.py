@@ -178,12 +178,12 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
     # Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
     Phi_cov = Phi_corr
     #
-    # Theta = np.eye(J)
-    # if off_diag_residual:
-    #     for i in [1,2,5]:
-    #         for j in [3,4]:
-    #             Theta[i,j] = off_diag_corr
-    #             Theta[j,i] = off_diag_corr
+    Theta = np.eye(J)
+    if off_diag_residual:
+        for i in [1,2,5]:
+            for j in [3,4]:
+                Theta[i,j] = off_diag_corr
+                Theta[j,i] = off_diag_corr
     ee = None
 
     Omega_corr = np.eye(J)
