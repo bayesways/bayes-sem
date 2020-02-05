@@ -47,8 +47,8 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   L_Phi ~ lkj_corr_cholesky(2);
   to_vector(uu_tilde) ~ normal(0, 1);
-  c ~ normal(0,.2);
-  L_Omega ~ lkj_corr_cholesky(10);
+  c ~ normal(0,.5);
+  L_Omega ~ lkj_corr_cholesky(5);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_Phi);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }

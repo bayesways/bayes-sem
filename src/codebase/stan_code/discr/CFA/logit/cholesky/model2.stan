@@ -8,7 +8,7 @@ data {
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
   vector[J] zeros_J = rep_vector(0, J);
-  real<lower=0> c=0.2;
+  real<lower=0> c=.5;
 }
 
 parameters {
@@ -47,7 +47,7 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   L_Phi ~ lkj_corr_cholesky(2);
   to_vector(uu_tilde) ~ normal(0, 1);
-  L_Omega ~ lkj_corr_cholesky(10);
+  L_Omega ~ lkj_corr_cholesky(5);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_Phi);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
