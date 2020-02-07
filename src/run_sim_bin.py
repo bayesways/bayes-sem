@@ -15,8 +15,8 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-parser.add_argument("-offcor","--off_corr", help="off_diag_corr for sim1", type=float, default=1)
-parser.add_argument("-prm_t","--param_t", help="param_t for Omega", type=float, default=.2)
+parser.add_argument("-offcor","--off_corr", help="off_diag_corr for sim1", type=float, default=.2)
+parser.add_argument("-prm_t","--param_t", help="param_t for Omega", type=float, default=1)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=5)
@@ -58,29 +58,37 @@ if args.existing_directory is None:
     if args.sim_case == 0 :
         data = gen_data_binary(args.nsim_data,
             random_seed = args.random_seed,
-            method = args.data_method)
+            off_diag_residual = False,
+            cross_loadings = False,
+            method = 3)
     elif args.sim_case == 1 :
         data = gen_data_binary(args.nsim_data,
+            random_seed = args.random_seed,
+            off_diag_residual = True,
+            off_diag_corr = args.off_corr,
+            method = 3)
+    elif args.sim_case == 2 :
+        data = gen_data_binary(args.nsim_data,
+            random_seed = args.random_seed,
             off_diag_residual = True,
             off_diag_corr = args.off_corr,
             param_t = args.param_t,
-            method = args.data_method,
-            random_seed = args.random_seed)
-    elif args.sim_case == 2 :
-        data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 0,
-            random_seed = args.random_seed)
-    elif args.sim_case == 3 :
-        data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 1,
-            random_seed = args.random_seed)
-    elif args.sim_case == 4 :
-        data = gen_data_binary(args.nsim_data,
-            cross_loadings = True, cross_loadings_level = 2,
-            random_seed = args.random_seed)
-    elif args.sim_case == 5 :
-        data = gen_data_binary_1factor(args.nsim_data,
-            random_seed = args.random_seed)
+            method = 5)
+    # elif args.sim_case == 2 :
+    #     data = gen_data_binary(args.nsim_data,
+    #         cross_loadings = True, cross_loadings_level = 0,
+    #         random_seed = args.random_seed)
+    # elif args.sim_case == 3 :
+    #     data = gen_data_binary(args.nsim_data,
+    #         cross_loadings = True, cross_loadings_level = 1,
+    #         random_seed = args.random_seed)
+    # elif args.sim_case == 4 :
+    #     data = gen_data_binary(args.nsim_data,
+    #         cross_loadings = True, cross_loadings_level = 2,
+    #         random_seed = args.random_seed)
+    # elif args.sim_case == 5 :
+    #     data = gen_data_binary_1factor(args.nsim_data,
+    #         random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data ")
         print("Choose simulation case 1:Off-diag residuals")
@@ -112,12 +120,12 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 1 :
         #with u's of fixed var
-        with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model2.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
     elif args.stan_model == 2 :
         #with u's (full)
-        with open('./codebase/stan_code/discr/CFA/%s/cholesky/model2_c.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/model2_c.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
     else:

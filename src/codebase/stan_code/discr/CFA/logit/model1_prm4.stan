@@ -7,7 +7,6 @@ data {
 
 transformed data{
   vector[K] zeros_K = rep_vector(0, K);
-  cov_matrix[K] I_K = diag_matrix(rep_vector(1, K));
 }
 
 parameters {
