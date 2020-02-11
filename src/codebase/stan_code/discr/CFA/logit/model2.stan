@@ -25,7 +25,7 @@ transformed parameters{
   matrix[J,K] beta;
   matrix[N,J] yy;
   matrix[N,J] uu;
-  vector<lower=0>[J] sigma_u = rep_vector(c, J);
+  vector<lower=0>[J] sigma_u = rep_vector(sqrt(c), J);
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -47,7 +47,7 @@ model {
   to_vector(alpha) ~ normal(0, 10);
   L_Phi ~ lkj_corr_cholesky(2);
   to_vector(uu_tilde) ~ normal(0, 1);
-  L_Omega ~ lkj_corr_cholesky(5);
+  L_Omega ~ lkj_corr_cholesky(2);
   for (n in 1:N) to_vector(zz[n,])  ~ multi_normal_cholesky(zeros_K, L_Phi);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }

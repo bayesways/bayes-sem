@@ -15,8 +15,8 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-parser.add_argument("-offcor","--off_corr", help="off_diag_corr for sim1", type=float, default=.2)
-parser.add_argument("-prm_t","--param_t", help="param_t for Omega", type=float, default=1)
+parser.add_argument("-offcor","--off_corr", help="off_diag_corr for sim1", type=float, default=1.5)
+parser.add_argument("-prm_t","--param_t", help="param_t for Omega", type=float, default=.5,)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
 parser.add_argument("-datm","--data_method", help="random seed for data generation", type=int, default=5)
