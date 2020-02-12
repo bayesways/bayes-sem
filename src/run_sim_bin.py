@@ -74,6 +74,13 @@ if args.existing_directory is None:
             off_diag_corr = args.off_corr,
             param_t = args.param_t,
             method = 5)
+    elif args.sim_case == 3 :
+        data = gen_data_binary(args.nsim_data,
+            random_seed = args.random_seed,
+            off_diag_residual = True,
+            off_diag_corr = args.off_corr,
+            param_t = args.param_t,
+            method = 6)
     # elif args.sim_case == 2 :
     #     data = gen_data_binary(args.nsim_data,
     #         cross_loadings = True, cross_loadings_level = 0,
@@ -128,6 +135,11 @@ if args.existing_directory is None:
         with open('./codebase/stan_code/discr/CFA/%s/model2_c.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
+    elif args.stan_model == 3 :
+        #with u's of fixed var
+        with open('./codebase/stan_code/discr/CFA/%s/model3_check.stan' % model_type, 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
     else:
         print("Choose from 0:2}")
 
