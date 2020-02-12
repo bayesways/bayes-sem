@@ -137,7 +137,7 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #with u's of fixed var
-        with open('./codebase/stan_code/discr/CFA/%s/model3_check.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/test/model1.stan' % model_type, 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
     else:

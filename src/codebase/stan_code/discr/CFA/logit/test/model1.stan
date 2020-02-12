@@ -10,7 +10,6 @@ transformed data{
   vector[K] zeros_K = rep_vector(0, K);
   vector[J] zeros_J = rep_vector(0, J);
   cov_matrix[J] I_J = diag_matrix(rep_vector(1, J));
-  real<lower=0> c=.5;
 }
 
 parameters {
@@ -18,7 +17,7 @@ parameters {
   matrix[3,K] beta_free; // 3 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
   cholesky_factor_corr[K] L_Phi;
-  cholesky_factor_corr[J] L_Omega;
+  cov_matrix[J] Omega_cov;
   matrix[N,K] zz;
   matrix[N,J] uu;
 }
@@ -26,7 +25,6 @@ parameters {
 transformed parameters{
   matrix[J,K] beta;
   matrix[N,J] yy;
-  vector<lower=0>[J] sigma_u = rep_vector(sqrt(c), J);
 
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
@@ -45,16 +43,13 @@ model {
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
   L_Phi ~ lkj_corr_cholesky(2);
-  L_Omega ~ lkj_corr_cholesky(2);
+  Omega_cov ~ inv_wishart(J+4, I_J);
   for (n in 1:N) to_vector(zz[n,]) ~ multi_normal_cholesky(zeros_K, L_Phi);
-  for (n in 1:N) to_vector(uu[n,]) ~ multi_normal_cholesky(zeros_J, diag_pre_multiply(sigma_u, L_Omega));
+  for (n in 1:N) to_vector(uu[n,]) ~ multi_normal(zeros_J, Omega_cov);
   // for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
   for (n in 1:N) DD[n,] ~ multi_normal(yy[n,], I_J);
 }
 
 generated quantities{
   corr_matrix[K] Phi_cov = multiply_lower_tri_self_transpose(L_Phi);
-  cov_matrix[J] Omega_cov = multiply_lower_tri_self_transpose(diag_pre_multiply(sigma_u, L_Omega));
-  corr_matrix[J] Omega_corr = multiply_lower_tri_self_transpose(L_Omega);
-
 }
