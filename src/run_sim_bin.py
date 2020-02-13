@@ -137,9 +137,9 @@ if args.existing_directory is None:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'c', 'Omega_cov', 'uu' , 'yy']
     elif args.stan_model == 3 :
         #with u's of fixed var
-        with open('./codebase/stan_code/discr/CFA/%s/test/model1.stan' % model_type, 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/%s/test/model3.stan' % model_type, 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'Omega_cov', 'uu' , 'yy']
+        param_names = ['beta', 'alpha', 'Phi_cov', 'Omega_cov' ]
     else:
         print("Choose from 0:2}")
 
@@ -172,9 +172,9 @@ print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains,
-    init = 0,
-    control = {'max_treedepth':15, 'adapt_delta':0.99})
+    warmup=args.num_warmup, chains=args.num_chains)
+    # init = 0,
+    # control = {'max_treedepth':15, 'adapt_delta':0.99})
 
 print("\n\nSaving posterior samples in %s"%log_dir)
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays

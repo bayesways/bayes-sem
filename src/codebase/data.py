@@ -226,9 +226,9 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, b=0.8,
                     Omega_corr[i,j] = off_diag_corr
                     Omega_corr[j,i] = off_diag_corr
         Omega_cov = np.diag(sigma_u) @ Omega_corr @  np.diag(sigma_u)
-        uu = multivariate_normal.rvs(mean = np.zeros(J), cov=Omega_cov, size=nsim_data)
-        yy = alpha + zz @ beta.T + uu
-        ee = multivariate_normal.rvs(mean = np.zeros(J), cov=np.eye(J), size=nsim_data)
+        # uu = multivariate_normal.rvs(mean = np.zeros(J), cov=Omega_cov, size=nsim_data)
+        yy = alpha + zz @ beta.T
+        ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Omega_cov, size=nsim_data)
         DD = yy + ee
 
     else:
