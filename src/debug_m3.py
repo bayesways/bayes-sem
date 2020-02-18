@@ -73,15 +73,15 @@ if args.load_model == False:
     if args.sim_case == 1 :
         with open('./codebase/stan_code/discr/CFA/logit/test/model3.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta']
     elif args.sim_case == 2 :
         with open('./codebase/stan_code/discr/CFA/logit/test/model3b.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta']
     elif args.sim_case == 3 :
         with open('./codebase/stan_code/discr/CFA/logit/test/model3c.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'uu']
     else:
         print('model is 1,2,3')
 
@@ -109,8 +109,7 @@ else:
     elif args.sim_case == 2 :
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta']
     elif args.sim_case == 3 :
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta',
-            'uu']
+        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'uu']
     else:
         print('model is 1,2,3')
 
