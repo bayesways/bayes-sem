@@ -105,6 +105,91 @@ def gen_data0(nsim_data, J=6, rho = 0.3, random_seed=None):
     return(data)
 
 
+def gen_data3(nsim_data, J=6, K=2, b=0.8, c=0.2, random_seed=None):
+    if random_seed is not None:
+        np.random.seed(random_seed)
+
+    alpha = np.zeros(J)
+
+    beta = np.array([[1,0],
+                     [b, 0],
+                     [b,0],
+                     [0,1],
+                     [0,b],
+                     [0,b]], dtype=float)
+
+    Phi_cov = np.eye(K)
+    Theta = c**2 * np.eye(J)
+    Marg_cov = beta @ beta.T + Theta
+    assert check_posdef(Marg_cov)==0
+    yy = multivariate_normal.rvs(mean = alpha, cov=Marg_cov, size=nsim_data)
+
+    DD = bernoulli.rvs(p=expit(yy))
+
+    data = dict()
+    data['random_seed'] = random_seed
+    data['N'] = nsim_data
+    data['J'] = J
+    data['K'] = K
+    data['c'] = c
+    data['alpha'] = alpha
+    data['beta'] = beta
+    data['Theta'] = Theta
+    data['y'] = yy
+    data['D'] = DD
+
+    return(data)
+
+
+def gen_data4(nsim_data, J=6, K=2, b=0.8, c=0.2,
+    rho = 0.4, off_diag_residual = False, random_seed=None):
+    if random_seed is not None:
+        np.random.seed(random_seed)
+
+    alpha = np.zeros(J)
+
+    beta = np.array([[1,0],
+                     [b, 0],
+                     [b,0],
+                     [0,1],
+                     [0,b],
+                     [0,b]], dtype=float)
+
+    sigma = np.ones(J)*c
+    Omega_corr = np.eye(J)
+    if off_diag_residual:
+        for i in [1,2,5]:
+            for j in [3,4]:
+                Omega_corr[i,j] = rho
+                Omega_corr[j,i] = rho
+        Omega = np.diag(sigma) @ Omega_corr @  np.diag(sigma)
+    else:
+        Omega = np.diag(sigma**2)
+
+
+    Marg_cov = beta @ beta.T + Omega
+    assert check_posdef(Marg_cov)==0
+    yy = multivariate_normal.rvs(mean = alpha, cov=Marg_cov, size=nsim_data)
+
+    DD = bernoulli.rvs(p=expit(yy))
+
+    data = dict()
+    data['random_seed'] = random_seed
+    data['N'] = nsim_data
+    data['J'] = J
+    data['K'] = K
+    data['c'] = c
+    data['sigma'] = sigma
+    data['alpha'] = alpha
+    data['beta'] = beta
+    data['Omega'] = Omega
+    data['Omega_corr'] = Omega_corr
+    data['y'] = yy
+    data['D'] = DD
+
+    return(data)
+
+
 def gen_data(nsim_data, J=6, c=1,
              off_diag_residual = False, off_diag_corr = 0.2,
              random_seed=None):
