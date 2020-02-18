@@ -12,6 +12,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument("num_samples", help="number of post-warm up iterations", type=int, default=1000)
+parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 # Optional arguments
 parser.add_argument("-lm","--load_model", help="load model", type=bool, default=False)
 parser.add_argument("-gd","--gen_data", help="gen fresh data", type=bool, default=False)
@@ -69,10 +70,21 @@ else:
 ################ Compile Model or Load ##########
 if args.load_model == False:
 
-    # with open('./codebase/stan_code/discr/CFA/logit/test/model3.stan', 'r') as file:
-    with open('./codebase/stan_code/discr/CFA/logit/test/model5.stan', 'r') as file:
-        model_code = file.read()
-    param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+    if args.sim_case == 1 :
+        with open('./codebase/stan_code/discr/CFA/logit/test/model3.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+    elif args.sim_case == 2 :
+        with open('./codebase/stan_code/discr/CFA/logit/test/model3b.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+    elif args.sim_case == 3 :
+        with open('./codebase/stan_code/discr/CFA/logit/test/model3c.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+    else:
+        print('model is 1,2,3')
+
 
     if bool(args.print_model):
         print(model_code)
@@ -92,7 +104,16 @@ if args.load_model == False:
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
-    param_names = ['alpha', 'yy',  'beta', 'Marg_cov']
+    if args.sim_case == 1 :
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta']
+    elif args.sim_case == 2 :
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta']
+    elif args.sim_case == 3 :
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'betabeta',
+            'uu']
+    else:
+        print('model is 1,2,3')
+
 
 ############################################################
 ################ Fit Model ##########
