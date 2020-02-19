@@ -80,7 +80,7 @@ if args.load_model == False:
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
 
     elif args.sim_case == 2 :
-        with open('./codebase/stan_code/discr/CFA/logit/test/model4B.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/logit/test/model4b.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
