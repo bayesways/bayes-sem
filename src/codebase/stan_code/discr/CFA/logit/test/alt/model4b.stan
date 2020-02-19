@@ -14,16 +14,15 @@ parameters {
   vector[J] alpha;
   matrix[3,K] beta_free; // 3 free eleements per factor
   matrix[J-3,K] beta_zeros; // 3 zero elements per factor
-  matrix[N,J] yy;
+  matrix[N,J] yystar;
   cov_matrix[J] Omega_cov;
-  cholesky_factor_corr[K] L_Phi;
-
 }
 
 transformed parameters{
   matrix[J,K] beta;
-  cov_matrix[J] Marg_cov;
-  corr_matrix[K] Phi_cov;
+  cholesky_factor_cov [J] L;
+  matrix[N,J] yy;
+
   for(j in 1:J) {
     for (k in 1:K) beta[j,k] = 0;
   }
@@ -33,21 +32,23 @@ transformed parameters{
   beta[4:J, 1] = beta_zeros[1:(J-3), 1];
   beta[1:(J-3), K] = beta_zeros[1:(J-3), K];
   
-  Phi_cov = multiply_lower_tri_self_transpose(L_Phi);
-  Marg_cov = beta * Phi_cov * beta'+ Omega_cov;
+  L = cholesky_decompose(Omega_cov);
+
+  for (n in 1:N) yy[n,] = to_row_vector(alpha) + yystar[n,] * L;
+
 }
 
 model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
-  L_Phi ~ lkj_corr_cholesky(2);
   Omega_cov ~ inv_wishart(J+6, I_J);
-  for (n in 1:N) yy[n,] ~ multi_normal(alpha, Marg_cov);
+  to_row_vector(yystar) ~ normal(0,1);
   for (j in 1:J) DD[, j] ~ bernoulli_logit(yy[, j]);
 }
 
 generated quantities{
   matrix[J,J] betabeta =  beta * beta';
+  cov_matrix[J] Marg_cov = beta * beta'+ Omega_cov;
 }
 

@@ -77,17 +77,17 @@ if args.load_model == False:
     if args.sim_case == 1 :
         with open('./codebase/stan_code/discr/CFA/logit/test/model4.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'Marg_cov', 'Omega_cov']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
 
     elif args.sim_case == 2 :
-        with open('./codebase/stan_code/discr/CFA/logit/test/model4b.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/logit/test/model4B.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'Marg_cov', 'Omega_cov']
-
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+            'Omega_cov', 'Phi_cov']
     elif args.sim_case == 3 :
         with open('./codebase/stan_code/discr/CFA/logit/test/model5.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'betabeta',  'Marg_cov', 'Omega_cov',
+        param_names = ['alpha', 'yy',  'beta',  'Marg_cov', 'Omega_cov',
             'Omega_corr', 'sigma_omega']
 
     else:
@@ -122,11 +122,11 @@ else:
     sm = load_obj('sm', log_dir)
 
     if args.sim_case == 1 :
-        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'Marg_cov', 'Omega_cov']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     elif args.sim_case == 2 :
-        param_names = ['alpha', 'yy',  'beta', 'betabeta', 'Marg_cov', 'Omega_cov']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov', 'Phi_cov']
     elif args.sim_case == 3 :
-        param_names = ['alpha', 'yy',  'beta', 'betabeta',  'Marg_cov', 'Omega_cov',
+        param_names = ['alpha', 'yy',  'beta',  'Marg_cov', 'Omega_cov',
             'Omega_corr', 'sigma_omega']
     else:
         print('model is 1,2,3')
