@@ -6,7 +6,7 @@ import sys
 import os
 
 from codebase.file_utils import save_obj, load_obj
-from codebase.data_db import gen_data4
+from codebase.data import gen_data_binary
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -50,15 +50,15 @@ if args.existing_directory is None or args.gen_data == True:
     print("\n\nGenerating Continuous data for case")
 
     if args.sim_case == 0 :
-        data = gen_data4(args.nsim_data,
+        data = gen_data_binary(args.nsim_data,
             c = args.c_param,
             off_diag_residual = False,
             random_seed = args.random_seed)
 
     elif args.sim_case == 1 :
-        data = gen_data4(args.nsim_data,
+        data = gen_data_binary(args.nsim_data,
+            rho2 = args.rho_param,
             c = args.c_param,
-            rho = args.rho_param,
             off_diag_residual = True,
             random_seed = args.random_seed)
 

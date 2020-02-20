@@ -129,10 +129,9 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, b=0.8,
-             off_diag_residual = False, off_diag_corr = 1,
-             param_t = 0.2,
+             off_diag_residual = False, rho2 = 0.4, c = 0.2,
              cross_loadings = False, cross_loadings_level = 1,
-             method = 5, random_seed=None):
+             method = 3, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
@@ -180,63 +179,51 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, b=0.8,
 
     assert check_posdef(Phi_cov)==0
     zz = multivariate_normal.rvs(mean = np.zeros(K), cov=Phi_cov,
-        size=nsim_data, allow_singular=False)
+        size=nsim_data)
 
-    if method < 5:
-        Theta = np.eye(J)
-        if off_diag_residual:
-            for i in [1,2,5]:
-                for j in [3,4]:
-                    Theta[i,j] = off_diag_corr
-                    Theta[j,i] = off_diag_corr
 
-        if method == 1: # logit method
-            yy = alpha + zz @ beta.T
-            DD = bernoulli.rvs(p=expit(yy))
-        elif method == 2: # probit method
-            yy = alpha + zz @ beta.T
-            DD = bernoulli.rvs(p=norm.cdf(yy))
-        elif method == 3: # logit2 method
-            assert check_posdef(Theta)==0
-            ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta,
-                size=nsim_data, allow_singular=False)
-            ee = logit(norm.cdf(ee_seed))
-            yy = alpha + zz @ beta.T + ee
-            DD = (yy>0).astype(int)
-        elif method == 4: # probit2 method
-            assert check_posdef(Theta)==0
-            ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta,
-                size=nsim_data, allow_singular=False)
-
-            yy = alpha + zz @ beta.T + ee
-            DD = (yy>0).astype(int)
-
-    elif method == 5: # logit method
-        Omega_corr = np.eye(J)
-        sigma_u = np.ones(J) * param_t**0.5
-        if off_diag_residual:
-            for i in [1,2,5]:
-                for j in [3,4]:
-                    Omega_corr[i,j] = off_diag_corr
-                    Omega_corr[j,i] = off_diag_corr
-        Omega_cov = np.diag(sigma_u) @ Omega_corr @  np.diag(sigma_u)
-        assert check_posdef(Omega_cov)==0
-        uu = multivariate_normal.rvs(mean = np.zeros(J), cov=Omega_cov,
-            size=nsim_data, allow_singular=False)
-        yy = alpha + zz @ beta.T + uu
-        DD = bernoulli.rvs(p=expit(yy))
-
+    sigma_theta = np.ones(J)*c
+    Theta_corr = np.eye(J)
+    if off_diag_residual:
+        for i in [1,2,5]:
+            for j in [3,4]:
+                Theta_corr[i,j] = rho2
+                Theta_corr[j,i] = rho2
+        Theta = np.diag(sigma_theta) @ Theta_corr @  np.diag(sigma_theta)
     else:
-        print("method must be in [1:5]")
+        Theta = np.diag(sigma_theta**2)
 
-    if method in [1,3,5]:
+
+
+    if method == 1: # logit method
+        yy = alpha + zz @ beta.T
+        DD = bernoulli.rvs(p=expit(yy))
+    elif method == 2: # probit method
+        yy = alpha + zz @ beta.T
+        DD = bernoulli.rvs(p=norm.cdf(yy))
+    elif method == 3: # logit2 method
+        assert check_posdef(Theta)==0
+        ee_seed = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta,
+            size=nsim_data)
+        ee = logit(norm.cdf(ee_seed))
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    elif method == 4: # probit2 method
+        assert check_posdef(Theta)==0
+        ee = multivariate_normal.rvs(mean = np.zeros(J), cov=Theta,
+            size=nsim_data)
+
+        yy = alpha + zz @ beta.T + ee
+        DD = (yy>0).astype(int)
+    else:
+        print("method must be in [1:4]")
+
+    if method in [1,3]:
         model_type = 'logit'
     elif method in [2,4]:
         model_type = 'probit'
-    elif method == 6 :
-        model_type = 'cont'
     else:
-        print("data method must be in [1:5]")
+        print("data method must be in [1:4]")
 
     data = dict()
     data['random_seed'] = random_seed
@@ -261,29 +248,19 @@ def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, b=0.8,
     except:
         pass
     try:
+        data['Theta_corr'] = Theta_corr
+    except:
+        pass
+    try:
+        data['sigma_theta'] = sigma_theta
+    except:
+        pass
+    try:
         data['e'] = ee
     except:
         pass
-
-
     try:
-        data['u'] = uu
-    except:
-        pass
-    try:
-        data['Omega_cov'] = Omega_cov
-    except:
-        pass
-    try:
-        data['Omega_corr'] = Omega_corr
-    except:
-        pass
-    try:
-        data['sigma_u'] = sigma_u
-    except:
-        pass
-    try:
-        data['param_t'] =param_t
+        data['c'] = c
     except:
         pass
 
