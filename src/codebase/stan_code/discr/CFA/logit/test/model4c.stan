@@ -44,6 +44,7 @@ model {
   to_vector(beta_free) ~ normal(0, 1);
   to_vector(beta_zeros) ~ normal(0, 0.1);
   to_vector(alpha) ~ normal(0, 10);
+  to_vector(zz_tilde) ~ normal(0,1);
   L_Phi ~ lkj_corr_cholesky(2);
   Omega_cov ~ inv_wishart(J+6, I_J);
   for (n in 1:N) uu[n,] ~ multi_normal(zeros_J, Omega_cov);
