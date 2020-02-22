@@ -21,7 +21,7 @@ parser.add_argument("-gd","--gen_data", help="gen fresh data", type=bool, defaul
 parser.add_argument("-rho","--rho_param", help="off diag correlation of Theta", type=float, default=0.3)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
-parser.add_argument("-c","--c_param", help="fixed variances of Theta", type=float, default=0.2)
+parser.add_argument("-c","--c_param", help="fixed variances of Theta", type=float, default=1)
 parser.add_argument("-nd","--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument("-th", "--task_handle", help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
@@ -34,7 +34,8 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_') # ISO 8601 format
-    log_dir =  "./log/"+nowstr+"%s_%s/"%(args.task_handle, args.stan_model)
+    log_dir =  "./log/"+nowstr+"%s_s%sm%s/"%(args.task_handle, args.sim_case,
+        args.stan_model)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 else:
@@ -61,10 +62,17 @@ if args.existing_directory is None or args.gen_data == True:
             c = args.c_param,
             off_diag_residual = True,
             random_seed = args.random_seed)
-
+    elif args.sim_case == 2 :
+        data = gen_data_binary(args.nsim_data,
+            c = args.c_param,
+            off_diag_residual = False,
+            cross_loadings = True,
+            cross_loadings_level = 1,
+            random_seed = args.random_seed)
     else:
         print("Choose simulation case 0:Clean data ")
         print("Choose simulation case 1:Off-diag residuals")
+        print("Choose simulation case 2:Cross loadings")
 
     stan_data = dict(
         N = data['N'],
@@ -86,37 +94,35 @@ else:
 if args.load_model == False:
 
     if args.stan_model == 1 :
-        with open('./codebase/stan_code/discr/CFA/logit/model1_prm4.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/logit/model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-
     elif args.stan_model == 2 :
-        with open('./codebase/stan_code/discr/CFA/logit/model4b.stan', 'r') as file:
+        with open('./codebase/stan_code/discr/CFA/logit/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
-
+    elif args.stan_model == 3 : # fixed variance of Omega
+        with open('./codebase/stan_code/discr/CFA/logit/model3.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
+            'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 4 :
+        with open('./codebase/stan_code/discr/CFA/logit/model4.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+            'Omega_cov', 'Phi_cov']
     else:
-        print('model is 1,2,3')
+        print('model is 1:4')
 
     if bool(args.print_model):
         print(model_code)
     file = open(log_dir+"model.txt", "w")
     file.write(model_code)
     file.close()
-
-
-    if bool(args.print_model):
-        print(model_code)
-    file = open(log_dir+"model.txt", "w")
-    file.write(model_code)
-    file.close()
-
-
 
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
-
     try:
         print("\n\nSaving compiled model in directory %s"%log_dir)
         save_obj(sm, 'sm', log_dir)
@@ -131,11 +137,14 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3 :
-        param_names = ['alpha', 'yy',  'beta',  'Marg_cov', 'Omega_cov',
-            'Omega_corr', 'sigma_omega']
+    elif args.stan_model == 3 : # fixed variance of Omega
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
+            'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 4 : # Omega = c Identity
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+            'Omega_cov', 'Phi_cov']
     else:
-        print('model is 1,2,3')
+        print('model is 1:4')
 
 ############################################################
 ################ Fit Model ##########
