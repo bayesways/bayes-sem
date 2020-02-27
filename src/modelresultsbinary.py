@@ -52,21 +52,25 @@ def get_avg_probs(data, ps, m, c=0.2):
     ## compute the pi's for the the m-th posterior sample
     N = data['N']
     L = 100
-    z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-        ps['Phi_cov'][m], size = L)
-    if 'uu' in ps.keys():
-        if 'Omega_cov' in ps.keys():
-            u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-                ps['Omega_cov'][m], size = L)
-        else:
-            pass
-    ystr = np.empty((L, data['J']))
-    for l in range(L):
-        ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
-        if 'uu' in ps.keys():
-            ystr[l] = ystr[l] + u_mc[l]
-        else:
-            pass
+    if 'zz' in ps.keys():
+        z_mc = multivariate_normal.rvs(np.zeros(data['K']),
+            ps['Phi_cov'][m], size = L)
+    # if 'uu' in ps.keys():
+    #     if 'Omega_cov' in ps.keys():
+    #         u_mc = multivariate_normal.rvs(np.zeros(data['J']),
+    #             ps['Omega_cov'][m], size = L)
+    #     else:
+    #         pass
+        ystr = np.empty((L, data['J']))
+        for l in range(L):
+            ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+            # if 'uu' in ps.keys():
+            #     ystr[l] = ystr[l] + u_mc[l]
+            # else:
+            #     pass
+    elif 'Marg_cov' in ps.keys():
+        ystr = multivariate_normal.rvs(mean = ps['alpha'][m],
+                    cov = ps['Marg_cov'][m], size = L)
     # logit
     pistr = expit(ystr)
 
@@ -111,11 +115,14 @@ def get_prob_pred_data(data, ps, m, c=0.2):
     # if 'uu' in ps.keys():
     #     ystr = ystr + u_mc
 
-    ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-    if 'uu' in ps.keys():
-        ystr = ystr + ps['uu'][m]
-    else:
-        pass
+    if 'zz' in ps.keys():
+        ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
+    # if 'uu' in ps.keys():
+    #     ystr = ystr + ps['uu'][m]
+    # else:
+    #     pass
+    elif 'Marg_cov' in ps.keys():
+        ystr = ps['yy'][m]
 
     # logit
     pistr = expit(ystr)
