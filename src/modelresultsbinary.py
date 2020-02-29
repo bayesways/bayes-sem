@@ -50,16 +50,11 @@ def get_all_possible_patterns(n):
 
 def get_probs(data, ps, m, c=0.2):
     ## compute the pi's for the the m-th posterior sample
-    L = 100
     if 'zz' in ps.keys():
-        z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-            ps['Phi_cov'][m], size = L)
-        ystr = np.empty((L, data['J']))
-        for l in range(L):
-            ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+        ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
     elif 'Marg_cov' in ps.keys():
-        ystr = multivariate_normal.rvs(mean = ps['alpha'][m],
-                    cov = ps['Marg_cov'][m], size = L)
+        ystr = ps['yy'][m]
+
     # logit
     pistr = expit(ystr)
 
@@ -70,24 +65,9 @@ def get_probs(data, ps, m, c=0.2):
 def get_prob_pred_data(data, ps, m, c=0.2):
     N = data['N']
     pistr = np.empty((N, data['J']))
-    # z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-    #     ps['Phi_cov'][m], size = N)
-    # if 'uu' in ps.keys():
-    #     if 'Omega_cov' in ps.keys():
-    #         u_mc = multivariate_normal.rvs(np.zeros(data['J']),
-    #             ps['Omega_cov'][m], size = N)
-    #     else:
-    #         pass
-    # ystr = ps['alpha'][m] + z_mc @ ps['beta'][m].T
-    # if 'uu' in ps.keys():
-    #     ystr = ystr + u_mc
 
     if 'zz' in ps.keys():
         ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-    # if 'uu' in ps.keys():
-    #     ystr = ystr + ps['uu'][m]
-    # else:
-    #     pass
     elif 'Marg_cov' in ps.keys():
         ystr = ps['yy'][m]
 
@@ -105,8 +85,8 @@ def get_Ey(data_ptrn, prob, N):
     ## compute E_y(theta) for a specific pattern y
     Ey = dict()
     for ptrn in distinct_patterns:
-        prob_matrix = bernoulli.pmf(k=to_nparray_data(ptrn), p = prob)
-        Ey[ptrn] = N * np.mean(np.prod(prob_matrix,1),0)
+        prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p = prob)
+        Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix,1)),0)
     return Ey
 
 

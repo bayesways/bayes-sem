@@ -15,7 +15,7 @@ parser.add_argument("num_samples", help="number of post-warm up iterations", typ
 parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
 parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
-parser.add_argument("-offcor","--off_corr", help="off_diag_corr for sim1", type=float, default=1.5)
+parser.add_argument("-odc","--off_diag_corr", help="off_diag_corr", type=float, default=.4)
 parser.add_argument("-prm_t","--param_t", help="param_t for Omega", type=float, default=.5,)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
@@ -65,22 +65,15 @@ if args.existing_directory is None:
         data = gen_data_binary(args.nsim_data,
             random_seed = args.random_seed,
             off_diag_residual = True,
-            off_diag_corr = args.off_corr,
+            off_diag_corr = args.off_diag_corr,
             method = 3)
     elif args.sim_case == 2 :
         data = gen_data_binary(args.nsim_data,
             random_seed = args.random_seed,
             off_diag_residual = True,
-            off_diag_corr = args.off_corr,
+            off_diag_corr = args.off_diag_corr,
             param_t = args.param_t,
             method = 5)
-    elif args.sim_case == 3 :
-        data = gen_data_binary(args.nsim_data,
-            random_seed = args.random_seed,
-            off_diag_residual = True,
-            off_diag_corr = args.off_corr,
-            param_t = args.param_t,
-            method = 6)
     # elif args.sim_case == 2 :
     #     data = gen_data_binary(args.nsim_data,
     #         cross_loadings = True, cross_loadings_level = 0,
@@ -153,6 +146,13 @@ if args.existing_directory is None:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
 
+    try:
+        print("\n\nSaving compiled model in directory %s"%log_dir)
+        save_obj(sm, 'sm', log_dir)
+    except:
+        # Print error message
+        print("could not save the stan model")
+
 else:
     print("\n\nReading existing compiled model from directory %s"%log_dir)
     sm = load_obj('sm', log_dir)
@@ -175,7 +175,7 @@ fit_run = sm.sampling(data=stan_data,
     warmup=args.num_warmup, chains=args.num_chains)
     # init = 0,
     # control = {'max_treedepth':15, 'adapt_delta':0.99})
-
+    
 print("\n\nSaving posterior samples in %s"%log_dir)
 stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
 
