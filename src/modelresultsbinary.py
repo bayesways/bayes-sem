@@ -48,7 +48,30 @@ def get_all_possible_patterns(n):
     return to_str_pattern(lst)
 
 
-def get_probs(data, ps, m, c=0.2):
+def get_exp_probs(data, ps, m , L=100):
+    ## compute the pi's for the the m-th posterior sample
+    if 'zz' in ps.keys():
+        z_mc = multivariate_normal.rvs(np.zeros(data['K']),
+            ps['Phi_cov'][m], size = L)
+        ystr = np.empty((L, data['J']))
+        for l in range(L):
+            ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
+    elif 'Marg_cov' in ps.keys():
+        ystr = multivariate_normal.rvs(ps['alpha'][m],
+            ps['Marg_cov'][m], size = L)
+    else:
+        print("No matching model")
+
+    # logit
+    pistr = expit(ystr)
+
+    # probit
+    # pistr = norm.cdf(ystr)
+
+    return pistr
+
+
+def get_probs(data, ps, m):
     ## compute the pi's for the the m-th posterior sample
     if 'zz' in ps.keys():
         ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
@@ -59,26 +82,6 @@ def get_probs(data, ps, m, c=0.2):
     pistr = expit(ystr)
 
     return pistr
-
-
-
-def get_prob_pred_data(data, ps, m, c=0.2):
-    N = data['N']
-    pistr = np.empty((N, data['J']))
-
-    if 'zz' in ps.keys():
-        ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-    elif 'Marg_cov' in ps.keys():
-        ystr = ps['yy'][m]
-
-    # logit
-    pistr = expit(ystr)
-
-    # probit
-    # pistr = norm.cdf(ystr)
-
-    return bernoulli.rvs(pistr)
-
 
 def get_Ey(data_ptrn, prob, N):
     distinct_patterns = np.unique(data_ptrn)
@@ -109,7 +112,7 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, nsim = 100):
+def get_PPP(data, ps, nsim = 100, L=100):
 
     nsim_N = ps['alpha'].shape[0]
     skip_step = int(nsim_N/nsim)
@@ -118,6 +121,7 @@ def get_PPP(data, ps, nsim = 100):
     for m_ind in tqdm(range(nsim)):
         m = skip_step*m_ind
         # compute Dy
+        # pi =  get_exp_probs(data, ps, m, L)
         pi =  get_probs(data, ps, m)
         data_ptrn = to_str_pattern(data['D'])
         # all_possible_patterns = get_all_possible_patterns(data['J'])
@@ -136,7 +140,7 @@ def get_PPP(data, ps, nsim = 100):
     #             Dy[ptrn] = 0.
 
         # compute Dy
-        ppdata = get_prob_pred_data(data, ps, m)
+        ppdata = bernoulli.rvs(get_probs(data, ps, m))
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
