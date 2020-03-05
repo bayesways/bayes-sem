@@ -154,7 +154,7 @@ print("\n\nFitting model.... \n\n")
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
     warmup=args.num_warmup, chains=args.num_chains,
-    control = {'max_treedepth':15, 'adapt_delta':0.99})
+    n_jobs=4, control = {'max_treedepth':15, 'adapt_delta':0.99})
     # init = 0)
 
 try:
