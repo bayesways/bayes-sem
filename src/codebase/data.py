@@ -129,7 +129,7 @@ def gen_data(nsim_data, J=6, K=2, rho =0.2, c=0.65, b=0.8,
 
 
 def gen_data_binary(nsim_data, J=6, K=2, rho =0.2, b=0.8,
-             off_diag_residual = False, rho2 = 0.3, c = 1,
+             off_diag_residual = False, rho2 = 0.1, c = 1,
              cross_loadings = False, cross_loadings_level = 1,
              method = 3, random_seed=None):
     if random_seed is not None:

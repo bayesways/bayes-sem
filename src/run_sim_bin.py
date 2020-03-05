@@ -18,7 +18,7 @@ parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no app
 parser.add_argument("-lm","--load_model", help="load model", type=bool, default=False)
 parser.add_argument("-odr","--off_diag_residual", help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd","--gen_data", help="gen fresh data", type=bool, default=False)
-parser.add_argument("-rho","--rho_param", help="off diag correlation of Theta", type=float, default=0.3)
+parser.add_argument("-rho","--rho_param", help="off diag correlation of Theta", type=float, default=0.2)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c","--c_param", help="fixed variances of Theta", type=float, default=1)
@@ -153,9 +153,9 @@ print("\n\nFitting model.... \n\n")
 
 fit_run = sm.sampling(data=stan_data,
     iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
+    warmup=args.num_warmup, chains=args.num_chains,
+    control = {'max_treedepth':15, 'adapt_delta':0.99})
     # init = 0)
-    # control = {'max_treedepth':15, 'adapt_delta':0.99})
 
 try:
     print("\n\nSaving fitted model in directory %s"%log_dir)
