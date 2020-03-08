@@ -181,9 +181,9 @@ for fold_index in range(args.n_splits):
 
     fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
             iter=args.num_samples + args.num_warmup,
-            warmup=args.num_warmup, chains=args.num_chains)
-            # init = 0,
-            # control = {'max_treedepth':15, 'adapt_delta':0.99})
+            warmup=args.num_warmup, chains=args.num_chains,
+            n_jobs=4, control = {'max_treedepth':15, 'adapt_delta':0.99})
+            # init = 0)
     try:
         print("\n\nSaving fitted model in directory %s"%log_dir)
         save_obj(fit_runs, 'fit', log_dir)
