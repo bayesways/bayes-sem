@@ -71,17 +71,60 @@ def get_exp_probs(data, ps, m , L=100):
     return pistr
 
 
+def get_exp_probs2(data, ps, m , L=100):
+    num_chains = 4
+    ystr = np.empty((num_chains,L, data['J']))
+    for cn in range(num_chains):
+        if 'zz' in ps.keys():
+            z_mc = multivariate_normal.rvs(np.zeros(data['K']),
+                ps['Phi_cov'][m, cn], size = L)
+            for l in range(L):
+                ystr[cn, l] = ps['alpha'][m, cn] + z_mc[l] @ ps['beta'][m, cn].T
+        elif 'Marg_cov' in ps.keys():
+            ystr[cn] = multivariate_normal.rvs(ps['alpha'][m, cn],
+                ps['Marg_cov'][m, cn], size = L)
+        else:
+            print("No matching model")
+
+    # logit
+    pistr = np.mean(expit(ystr),0)
+
+    # probit
+    # pistr = norm.cdf(ystr)
+
+    return pistr
+
+
+
 def get_probs(data, ps, m):
     ## compute the pi's for the the m-th posterior sample
-    if 'zz' in ps.keys():
-        ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-    elif 'Marg_cov' in ps.keys():
-        ystr = ps['yy'][m]
+    # Don't think we need this
+    # if 'zz' in ps.keys():
+    #     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
+    # elif 'Marg_cov' in ps.keys():
+    #     ystr = ps['yy'][m]
 
+    ystr = ps['yy'][m]
     # logit
     pistr = expit(ystr)
 
     return pistr
+
+
+
+def get_probs2(data, ps, m):
+    cn = 1
+    ## compute the pi's for the the m-th posterior sample
+    # ystr = np.empty_like(ps['yy'][m])
+    #
+    # for cn in range(num_chains):
+    #     ystr[cn] = ps['yy'][m, cn]
+
+    # logit
+    # pistr = np.mean(expit(ps['yy'][m, cn]),0)
+    pistr = expit(ps['yy'][m, cn])
+    return pistr
+
 
 def get_Ey(data_ptrn, prob, N):
     distinct_patterns = np.unique(data_ptrn)
@@ -112,51 +155,30 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, nsim = 100, L=100):
+def get_PPP(data, ps, nsim = 100):
 
     nsim_N = ps['alpha'].shape[0]
     skip_step = int(nsim_N/nsim)
+
+    data_ptrn = to_str_pattern(data['D'])
+    Oy = get_Oy(data_ptrn)
 
     PPP_vals = np.empty((nsim, 2))
     for m_ind in tqdm(range(nsim)):
         m = skip_step*m_ind
         # compute Dy
-        # pi =  get_exp_probs(data, ps, m, L)
-        pi =  get_probs(data, ps, m)
-        data_ptrn = to_str_pattern(data['D'])
-        # all_possible_patterns = get_all_possible_patterns(data['J'])
-        Oy = get_Oy(data_ptrn)
+        # pi =  get_exp_probs2(data, ps, m, 100)
+        pi = get_probs2(data, ps, m)
         Ey = get_Ey(data_ptrn, pi, data['N'])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
-        # complete any missing patterns with 0's
-    #     new_patterns = set(all_possible_patterns) - set(data_ptrn)
-    #     if new_patterns == set():
-    #         pass
-    # #         print('no new patterns')
-    #     else:
-    #         for ptrn in new_patterns:
-    #             Oy[ptrn] = 0.
-    #             Dy[ptrn] = 0.
-
         # compute Dy
-        ppdata = bernoulli.rvs(get_probs(data, ps, m))
+        ppdata = bernoulli.rvs(get_probs2(data, ps, m))
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
         Eystr = get_Ey(ppddata_ptrn, pi, data['N'])
         Dystr = get_Dy(Oystr, Eystr, ppddata_ptrn)
-
-        # complete any missing patterns with 0's
-        # new_patterns = set(all_possible_patterns) - set(ppddata_ptrn)
-        # if new_patterns == set():
-        #     pass
-    #         print('no new patterns')
-
-        # else:
-        #     for ptrn in new_patterns:
-        #         Oystr[ptrn] = 0.
-        #         Dystr[ptrn] = 0.
 
         PPP_vals[m_ind,0] = sum(Dy.values())
         PPP_vals[m_ind,1] = sum(Dystr.values())
