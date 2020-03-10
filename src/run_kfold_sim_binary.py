@@ -22,7 +22,7 @@ parser.add_argument("stan_model", help="0:full model, 1:no u's, 2: no u's no app
 parser.add_argument("-lm","--load_model", help="load model", type=bool, default=False)
 parser.add_argument("-odr","--off_diag_residual", help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd","--gen_data", help="gen fresh data", type=bool, default=False)
-parser.add_argument("-rho","--rho_param", help="off diag correlation of Theta", type=float, default=0.3)
+parser.add_argument("-rho","--rho_param", help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains","--num_chains", help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed","--random_seed", help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c","--c_param", help="fixed variances of Theta", type=float, default=1)
