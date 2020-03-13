@@ -112,8 +112,16 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 5 :
+        with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'yy']
+    elif args.stan_model == 6 :
+        with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     else:
-        print('model is 1:4')
+        print('model is 1:6')
 
     if bool(args.print_model):
         print(model_code)
@@ -143,8 +151,12 @@ else:
     elif args.stan_model == 4 : # Omega = c Identity
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 5 :
+        param_names = ['beta', 'alpha', 'zz', 'yy']
+    elif args.stan_model == 6 :
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     else:
-        print('model is 1:4')
+        print('model is 1:6')
 
 ############################################################
 ################ Fit Model ##########
