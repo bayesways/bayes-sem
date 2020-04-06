@@ -112,8 +112,8 @@ def get_probs(data, ps, m):
 
 
 
-def get_probs2(data, ps, m):
-    pistr = expit(ps['yy'][m])
+def get_probs2(data, ps, m, cn):
+    pistr = expit(ps['yy'][m, cn])
     return pistr
 
 
@@ -146,7 +146,7 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, nsim=100):
+def get_PPP(data, ps, cn, nsim = 100):
 
     nsim_N = ps['alpha'].shape[0]
     skip_step = int(nsim_N/nsim)
@@ -159,12 +159,12 @@ def get_PPP(data, ps, nsim=100):
         m = skip_step*m_ind
         # compute Dy
         # pi =  get_exp_probs2(data, ps, m, 100)
-        pi = get_probs2(data, ps, m)
+        pi = get_probs2(data, ps, m, cn)
         Ey = get_Ey(data_ptrn, pi, data['N'])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
         # compute Dy
-        ppdata = bernoulli.rvs(get_probs2(data, ps, m))
+        ppdata = bernoulli.rvs(get_probs2(data, ps, m, cn))
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
