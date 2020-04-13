@@ -1,4 +1,4 @@
-# Factor Analysis
+# Bayesian SEM
 
 ## Setup
 
@@ -146,3 +146,6 @@ on the server, collect the results and visualize them locally with
 * ~~Undersand why adding approximate zeros to `beta` in Binary model fails. (Try 8 variables and 2 factors)~~
 * Create PPP for 1 factor models
 * ~~Fix hard code issue of 100 n_sim PPP calculation~~
+* ~~Write run scripts for FND data PPP and CV Index~~
+* Get PPP results for EFA Model 2 on FND data
+* Get CV Index results for Models 1 and 2 on FND data
