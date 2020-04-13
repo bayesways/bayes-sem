@@ -4,9 +4,12 @@ import pystan
 import datetime
 import sys
 import os
+import numpy as np
+from sklearn.model_selection import KFold
+from codebase.data_FND import get_FND_data
 
 from codebase.file_utils import save_obj, load_obj
-from codebase.data_FND import get_FND_data
+from codebase.data import gen_data
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -22,7 +25,7 @@ parser.add_argument("-th", "--task_handle", help="hande for task", type=str, def
 parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
     type=str, default=None)
-
+parser.add_argument("-nfl", "--n_splits", help="number of folds", type=int, default=3)
 args = parser.parse_args()
 
 ############################################################
@@ -39,6 +42,7 @@ else:
         print("\n\nAppending `/`-character at the end of directory")
         log_dir = log_dir+ "/"
 
+
 ############################################################
 ################ Create Data or Load ##########
 if args.existing_directory is None:
@@ -51,15 +55,34 @@ if args.existing_directory is None:
     else:
         print("Only Simulation Option is 1")
 
+    print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
 
-    stan_data = dict(
-        N = data['N'],
-        J = data['J'],
-        K = data['K'],
-        DD = data['D']
-        )
-    print("\n\nSaving data to directory %s"% log_dir)
+    X = data['D']
+    kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=34)
+    kf.get_n_splits(X)
+
+    stan_data = dict()
+    complete_data = dict()
+    fold_index = 0
+    for train_index, test_index in kf.split(X):
+        data_fold = dict()
+        data_fold['D_train'], data_fold['D_test'] = X[train_index], X[test_index]
+        data_fold['N_train'], data_fold['N_test'] = data_fold['D_train'].shape[0], data_fold['D_test'].shape[0]
+        stan_data[fold_index] = dict(N = data_fold['N_train'],
+                                          K = data['K'],
+                                          J = data['J'],
+                                          DD = data_fold['D_train'])
+        test_data_fold = dict(N = data_fold['N_test'],
+                                          K = data['K'],
+                                          J = data['J'],
+                                          DD = data_fold['D_test'])
+        complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
+
+        fold_index += 1
+
+    print("\n\nSaving data folds at %s"%log_dir)
     save_obj(stan_data, 'stan_data', log_dir)
+    save_obj(complete_data, 'complete_data', log_dir)
     save_obj(data, 'data', log_dir)
 
 else:
@@ -138,31 +161,37 @@ else:
 
 ############################################################
 ################ Fit Model ##########
-print("\n\nFitting model.... \n\n")
+print("\n\nKfold Fitting starts.... \n\n")
 
+fit_runs = dict()
+for fold_index in range(args.n_splits):
+    print("\n\nFitting model.... \n\n")
 
-fit_run = sm.sampling(data=stan_data,
-    iter=args.num_samples + args.num_warmup,
-    warmup=args.num_warmup, chains=args.num_chains)
-    # , n_jobs=4)
-    # control = {'max_treedepth':15, 'adapt_delta':0.99})
-    # init = 0)
+    fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
+            iter=args.num_samples + args.num_warmup,
+            warmup=args.num_warmup, chains=args.num_chains)
+            # n_jobs=4, control = {'max_treedepth':15, 'adapt_delta':0.99})
+            # init = 0)
+    try:
+        print("\n\nSaving fitted model in directory %s"%log_dir)
+        save_obj(fit_runs, 'fit', log_dir)
+    except:
+        # Print error message
+        print("could not save the fit object")
 
-try:
-    print("\n\nSaving fitted model in directory %s"%log_dir)
-    save_obj(fit_run, 'fit', log_dir)
-except:
-    # Print error message
-    print("could not save the fit object")
+print("\n\nSaving posterior samples in %s ..."%log_dir)
 
+stan_samples = dict()
+for fold_index in range(args.n_splits):
+    print("\n\nSaving posterior for fold %s samples in %s"%(fold_index, log_dir))
+    # return a dictionary of arrays
+    stan_samples[fold_index] = fit_runs[fold_index].extract(permuted=False,
+                        pars=param_names)
 
-print("\n\nSaving posterior samples in %s"%log_dir)
-stan_samples= fit_run.extract(permuted=False, pars=param_names)  # return a dictionary of arrays
-
-if args.num_chains ==1:
-    ps = dict()
-    for name in param_names:
-        ps[name] = np.squeeze(stan_samples[name])
-else:
-    ps = stan_samples
-save_obj(ps, 'ps', log_dir)
+    if args.num_chains ==1:
+        ps = dict()
+        for name in param_names:
+            ps[name] = np.squeeze(stan_samples[fold_index][name])
+    else:
+        ps = stan_samples[fold_index]
+    save_obj(ps, 'ps_'+str(fold_index), log_dir)
