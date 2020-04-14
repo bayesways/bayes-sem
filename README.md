@@ -149,6 +149,6 @@ on the server, collect the results and visualize them locally with
 * ~~Write run scripts for FND data PPP and CV Index~~
 * ~~Get PPP results for EFA Model 2 on FND data~~
 * ~~Get CV Index results for Models 1 and 2 on FND data~~
-* Plot and see if PPP results make sense
-* Plot and see if CV results make sense
+* ~~Plot and see if PPP results make sense~~
+* ~~Plot and see if CV results make sense~~
 * Move vis display code to `altair`
