@@ -13,15 +13,6 @@ from scipy.special import ndtri
 import argparse
 
 
-# parser = argparse.ArgumentParser()
-# parser.add_argument("logdir", help="path to files", type=str, default=None)
-#
-# # Optional arguments
-# parser.add_argument("-prm", "--print_model", help="print model on screen", type=int, default=1)
-#
-# args = parser.parse_args()
-
-
 def to_str_pattern(y0):
     if np.ndim(y0) == 1:
         return ''.join(y0.astype(str))
@@ -95,24 +86,7 @@ def get_exp_probs2(data, ps, m , L=100):
     return pistr
 
 
-
-def get_probs(data, ps, m):
-    ## compute the pi's for the the m-th posterior sample
-    # Don't think we need this
-    # if 'zz' in ps.keys():
-    #     ystr = ps['alpha'][m] + ps['zz'][m] @ ps['beta'][m].T
-    # elif 'Marg_cov' in ps.keys():
-    #     ystr = ps['yy'][m]
-
-    ystr = ps['yy'][m]
-    # logit
-    pistr = expit(ystr)
-
-    return pistr
-
-
-
-def get_probs2(data, ps, m, cn):
+def get_probs(data, ps, m, cn):
     pistr = expit(ps['yy'][m, cn])
     return pistr
 
@@ -158,13 +132,12 @@ def get_PPP(data, ps, cn, nsim = 100):
     for m_ind in tqdm(range(nsim)):
         m = skip_step*m_ind
         # compute Dy
-        # pi =  get_exp_probs2(data, ps, m, 100)
-        pi = get_probs2(data, ps, m, cn)
+        pi = get_probs(data, ps, m, cn)
         Ey = get_Ey(data_ptrn, pi, data['N'])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
         # compute Dy
-        ppdata = bernoulli.rvs(get_probs2(data, ps, m, cn))
+        ppdata = bernoulli.rvs(get_probs(data, ps, m, cn))
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
