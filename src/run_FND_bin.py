@@ -84,11 +84,10 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/CFA/logit/model1b.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 4 :
-        with open('./codebase/stan_code/discr/CFA/logit/model4.stan', 'r') as file:
+    elif args.stan_model == 4 : # 1 f model
+        with open('./codebase/stan_code/discr/CFA/logit/1f/model1_1f.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-            'Omega_cov', 'Phi_cov']
+        param_names = ['alpha', 'yy',  'beta', 'zz']
     elif args.stan_model == 5 :
         with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
             model_code = file.read()
@@ -97,6 +96,10 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 7 : # 1 f model + u's
+        with open('./codebase/stan_code/discr/CFA/logit/1f/model1b_1f.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Omega_cov']    
     else:
         print('model is 1:6')
 
@@ -124,14 +127,14 @@ else:
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov', 'Phi_cov']
     elif args.stan_model == 3 : # model with cross loadings, no u's
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-
-    elif args.stan_model == 4 : # Omega = c Identity
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-            'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 4 : # 1 factor model
+        param_names = ['alpha', 'yy',  'beta', 'zz']
     elif args.stan_model == 5 :
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 6 :
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 7 : # 1 f model + u's
+        param_names = ['alpha', 'yy',  'beta', 'Omega_cov']    
     else:
         print('model is 1:6')
 
