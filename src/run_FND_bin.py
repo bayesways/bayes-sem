@@ -80,11 +80,10 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3 : # fixed variance of Omega
-        with open('./codebase/stan_code/discr/CFA/logit/model3.stan', 'r') as file:
+    elif args.stan_model == 3 :# model with cross loadings, no u's
+        with open('./codebase/stan_code/discr/CFA/logit/model1b.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-            'Omega_cov', 'Phi_cov']
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 4 :
         with open('./codebase/stan_code/discr/CFA/logit/model4.stan', 'r') as file:
             model_code = file.read()
@@ -123,9 +122,9 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2 :
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3 : # fixed variance of Omega
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-            'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 3 : # model with cross loadings, no u's
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+
     elif args.stan_model == 4 : # Omega = c Identity
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
             'Omega_cov', 'Phi_cov']
