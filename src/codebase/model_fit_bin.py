@@ -89,3 +89,24 @@ def get_PPP(data, ps, cn, nsim=100):
         PPP_vals[m_ind, 1] = sum(Dystr.values())
 
     return PPP_vals, Dy, Dystr
+
+
+def get_lgscr(data, ps, num_chains, nsim = 100):
+
+    nsim_N = ps['alpha'].shape[0]
+    skip_step = int(nsim_N/nsim)
+    
+    data_ptrn = to_str_pattern(data['DD'])
+    Oy = get_Oy(data_ptrn)
+
+    lgscr_vals = np.empty((nsim,num_chains))
+    for m_ind in tqdm(range(nsim)):
+        m = skip_step*m_ind
+        # compute Dy
+        for cn in range(num_chains):
+            pi = get_probs(data, ps, m, cn)
+            Ey = get_Ey(data_ptrn, pi, data['N'])
+            Dy = get_Dy(Oy, Ey, data_ptrn)
+            lgscr_vals[m_ind, cn] = sum(Dy.values())
+
+    return lgscr_vals, Dy
