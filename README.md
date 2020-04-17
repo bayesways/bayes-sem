@@ -27,6 +27,8 @@ Convert `a.ipynb` to `a.py`:
 
 ## How to use:
 
+#### Continuous Data
+
 * To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
 
   ```
@@ -98,6 +100,17 @@ script. It works as follows
 
 * To run a 2-factor and 6 manifest variables  model simulation with kfold splits run `run_kfold_sim.py` with similar options as above. 
 
+* For versions of the script that run the experiment multiple times with different seeds look for the `_bstr` suffix.
+
+
+#### Discrete Data
+
+ * Run simulation with `run_sim_bin.py` and `run_kfold_sim_binary.py`. Get the PPP results in notebooks such `9.1 Simulation 2 Factor Binary - PPP.ipynb` which uses functions from `modelresultsbinary.py` and `modelresultsbinary_4chains.py`. Kfold results are run in notebooks such `9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb`
+ 
+ 
+#### Real World binary data
+ 
+ * Run the FND data experiment with `run_FND_bin.py` and `run_FND_kfold_bin.py` and read the results with the same methods as above.
 
 ### On Fabian
 

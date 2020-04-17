@@ -383,6 +383,8 @@ $ source activate bayes-sem</code></pre>
 </div>
 <div id="how-to-use" class="section level2">
 <h2>How to use:</h2>
+<div id="continuous-data" class="section level4">
+<h4>Continuous Data</h4>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
 <pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
@@ -406,7 +408,21 @@ $ source activate bayes-sem</code></pre>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>model-results.py</code></p></li>
 <li><p>To run a 2-factor and 6 manifest variables model simulation with kfold splits run <code>run_kfold_sim.py</code> with similar options as above.</p></li>
+<li><p>For versions of the script that run the experiment multiple times with different seeds look for the <code>_bstr</code> suffix.</p></li>
 </ul>
+</div>
+<div id="discrete-data" class="section level4">
+<h4>Discrete Data</h4>
+<ul>
+<li>Run simulation with <code>run_sim_bin.py</code> and <code>run_kfold_sim_binary.py</code>. Get the PPP results in notebooks such <code>9.1 Simulation 2 Factor Binary - PPP.ipynb</code> which uses functions from <code>modelresultsbinary.py</code> and <code>modelresultsbinary_4chains.py</code>. Kfold results are run in notebooks such <code>9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb</code></li>
+</ul>
+</div>
+<div id="real-world-binary-data" class="section level4">
+<h4>Real World binary data</h4>
+<ul>
+<li>Run the FND data experiment with <code>run_FND_bin.py</code> and <code>run_FND_kfold_bin.py</code> and read the results with the same methods as above.</li>
+</ul>
+</div>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
 <p>We installed pystan version 2.19 which should run the same scripts as local correctly.</p>
