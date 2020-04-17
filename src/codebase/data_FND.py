@@ -13,7 +13,7 @@ def get_FND_data(return_dict=True):
     dfq = df.loc[:, question_field_names]
     dfq = dfq[dfq['FNSMOKE'] == 1]
     dfq = dfq.iloc[:, 1:].dropna().reset_index(drop=True).astype(int)
-    dfq['FNFIRST'] = (dfq.FNFIRST <= 2).astype(int)
+    dfq['FNFIRST'] = (dfq.FNFIRST > 2).astype(int)
     dfq['FNNODAY'] = (dfq.FNNODAY <= 1).astype(int)
 
     listofquestions = ['FNFIRST', 'FNGIVEUP',
