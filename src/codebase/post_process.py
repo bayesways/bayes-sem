@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import operator
 from numpy.linalg import eigh
 from scipy.stats import kde
@@ -17,7 +18,7 @@ def get_topn(L, topn):
         index[i] = ind
         max_evals[i] = value
         # delete element to repeat process
-        L_c = np.delete(L_c,ind)
+        L_c = np.delete(L_c, ind)
     return index, max_evals
 
 
@@ -27,29 +28,28 @@ def get_topn_eig(M, topn):
     P = eset[1]
     index, max_evals = get_topn(L, topn)
 
-
     out = dict()
     out['index'] = index
     out['P'] = P[:, index]
     for i in range(topn):
-        if  out['P'][0,i]<0:
-            out['P'][:,i] = -out['P'][:,i]
+        if out['P'][0, i] < 0:
+            out['P'][:, i] = -out['P'][:, i]
 
     out['L'] = L[index]
 
     return out
 
 
-def get_non_zeros(x, prc_min = 10, prc_max = 90):
+def get_non_zeros(x, prc_min=10, prc_max=90):
     """
     Returns the index of the elements that do not contain
     zero in their quantile interval from prc_min to prc_max.
     Indices are returned in two arrays a1, a2. The i-th non
     zero element of the matrix x is at position [a1[i], a2[i]].
     """
-    rcs = np.percentile(x, [prc_min,prc_max], axis=0)
-    min_b = rcs[0,:,:]
-    max_b = rcs[1,:,:]
+    rcs = np.percentile(x, [prc_min, prc_max], axis=0)
+    min_b = rcs[0, :, :]
+    max_b = rcs[1, :, :]
 
     zeros = np.zeros((x.shape[1], x.shape[2]))
 
@@ -67,3 +67,38 @@ def kde_mode(x):
     """
     nparam_density = kde.gaussian_kde(x)
     return x[np.argsort(nparam_density)[-1]]
+
+
+def return_post_df(ps, param_name, cn, row, col=None):
+    post_df = pd.DataFrame(
+        data=ps[param_name][:, cn, row, col], columns=['val'])
+    post_df = post_df.reset_index()
+    post_df['param_name'] = param_name
+    post_df['cn'] = cn
+    post_df['row'] = row
+    if col is not None:
+        post_df['col'] = col
+    return post_df
+
+
+def samples_to_df(ps, param_name):
+    num_chains = ps[param_name].shape[1]
+    num_rows = ps[param_name].shape[2]
+    if ps[param_name].ndim > 3:
+        plot_dims = 2
+        num_cols = ps[param_name].shape[3]
+    else:
+        plot_dims = 1
+
+    post_dfs = []
+
+    for cn in range(num_chains):
+        for row in range(num_rows):
+            if plot_dims == 2:
+                for col in range(num_cols):
+                    post_dfs.append(return_post_df(
+                        ps, param_name, cn, row, col))
+            else:
+                post_dfs.append(return_post_df(ps, param_name, cn, row, None))
+
+    return pd.concat(post_dfs, axis=0)

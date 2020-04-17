@@ -427,6 +427,7 @@ $ source activate bayes-sem</code></pre>
 <li><p>Raw data is saved in <code>dat/real_data/FND.csv</code> and the data descriptions are in <code>dat/real_data/FTND Description.xlsx</code>. Data is processed with <code>src/codebase/data_FND.py</code>. There is also a notebook presenting some descriptive statistics of the dataset <code>src/10. Real Data Setup - FND.ipynb</code></p></li>
 <li><p>Run the FND data experiment with <code>run_FND_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
+<li><p>Chart posterior samples with plotting functions in <code>10.1-FDN-Plotting.ipynb</code></p></li>
 </ul>
 </div>
 </div>

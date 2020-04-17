@@ -123,6 +123,8 @@ Chris G. Richardson, Pamela A. Ratner.
 
 * Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
 
+* Chart posterior samples with plotting functions in `10.1-FDN-Plotting.ipynb`
+
 ### On Fabian
 
 We installed pystan version 2.19 which should run the same scripts as local correctly.
