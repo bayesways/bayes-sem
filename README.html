@@ -417,11 +417,18 @@ $ source activate bayes-sem</code></pre>
 <li>Run simulation with <code>run_sim_bin.py</code> and <code>run_kfold_sim_binary.py</code>. Get the PPP results in notebooks such <code>9.1 Simulation 2 Factor Binary - PPP.ipynb</code> which uses functions from <code>modelresultsbinary.py</code> and <code>modelresultsbinary_4chains.py</code>. Kfold results are run in notebooks such <code>9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb</code></li>
 </ul>
 </div>
-<div id="real-world-binary-data" class="section level4">
-<h4>Real World binary data</h4>
+<div id="real-world-binary-data" class="section level3">
+<h3>Real World binary data</h3>
+<div id="fnd-data" class="section level4">
+<h4>FND Data</h4>
+<p>We used our methodology on the on the real dataset FND (Fagerstrom Nicotine Dependence). There are 6 questions (J=6) that are binary (either originally or made to be). We used two different factor structures: 1 factor (K=1) loading on all items, and 2 factors (K=2) where the first factor loads to questions 1,2,3 and the second factor loads to 4,5,6.</p>
+<p>The model structure and related literature of the dataset and other factor analyses papers written on the dataset is described in <em>“A confirmatory factor analysis of the Fagerstrom Test for Nicotine Dependence”</em> by Chris G. Richardson, Pamela A. Ratner.</p>
+<p>Software use:</p>
 <ul>
-<li>Run the FND data experiment with <code>run_FND_bin.py</code> and <code>run_FND_kfold_bin.py</code> and read the results with the same methods as above.</li>
+<li><p>Raw data is saved in <code>dat/real_data/FND.csv</code> and the data descriptions are in <code>dat/real_data/FTND Description.xlsx</code>. Data is processed with <code>src/codebase/data_FND.py</code>. There is also a notebook presenting some descriptive statistics of the dataset <code>src/10. Real Data Setup - FND.ipynb</code></p></li>
+<li><p>Run the FND data experiment with <code>run_FND_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 </ul>
+</div>
 </div>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
