@@ -16,7 +16,7 @@ parser.add_argument(
 parser.add_argument(
     "num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument(
-    "stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+    "stan_model", help="choose what model to run-see list in code", type=int, default=0)
 # Optional arguments
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')

@@ -117,8 +117,6 @@ We used our methodology on the on the real dataset FND (Fagerstrom Nicotine Depe
 The model structure and related literature of the dataset and other factor analyses papers written on the dataset is described in *"A confirmatory factor analysis of the Fagerstrom Test for Nicotine Dependence"* by
 Chris G. Richardson, Pamela A. Ratner.  
 
-Software use: 
-
 * Raw data is saved in `dat/real_data/FND.csv` and the data descriptions are in `dat/real_data/FTND Description.xlsx`. Data is processed with `src/codebase/data_FND.py`. There is also a notebook presenting some descriptive statistics of the dataset `src/10. Real Data Setup - FND.ipynb`
 
 * Run the FND data experiment with `run_FND_bin.py`. To choose which model to run use the `<model_code>` option as follows:  "1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u's, 6: EFA with u's". Results are saved in `log/<time_task_handle>` directories. By default it runs the 'PPP' experiment, pass `-cv cv` to run the Cross Validation experiment. 
