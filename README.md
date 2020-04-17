@@ -177,6 +177,6 @@ on the server, collect the results and visualize them locally with
 * ~~Get CV Index results for Models 1 and 2 on FND data~~
 * ~~Plot and see if PPP results make sense~~
 * ~~Plot and see if CV results make sense~~
-* Move vis display code to `altair`
-* Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain
+* ~~Move vis display code to `altair`~~
+* ~~Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain~~
 * Re-run continuous model code for experiments and clean up code and save results
