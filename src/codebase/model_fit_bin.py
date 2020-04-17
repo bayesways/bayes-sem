@@ -1,16 +1,9 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import multivariate_normal, bernoulli, norm
-import datetime
-import sys
-import os
-import itertools
-
-from tqdm.notebook import tqdm
+from scipy.stats import multivariate_normal, bernoulli
+from tqdm import tqdm
 from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
-from scipy.special import ndtri
-import argparse
 
 
 def to_str_pattern(y0):
@@ -28,62 +21,10 @@ def to_nparray_data(yresp):
     else:
         J = len(yresp[0])
         N = yresp.shape[0]
-        res = np.empty((N,J))
+        res = np.empty((N, J))
         for i in range(N):
             res[i] = np.array(list(yresp[i])).astype(int)
         return res
-
-
-def get_all_possible_patterns(n):
-    lst = list(map(list, itertools.product([0, 1], repeat=n)))
-    return to_str_pattern(lst)
-
-
-def get_exp_probs(data, ps, m , L=100):
-    ## compute the pi's for the the m-th posterior sample
-    if 'zz' in ps.keys():
-        z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-            ps['Phi_cov'][m], size = L)
-        ystr = np.empty((L, data['J']))
-        for l in range(L):
-            ystr[l] = ps['alpha'][m] + z_mc[l] @ ps['beta'][m].T
-    elif 'Marg_cov' in ps.keys():
-        ystr = multivariate_normal.rvs(ps['alpha'][m],
-            ps['Marg_cov'][m], size = L)
-    else:
-        print("No matching model")
-
-    # logit
-    pistr = expit(ystr)
-
-    # probit
-    # pistr = norm.cdf(ystr)
-
-    return pistr
-
-
-def get_exp_probs2(data, ps, m , L=100):
-    num_chains = 4
-    ystr = np.empty((num_chains,L, data['J']))
-    for cn in range(num_chains):
-        if 'zz' in ps.keys():
-            z_mc = multivariate_normal.rvs(np.zeros(data['K']),
-                ps['Phi_cov'][m, cn], size = L)
-            for l in range(L):
-                ystr[cn, l] = ps['alpha'][m, cn] + z_mc[l] @ ps['beta'][m, cn].T
-        elif 'Marg_cov' in ps.keys():
-            ystr[cn] = multivariate_normal.rvs(ps['alpha'][m, cn],
-                ps['Marg_cov'][m, cn], size = L)
-        else:
-            print("No matching model")
-
-    # logit
-    pistr = np.mean(expit(ystr),0)
-
-    # probit
-    # pistr = norm.cdf(ystr)
-
-    return pistr
 
 
 def get_probs(data, ps, m, cn):
@@ -96,8 +37,8 @@ def get_Ey(data_ptrn, prob, N):
     ## compute E_y(theta) for a specific pattern y
     Ey = dict()
     for ptrn in distinct_patterns:
-        prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p = prob)
-        Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix,1)),0)
+        prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p=prob)
+        Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix, 1)), 0)
     return Ey
 
 
@@ -120,7 +61,7 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, cn, nsim = 100):
+def get_PPP(data, ps, cn, nsim=100):
 
     nsim_N = ps['alpha'].shape[0]
     skip_step = int(nsim_N/nsim)
@@ -144,7 +85,7 @@ def get_PPP(data, ps, cn, nsim = 100):
         Eystr = get_Ey(ppddata_ptrn, pi, data['N'])
         Dystr = get_Dy(Oystr, Eystr, ppddata_ptrn)
 
-        PPP_vals[m_ind,0] = sum(Dy.values())
-        PPP_vals[m_ind,1] = sum(Dystr.values())
+        PPP_vals[m_ind, 0] = sum(Dy.values())
+        PPP_vals[m_ind, 1] = sum(Dystr.values())
 
     return PPP_vals, Dy, Dystr
