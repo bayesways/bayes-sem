@@ -238,10 +238,13 @@ elif args.ppp_cv == 'cv':  # run CV
         stan_samples[fold_index] = fit_runs[fold_index].extract(permuted=False,
                                                                 pars=param_names)
 
-        if args.num_chains == 1:
+        if (args.num_chains == 1) and args.squeeze_ps:
             ps = dict()
             for name in param_names:
                 ps[name] = np.squeeze(stan_samples[fold_index][name])
         else:
             ps = stan_samples[fold_index]
         save_obj(ps, 'ps_'+str(fold_index), log_dir)
+
+else:
+    print("-cv needs to be 'ppp' or 'cv'")
