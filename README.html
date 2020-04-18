@@ -414,7 +414,6 @@ $ source activate bayes-sem</code></pre>
 <div id="discrete-data" class="section level3">
 <h3>Discrete Data</h3>
 <ul>
-<li><p>Run simulation with <code>run_sim_bin.py</code> and <code>run_kfold_sim_binary.py</code>. Get the PPP results in notebooks such <code>9.1 Simulation 2 Factor Binary - PPP.ipynb</code> which uses functions from <code>modelresultsbinary.py</code> and <code>modelresultsbinary_4chains.py</code>. Kfold results are run in notebooks such <code>9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb</code></p></li>
 <li><p>Run the simulation experiment with <code>run_sim_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
 <li><p>Posterior Sample charts in <code>2.1-Binary-Simulation-Plotting-CFA.ipynb</code> and <code>2.1-Binary-Simulation-Plotting-EFA.ipynb</code> (to do)</p></li>

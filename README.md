@@ -105,8 +105,6 @@ script. It works as follows
 
 ### Discrete Data
 
- * Run simulation with `run_sim_bin.py` and `run_kfold_sim_binary.py`. Get the PPP results in notebooks such `9.1 Simulation 2 Factor Binary - PPP.ipynb` which uses functions from `modelresultsbinary.py` and `modelresultsbinary_4chains.py`. Kfold results are run in notebooks such `9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb`
- 
 * Run the simulation experiment with `run_sim_bin.py`. To choose which model to run use the `<model_code>` option as follows:  "1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u's, 6: EFA with u's". Results are saved in `log/<time_task_handle>` directories. By default it runs the 'PPP' experiment, pass `-cv cv` to run the Cross Validation experiment. 
 
 * Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
