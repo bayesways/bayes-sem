@@ -411,10 +411,13 @@ $ source activate bayes-sem</code></pre>
 <li><p>For versions of the script that run the experiment multiple times with different seeds look for the <code>_bstr</code> suffix.</p></li>
 </ul>
 </div>
-<div id="discrete-data" class="section level4">
-<h4>Discrete Data</h4>
+<div id="discrete-data" class="section level3">
+<h3>Discrete Data</h3>
 <ul>
-<li>Run simulation with <code>run_sim_bin.py</code> and <code>run_kfold_sim_binary.py</code>. Get the PPP results in notebooks such <code>9.1 Simulation 2 Factor Binary - PPP.ipynb</code> which uses functions from <code>modelresultsbinary.py</code> and <code>modelresultsbinary_4chains.py</code>. Kfold results are run in notebooks such <code>9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb</code></li>
+<li><p>Run simulation with <code>run_sim_bin.py</code> and <code>run_kfold_sim_binary.py</code>. Get the PPP results in notebooks such <code>9.1 Simulation 2 Factor Binary - PPP.ipynb</code> which uses functions from <code>modelresultsbinary.py</code> and <code>modelresultsbinary_4chains.py</code>. Kfold results are run in notebooks such <code>9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb</code></p></li>
+<li><p>Run the simulation experiment with <code>run_sim_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
+<li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
+<li><p>Posterior Sample charts in <code>2.1-Binary-Simulation-Plotting-CFA.ipynb</code> and <code>2.1-Binary-Simulation-Plotting-EFA.ipynb</code> (to do)</p></li>
 </ul>
 </div>
 <div id="real-world-binary-data" class="section level3">
@@ -427,7 +430,7 @@ $ source activate bayes-sem</code></pre>
 <li><p>Raw data is saved in <code>dat/real_data/FND.csv</code> and the data descriptions are in <code>dat/real_data/FTND Description.xlsx</code>. Data is processed with <code>src/codebase/data_FND.py</code>. There is also a notebook presenting some descriptive statistics of the dataset <code>src/10. Real Data Setup - FND.ipynb</code></p></li>
 <li><p>Run the FND data experiment with <code>run_FND_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
-<li><p>Chart posterior samples with plotting functions in <code>10.1-FDN-Plotting.ipynb</code></p></li>
+<li><p>Posterior Sample charts in <code>10.1-FDN-Plotting-CFA.ipynb</code> and <code>10.1-FDN-Plotting-EFA.ipynb</code></p></li>
 </ul>
 </div>
 </div>
@@ -478,6 +481,7 @@ source activate pystan-dev</code></pre></li>
 <li><del>Plot and see if CV results make sense</del></li>
 <li><del>Move vis display code to <code>altair</code></del></li>
 <li><del>Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain</del></li>
+<li>Organize binary simulation notebooks (including EFA specific notebooks)</li>
 <li>Re-run continuous model code for experiments and clean up code and save results</li>
 </ul>
 </div>

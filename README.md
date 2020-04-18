@@ -103,9 +103,15 @@ script. It works as follows
 * For versions of the script that run the experiment multiple times with different seeds look for the `_bstr` suffix.
 
 
-#### Discrete Data
+### Discrete Data
 
  * Run simulation with `run_sim_bin.py` and `run_kfold_sim_binary.py`. Get the PPP results in notebooks such `9.1 Simulation 2 Factor Binary - PPP.ipynb` which uses functions from `modelresultsbinary.py` and `modelresultsbinary_4chains.py`. Kfold results are run in notebooks such `9.4 Simulation Factor Binary - Kfold-Pattern Index.ipynb`
+ 
+* Run the simulation experiment with `run_sim_bin.py`. To choose which model to run use the `<model_code>` option as follows:  "1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u's, 6: EFA with u's". Results are saved in `log/<time_task_handle>` directories. By default it runs the 'PPP' experiment, pass `-cv cv` to run the Cross Validation experiment. 
+
+* Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
+
+* Posterior Sample charts in `2.1-Binary-Simulation-Plotting-CFA.ipynb` and `2.1-Binary-Simulation-Plotting-EFA.ipynb` (to do)
  
  
 ### Real World binary data
@@ -123,7 +129,7 @@ Chris G. Richardson, Pamela A. Ratner.
 
 * Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
 
-* Chart posterior samples with plotting functions in `10.1-FDN-Plotting.ipynb`
+* Posterior Sample charts in `10.1-FDN-Plotting-CFA.ipynb` and `10.1-FDN-Plotting-EFA.ipynb`
 
 ### On Fabian
 
@@ -179,4 +185,5 @@ on the server, collect the results and visualize them locally with
 * ~~Plot and see if CV results make sense~~
 * ~~Move vis display code to `altair`~~
 * ~~Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain~~
+* Organize binary simulation notebooks (including EFA specific notebooks)
 * Re-run continuous model code for experiments and clean up code and save results
