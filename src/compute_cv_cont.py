@@ -6,7 +6,7 @@ import sys
 import os
 from scipy.stats import multivariate_normal
 from sklearn.model_selection import KFold
-from codebase.model_fit_cont import Nlogpdf
+from codebase.model_fit_cont import get_lgscr
 
 
 from codebase.file_utils import save_obj, load_obj
@@ -16,8 +16,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("logdir", help="path to files", type=str, default=None)
 
 # Optional arguments
-parser.add_argument("-prm", "--print_model",
-                    help="print model on screen", type=int, default=1)
+parser.add_argument("-nsim", "--nsim_ppp",
+                    help="number of posterior samples to use for PPP", type=int, default=100)
+
 
 args = parser.parse_args()
 
@@ -47,19 +48,22 @@ model_posterior_samples[2] = load_obj('ps_2', logdir)
 print("\n\nComputing Folds...\n\n")
 
 mcmc_length = model_posterior_samples[0]['alpha'].shape[0]
-cn = 0
+num_chains = model_posterior_samples[0]['alpha'].shape[1]
 
-Ds = np.empty((mcmc_length, 3))
+
+Ds = np.empty((3, num_chains))
 for fold_index in range(3):
-    for mcmc_iter in range(mcmc_length):
-        model_lgpdf = Nlogpdf(complete_data[fold_index]['test']['yy'],
-                              model_posterior_samples[fold_index]['alpha'][mcmc_iter, cn],
-                              model_posterior_samples[fold_index]['Marg_cov'][mcmc_iter, cn])
+    lgscr_vals = get_lgscr(model_posterior_samples[fold_index], complete_data[fold_index],
+                           args.nsim_ppp)
 
-        Ds[mcmc_iter, fold_index] = -2*np.sum(model_lgpdf)
+    # for each chain take the mean log_score across the MCMC iters
+    Ds[fold_index] = np.mean(lgscr_vals, 0)
 
-print(Ds.shape)
-save_obj(Ds, 'ds', "./")
-print(np.sum(Ds, axis=0)/mcmc_length)
-result = np.round(100*np.mean(np.sum(Ds, axis=0)/mcmc_length))
-print("k-fold Index = %d %%" % result)
+# for each chain, sum the log_scores across 3 folds
+logscore_chains = np.sum(Ds, axis=0)
+
+# take the mean sum log-score)
+avg_logscore = np.round(np.mean(np.sum(Ds, axis=0)), 4)
+
+print("Log score for each chain", logscore_chains)
+print("Avg Log score", avg_logscore)

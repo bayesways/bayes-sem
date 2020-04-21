@@ -88,13 +88,13 @@ def get_PPP(data, ps, cn, nsim=100):
         PPP_vals[m_ind, 0] = sum(Dy.values())
         PPP_vals[m_ind, 1] = sum(Dystr.values())
 
-    return PPP_vals, Dy, Dystr
+    return PPP_vals
 
 
 def get_lgscr(data, ps, num_chains, nsim = 100):
 
-    nsim_N = ps['alpha'].shape[0]
-    skip_step = int(nsim_N/nsim)
+    mcmc_length = ps['alpha'].shape[0]
+    skip_step = int(mcmc_length/nsim)
     
     data_ptrn = to_str_pattern(data['DD'])
     Oy = get_Oy(data_ptrn)

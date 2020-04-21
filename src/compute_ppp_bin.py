@@ -25,9 +25,9 @@ ps = load_obj('ps', log_dir)
 num_chains = ps['alpha'].shape[1]
 num_samples = ps['alpha'].shape[0]
 
-ppp_cn = np.empty(num_chains)
+ppp_cn = np.empty(num_chains, args.nsim_ppp)
 for cn in range(num_chains):
-    PPP_vals, Dy, Dystr = get_PPP(data, ps, cn, args.nsim_ppp)
+    PPP_vals = get_PPP(data, ps, cn, args.nsim_ppp)
 
     ppp_cn[cn] = 100*np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
     print(ppp_cn[cn])
