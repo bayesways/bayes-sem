@@ -383,8 +383,26 @@ $ source activate bayes-sem</code></pre>
 </div>
 <div id="how-to-use" class="section level2">
 <h2>How to use:</h2>
-<div id="continuous-data" class="section level4">
-<h4>Continuous Data</h4>
+<div id="continuous-data" class="section level3">
+<h3>Continuous Data</h3>
+<div id="simulation-continuous-data" class="section level4">
+<h4>Simulation Continuous Data</h4>
+<ul>
+<li><p>To run a 2-factor and 6 manifest variables model simulation run <code>run_sim_cont.py</code>. The command runs as follows</p>
+<pre><code>run_sim_cont.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;data_scenario&gt; &lt;model_code&gt;</code></pre>
+<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>),<code>-num_chains</code> (<code>--num_chains</code>), <code>-seed</code> (<code>--random_seed</code>), <code>-nd</code> (<code>--nsim_data</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
+<p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u’s, 2 CFA/5 EFA: full factor model”</p>
+<p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
+<p>The results are processed using <code>compute_ppp_cont.py</code></p></li>
+<li><p>To run a 2-factor and 6 manifest variables model simulation with kfold splits run the same as above with the cv flag on <code>run_sim_cont.py -cv cv</code>, and additional similar options as above.</p></li>
+</ul>
+<p>The results are processed using <code>compute_cv_cont.py</code></p>
+<ul>
+<li>For versions of the script that run the experiment multiple times with different seeds look for the <code>_bstr</code> suffix.</li>
+</ul>
+</div>
+<div id="real-world-application" class="section level4">
+<h4>Real World Application</h4>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
 <pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
@@ -401,23 +419,19 @@ $ source activate bayes-sem</code></pre>
 <p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
 <p>The results are processed using <code>kfold_results.py</code> by passing the two <code>log/&lt;dir&gt;</code> of the two models to be compared. The order matters, as follows.</p>
 <pre><code>kfold_results.py &lt;log_dir_benchmark_model&gt; &lt;log_dir_proposed_model&gt; </code></pre></li>
-<li><p>To run a 2-factor and 6 manifest variables model simulation run <code>run_sim_exp1.py</code>. The command runs as follows</p>
-<pre><code>run_sim_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;data_scenario&gt; &lt;model_code&gt;</code></pre>
-<p>with optional flags for <code>-th</code> (<code>--task_handle</code>), <code>-pm</code> (<code>--print_model</code>),<code>-num_chains</code> (<code>--num_chains</code>), <code>-seed</code> (<code>--random_seed</code>), <code>-nd</code> (<code>--nsim_data</code>) and <code>-xdir</code> (<code>--existing_directory</code>). The results are saved in <code>src/log/&lt;date-time&gt;_&lt;task_handle&gt;</code>.</p>
-<p>To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u’s, 2 CFA/5 EFA: full factor model”</p>
-<p>If an existing directory is given then the script looks for an existing compiled stan model to load and run with the new number of iterations.</p>
-<p>The results are processed using <code>model-results.py</code></p></li>
-<li><p>To run a 2-factor and 6 manifest variables model simulation with kfold splits run <code>run_kfold_sim.py</code> with similar options as above.</p></li>
-<li><p>For versions of the script that run the experiment multiple times with different seeds look for the <code>_bstr</code> suffix.</p></li>
 </ul>
+</div>
 </div>
 <div id="discrete-data" class="section level3">
 <h3>Discrete Data</h3>
+<div id="simulation-binary-data" class="section level4">
+<h4>Simulation Binary Data</h4>
 <ul>
 <li><p>Run the simulation experiment with <code>run_sim_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
 <li><p>Posterior Sample charts in <code>2.1-Binary-Simulation-Plotting-CFA.ipynb</code> and <code>2.1-Binary-Simulation-Plotting-EFA.ipynb</code> (to do)</p></li>
 </ul>
+</div>
 </div>
 <div id="real-world-binary-data" class="section level3">
 <h3>Real World binary data</h3>
@@ -481,7 +495,7 @@ source activate pystan-dev</code></pre></li>
 <li><del>Move vis display code to <code>altair</code></del></li>
 <li><del>Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain</del></li>
 <li>Organize binary simulation notebooks (including EFA specific notebooks)</li>
-<li>Re-run continuous model code for experiments and clean up code and save results</li>
+<li><del>Re-run continuous model code for experiments and clean up code and save results</del></li>
 </ul>
 </div>
 </div>
