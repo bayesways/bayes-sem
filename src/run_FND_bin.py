@@ -62,7 +62,9 @@ if args.existing_directory is None:
 
     if args.sim_case == 1:
         data = get_FND_data()
-
+    elif args.sim_case == 2:
+        data = get_FND_data()
+        data['K'] = 3
     else:
         print("Only Simulation Option is 1")
 
