@@ -401,8 +401,8 @@ $ source activate bayes-sem</code></pre>
 <li>For versions of the script that run the experiment multiple times with different seeds look for the <code>_bstr</code> suffix.</li>
 </ul>
 </div>
-<div id="real-world-application" class="section level4">
-<h4>Real World Application</h4>
+<div id="real-world-application-old-might-need-rechecking" class="section level4">
+<h4>Real World Application (OLD might need rechecking)</h4>
 <ul>
 <li><p>To run the Muthen model run <code>run_muthen_exp1.py</code>. The command runs as follows</p>
 <pre><code>run_muthen_exp1.py &lt;num_warmup&gt; &lt;num_samples&gt; &lt;model_code&gt;</code></pre>
@@ -429,7 +429,7 @@ $ source activate bayes-sem</code></pre>
 <ul>
 <li><p>Run the simulation experiment with <code>run_sim_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
-<li><p>Posterior Sample charts in <code>2.1-Binary-Simulation-Plotting-CFA.ipynb</code> and <code>2.1-Binary-Simulation-Plotting-EFA.ipynb</code> (to do)</p></li>
+<li><p>Posterior Sample charts in <code>3.1-Binary-Simulation-Plotting-CFA.ipynb</code> and <code>3.2-Binary-Simulation-Plotting-EFA.ipynb</code></p></li>
 </ul>
 </div>
 </div>
@@ -441,9 +441,9 @@ $ source activate bayes-sem</code></pre>
 <p>The model structure and related literature of the dataset and other factor analyses papers written on the dataset is described in <em>“A confirmatory factor analysis of the Fagerstrom Test for Nicotine Dependence”</em> by Chris G. Richardson, Pamela A. Ratner.</p>
 <ul>
 <li><p>Raw data is saved in <code>dat/real_data/FND.csv</code> and the data descriptions are in <code>dat/real_data/FTND Description.xlsx</code>. Data is processed with <code>src/codebase/data_FND.py</code>. There is also a notebook presenting some descriptive statistics of the dataset <code>src/10. Real Data Setup - FND.ipynb</code></p></li>
-<li><p>Run the FND data experiment with <code>run_FND_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u’s, 6: EFA with u’s”. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
+<li><p>Run the FND data experiment with <code>run_FND_bin.py</code>. To choose which model to run use the <code>&lt;model_code&gt;</code> option as follows: “1: CFA (2 factor no u’s), 2: CFA 2 (2 factor), 3: Model 1.5 (2 factor), 4: EFA Model no u’s, 5: EFA Model”. If running an EFA model (model 4 or 5) you can choose the number of factors k with flag <code>-nfac k</code>. Results are saved in <code>log/&lt;time_task_handle&gt;</code> directories. By default it runs the ‘PPP’ experiment, pass <code>-cv cv</code> to run the Cross Validation experiment.</p></li>
 <li><p>Compute PPP values with <code>src/compute_ppp_bin.py</code> and cross validation values with <code>src/compute_cv_bin.py</code></p></li>
-<li><p>Posterior Sample charts in <code>10.1-FDN-Plotting-CFA.ipynb</code> and <code>10.1-FDN-Plotting-EFA.ipynb</code></p></li>
+<li><p>Posterior Sample charts in <code>4.1-FDN-Plotting-CFA.ipynb</code> and <code>4.2-FDN-Plotting-EFA.ipynb</code></p></li>
 </ul>
 </div>
 </div>
@@ -466,8 +466,8 @@ source activate pystan-dev</code></pre></li>
 <pre><code>find . type f -name '*.p' -delete</code></pre>
 </div>
 </div>
-<div id="results" class="section level2">
-<h2>Results:</h2>
+<div id="results---old" class="section level2">
+<h2>(Results - OLD):</h2>
 <ul>
 <li><p>To run the experiment of Muthen data <code>run_muthen_exp1.py</code>. Usually we run this on the server, collect the results and visualize them locally with <code>1.1.Muthen-women</code> or <code>1.2.Muthen-men</code>.</p></li>
 <li><p>Compared the PPP values using <code>model-results.py</code> of model 1 and model 2.</p></li>
@@ -494,7 +494,7 @@ source activate pystan-dev</code></pre></li>
 <li><del>Plot and see if CV results make sense</del></li>
 <li><del>Move vis display code to <code>altair</code></del></li>
 <li><del>Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain</del></li>
-<li>Organize binary simulation notebooks (including EFA specific notebooks)</li>
+<li><del>Organize binary simulation notebooks (including EFA specific notebooks)</del></li>
 <li><del>Re-run continuous model code for experiments and clean up code and save results</del></li>
 </ul>
 </div>

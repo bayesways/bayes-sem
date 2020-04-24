@@ -57,7 +57,7 @@ The results are processed using `compute_cv_cont.py`
 
 
 
-#### Real World Application
+#### Real World Application (OLD might need rechecking)
 
 * To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
 
@@ -118,7 +118,7 @@ script. It works as follows
 
 * Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
 
-* Posterior Sample charts in `2.1-Binary-Simulation-Plotting-CFA.ipynb` and `2.1-Binary-Simulation-Plotting-EFA.ipynb` (to do)
+* Posterior Sample charts in `3.1-Binary-Simulation-Plotting-CFA.ipynb` and `3.2-Binary-Simulation-Plotting-EFA.ipynb` 
  
  
 ### Real World binary data
@@ -132,11 +132,11 @@ Chris G. Richardson, Pamela A. Ratner.
 
 * Raw data is saved in `dat/real_data/FND.csv` and the data descriptions are in `dat/real_data/FTND Description.xlsx`. Data is processed with `src/codebase/data_FND.py`. There is also a notebook presenting some descriptive statistics of the dataset `src/10. Real Data Setup - FND.ipynb`
 
-* Run the FND data experiment with `run_FND_bin.py`. To choose which model to run use the `<model_code>` option as follows:  "1: Model1 (2 factor), 2:Model 2 (2 factor), 3: Model 1.5 (2 factor), 4: 1 Factor Model, 5: EFA no u's, 6: EFA with u's". Results are saved in `log/<time_task_handle>` directories. By default it runs the 'PPP' experiment, pass `-cv cv` to run the Cross Validation experiment. 
+* Run the FND data experiment with `run_FND_bin.py`. To choose which model to run use the `<model_code>` option as follows:  "1: CFA (2 factor no u's), 2: CFA 2 (2 factor), 3: Model 1.5 (2 factor), 4: EFA Model no u's, 5: EFA Model". If running an EFA model (model 4 or 5) you can choose the number of factors k with flag `-nfac k`. Results are saved in `log/<time_task_handle>` directories. By default it runs the 'PPP' experiment, pass `-cv cv` to run the Cross Validation experiment. 
 
 * Compute PPP values with `src/compute_ppp_bin.py` and cross validation values with `src/compute_cv_bin.py`
 
-* Posterior Sample charts in `10.1-FDN-Plotting-CFA.ipynb` and `10.1-FDN-Plotting-EFA.ipynb`
+* Posterior Sample charts in `4.1-FDN-Plotting-CFA.ipynb` and `4.2-FDN-Plotting-EFA.ipynb`
 
 ### On Fabian
 
@@ -160,7 +160,7 @@ To save storage space you can remove old pickled files with
     find . type f -name '*.p' -delete
 
 
-## Results:
+## (Results - OLD):
 
 * To run the experiment of Muthen data `run_muthen_exp1.py`. Usually we run this
 on the server, collect the results and visualize them locally with
@@ -192,5 +192,5 @@ on the server, collect the results and visualize them locally with
 * ~~Plot and see if CV results make sense~~
 * ~~Move vis display code to `altair`~~
 * ~~Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain~~
-* Organize binary simulation notebooks (including EFA specific notebooks)
+* ~~Organize binary simulation notebooks (including EFA specific notebooks)~~
 * ~~Re-run continuous model code for experiments and clean up code and save results~~
