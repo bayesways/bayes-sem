@@ -33,9 +33,11 @@ parser.add_argument("-sqz", "--squeeze_ps",
 parser.add_argument("-seed", "--random_seed",
                     help="random seed for data generation", type=int, default=0)
 parser.add_argument("-th", "--task_handle",
-                    help="hande for task", type=str, default="_")
+                    help="hande for task", type=str, default="FND")
 parser.add_argument("-prm", "--print_model",
                     help="print model on screen", type=int, default=0)
+parser.add_argument("-save_stan", "--save_stan",
+                    help="print model on screen", type=bool, default=False)                    
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
                     type=str, default=None)
 parser.add_argument("-nfl", "--n_splits",
@@ -47,8 +49,8 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  # ISO 8601 format
-    log_dir = "./log/"+nowstr+"%s_s%sm%s/" % (args.task_handle, args.sim_case,
-                                              args.stan_model)
+    log_dir = "./log/"+nowstr+"%s_%s_m%s_f%s/" % (args.task_handle, args.ppp_cv,
+                                              args.stan_model, args.num_factors)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 else:
@@ -156,12 +158,13 @@ if args.load_model == False:
 
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
-    try:
-        print("\n\nSaving compiled model in directory %s" % log_dir)
-        save_obj(sm, 'sm', log_dir)
-    except:
-        # Print error message
-        print("could not save the stan model")
+    if args.save_stan:
+        try:
+            print("\n\nSaving compiled model in directory %s" % log_dir)
+            save_obj(sm, 'sm', log_dir)
+        except:
+            # Print error message
+            print("could not save the stan model")
 else:
     print("\n\nReading existing compiled model from directory %s" % log_dir)
     sm = load_obj('sm', log_dir)
@@ -191,12 +194,13 @@ if args.ppp_cv == 'ppp':  # run PPP
                           warmup=args.num_warmup, chains=args.num_chains, n_jobs=4,
                           control={'max_treedepth': 15, 'adapt_delta': 0.99}, init=0)
 
-    try:
-        print("\n\nSaving fitted model in directory %s" % log_dir)
-        save_obj(fit_run, 'fit', log_dir)
-    except:
-        # Print error message
-        print("could not save the fit object")
+    if args.save_stan:
+        try:
+            print("\n\nSaving fitted model in directory %s" % log_dir)
+            save_obj(fit_run, 'fit', log_dir)
+        except:
+            # Print error message
+            print("could not save the fit object")
 
     print("\n\nSaving posterior samples in %s" % log_dir)
     # return a dictionary of arrays
@@ -221,12 +225,13 @@ elif args.ppp_cv == 'cv':  # run CV
                                            iter=args.num_samples + args.num_warmup,
                                            warmup=args.num_warmup, chains=args.num_chains, n_jobs=4,
                                            control={'max_treedepth': 15, 'adapt_delta': 0.99}, init=0)
-        try:
-            print("\n\nSaving fitted model in directory %s" % log_dir)
-            save_obj(fit_runs, 'fit', log_dir)
-        except:
-            # Print error message
-            print("could not save the fit object")
+        if args.save_stan:
+            try:
+                print("\n\nSaving fitted model in directory %s" % log_dir)
+                save_obj(fit_runs, 'fit', log_dir)
+            except:
+                # Print error message
+                print("could not save the fit object")
 
     print("\n\nSaving posterior samples in %s ..." % log_dir)
 
