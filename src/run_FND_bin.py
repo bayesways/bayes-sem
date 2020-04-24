@@ -22,6 +22,8 @@ parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
 parser.add_argument("-sc", "--sim_case",
                     help="simulation case number", type=int, default=1)
+parser.add_argument("-nfac", "--num_factors",
+                    help="number of factors for EFA", type=int, default=2)
 parser.add_argument("-lm", "--load_model",
                     help="load model", type=bool, default=False)
 parser.add_argument("-num_chains", "--num_chains",
@@ -36,7 +38,8 @@ parser.add_argument("-prm", "--print_model",
                     help="print model on screen", type=int, default=0)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
                     type=str, default=None)
-parser.add_argument("-nfl", "--n_splits", help="number of folds", type=int, default=3)
+parser.add_argument("-nfl", "--n_splits",
+                    help="number of folds", type=int, default=3)
 
 args = parser.parse_args()
 
@@ -62,11 +65,12 @@ if args.existing_directory is None:
 
     if args.sim_case == 1:
         data = get_FND_data()
-    elif args.sim_case == 2:
-        data = get_FND_data()
-        data['K'] = 3
     else:
         print("Only Simulation Option is 1")
+
+    # define number of factors for EFA only 
+    if args.stan_model >= 4:
+        data['K'] = args.num_factors
 
     if args.ppp_cv == 'ppp':  # run PPP
         stan_data = dict(
@@ -133,20 +137,16 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/CFA/logit/model1b.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 4:  # 1 f model + u's
-        with open('./codebase/stan_code/discr/CFA/logit/1f/model1b_1f.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Omega_cov']
-    elif args.stan_model == 5:
+    elif args.stan_model == 4:  # EFA no u's
         with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
             model_code = file.read()
         param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 6:
+    elif args.stan_model == 5:  # EFA with u's
         with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     else:
-        print('model is 1:6')
+        print('model is 1:5')
 
     if bool(args.print_model):
         print(model_code)
@@ -173,14 +173,12 @@ else:
                        'Marg_cov', 'Omega_cov', 'Phi_cov']
     elif args.stan_model == 3:  # model with cross loadings, no u's
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 4:  # 1 f model + u's
-        param_names = ['alpha', 'yy',  'beta', 'Omega_cov']
-    elif args.stan_model == 5:
+    elif args.stan_model == 4:
         param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 6:
+    elif args.stan_model == 5:
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     else:
-        print('model is 1:6')
+        print('model is 1:5')
 
 ############################################################
 ################ Fit Model ##########
