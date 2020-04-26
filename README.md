@@ -138,6 +138,20 @@ Chris G. Richardson, Pamela A. Ratner.
 
 * Posterior Sample charts in `4.1-FDN-Plotting-CFA.ipynb` and `4.2-FDN-Plotting-EFA.ipynb`
 
+#### Results: 
+
+* `log/FND` contains results from running the algorithsm with the binary enconding 
+    
+      dfq['FNFIRST'] = (dfq.FNFIRST > 2).astype(int)
+      dfq['FNNODAY'] = (dfq.FNNODAY > 2).astype(int)
+    
+* `log/FND2` contains results from running the algorithsm with the binary enconding 
+    
+      dfq['FNFIRST'] = (dfq.FNFIRST > 2).astype(int)`
+      dfq['FNNODAY'] = (dfq.FNNODAY > 1).astype(int)`    
+    
+
+
 ### On Fabian
 
 We installed pystan version 2.19 which should run the same scripts as local correctly.

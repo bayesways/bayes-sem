@@ -446,6 +446,17 @@ $ source activate bayes-sem</code></pre>
 <li><p>Posterior Sample charts in <code>4.1-FDN-Plotting-CFA.ipynb</code> and <code>4.2-FDN-Plotting-EFA.ipynb</code></p></li>
 </ul>
 </div>
+<div id="results" class="section level4">
+<h4>Results:</h4>
+<ul>
+<li><p><code>log/FND</code> contains results from running the algorithsm with the binary enconding</p>
+<pre><code>dfq['FNFIRST'] = (dfq.FNFIRST &gt; 2).astype(int)
+dfq['FNNODAY'] = (dfq.FNNODAY &gt; 2).astype(int)</code></pre></li>
+<li><p><code>log/FND2</code> contains results from running the algorithsm with the binary enconding</p>
+<pre><code>dfq['FNFIRST'] = (dfq.FNFIRST &gt; 2).astype(int)`
+dfq['FNNODAY'] = (dfq.FNNODAY &gt; 1).astype(int)`    </code></pre></li>
+</ul>
+</div>
 </div>
 <div id="on-fabian" class="section level3">
 <h3>On Fabian</h3>
