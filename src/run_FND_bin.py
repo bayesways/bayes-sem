@@ -135,10 +135,11 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                        'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3:  # model with cross loadings, no u's
-        with open('./codebase/stan_code/discr/CFA/logit/model1b.stan', 'r') as file:
+    elif args.stan_model == 3: # alt param of model 2
+        with open('./codebase/stan_code/discr/CFA/logit/model2_prm2.stan', 'r') as file:
             model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                       'Omega_cov', 'Phi_cov']
     elif args.stan_model == 4:  # EFA no u's
         with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
             model_code = file.read()
@@ -174,8 +175,9 @@ else:
     elif args.stan_model == 2:
         param_names = ['alpha', 'yy',  'beta',
                        'Marg_cov', 'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3:  # model with cross loadings, no u's
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+    elif args.stan_model == 3: # alt param of model2
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                       'Omega_cov', 'Phi_cov']
     elif args.stan_model == 4:
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 5:
