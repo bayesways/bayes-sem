@@ -86,7 +86,7 @@ if args.existing_directory is None:
         save_obj(data, 'data', log_dir)
     elif args.ppp_cv == 'cv':  # run CV
         X = data['D']
-        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=34)
+        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=1)
         kf.get_n_splits(X)
 
         stan_data = dict()
@@ -225,7 +225,7 @@ elif args.ppp_cv == 'cv':  # run CV
 
         fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
                                            iter=args.num_samples + args.num_warmup,
-                                           warmup=args.num_warmup, chains=args.num_chains, n_jobs=4,
+                                           warmup=args.num_warmup, chains=args.num_chains, n_jobs=args.num_chains,
                                            control={'max_treedepth': 15, 'adapt_delta': 0.99}, init=0)
         if args.save_stan:
             try:
