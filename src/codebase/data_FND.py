@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 
-def get_FND_data(return_dict=True):
+def get_FND_data(return_dict=True, alt_order=False):
     df = pd.read_csv("../dat/real_data/FND.csv")
 
     df_dscr = pd.read_excel(
@@ -18,7 +18,13 @@ def get_FND_data(return_dict=True):
 
     listofquestions = ['FNFIRST', 'FNGIVEUP',
                        'FNFREQ', 'FNNODAY', 'FNFORBDN', 'FNSICK']
+    listofquestions2 = ['FNGIVEUP',
+                        'FNFREQ', 'FNNODAY', 'FNFORBDN', 'FNSICK', 'FNFIRST']
+
     dfq = dfq.loc[:, listofquestions]
+
+    if alt_order:
+        dfq = dfq.loc[:, listofquestions2]
 
     if return_dict:
         data = dict()

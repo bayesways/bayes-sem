@@ -37,7 +37,7 @@ parser.add_argument("-th", "--task_handle",
 parser.add_argument("-prm", "--print_model",
                     help="print model on screen", type=int, default=0)
 parser.add_argument("-save_stan", "--save_stan",
-                    help="print model on screen", type=bool, default=False)                    
+                    help="print model on screen", type=bool, default=False)
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
                     type=str, default=None)
 parser.add_argument("-nfl", "--n_splits",
@@ -49,8 +49,8 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  # ISO 8601 format
-    log_dir = "./log/"+nowstr+"%s_%s_m%s_f%s/" % (args.task_handle, args.ppp_cv,
-                                              args.stan_model, args.num_factors)
+    log_dir = "./log/"+nowstr+"%s_%s_sc%s_m%s_f%s/" % (args.task_handle, args.ppp_cv, args.sim_case,
+                                                       args.stan_model, args.num_factors)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 else:
@@ -67,10 +67,12 @@ if args.existing_directory is None:
 
     if args.sim_case == 1:
         data = get_FND_data()
+    elif args.sim_case == 2:
+        data = get_FND_data(alt_order=True)
     else:
-        print("Only Simulation Option is 1")
+        print("Only Simulation Option is 1 or 2")
 
-    # define number of factors for EFA only 
+    # define number of factors for EFA only
     if args.stan_model >= 4:
         data['K'] = args.num_factors
 
@@ -86,7 +88,7 @@ if args.existing_directory is None:
         save_obj(data, 'data', log_dir)
     elif args.ppp_cv == 'cv':  # run CV
         X = data['D']
-        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=1)
+        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=34)
         kf.get_n_splits(X)
 
         stan_data = dict()
@@ -135,7 +137,7 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                        'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3: # alt param of model 2
+    elif args.stan_model == 3:  # alt param of model 2
         with open('./codebase/stan_code/discr/CFA/logit/model2_prm2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
@@ -148,6 +150,15 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 6:  # EFA lower triang no u's
+        with open('./codebase/stan_code/discr/EFA/model1_lower.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['beta', 'alpha', 'zz', 'yy']
+    elif args.stan_model == 7:  # EFA lower triang with u's
+        with open('./codebase/stan_code/discr/EFA/model2_lower.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+
     else:
         print('model is 1:5')
 
@@ -175,12 +186,16 @@ else:
     elif args.stan_model == 2:
         param_names = ['alpha', 'yy',  'beta',
                        'Marg_cov', 'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3: # alt param of model2
+    elif args.stan_model == 3:  # alt param of model2
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                        'Omega_cov', 'Phi_cov']
     elif args.stan_model == 4:
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 5:
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 6:  # EFA no u's
+        param_names = ['beta', 'alpha', 'zz', 'yy']
+    elif args.stan_model == 7:  # EFA with u's
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
     else:
         print('model is 1:5')
