@@ -11,8 +11,9 @@ transformed data{
 
 parameters {
   vector[J] alpha;
-  vector[J] beta_free1; // 1st factor
-  vector[J-1] beta_free2; // 2nd factor (enforce beta lower triangular)
+  vector<lower=0>[2] beta_leading;
+  vector[J-1] beta_free1; // 1st factor
+  vector[J-2] beta_free2; // 2nd factor (enforce beta lower triangular)
   matrix[N,J] yy;
   cov_matrix[J] Omega_cov;
 }
@@ -20,13 +21,17 @@ parameters {
 transformed parameters{
   matrix[J,K] beta;
   cov_matrix[J] Marg_cov;
+  beta[1,1] = beta_leading[1];
+  beta[2:J, 1] = beta_free1;
+
   beta[1,2] = 0;
-  beta[1:J, 1] = beta_free1;
-  beta[2:J, 2] = beta_free2;
+  beta[2,2] = beta_leading[2];
+  beta[3:J, 2] = beta_free2;
   Marg_cov = beta * beta'+ Omega_cov;
 }
 
 model {
+  to_vector(beta_leading) ~ normal(0, 2);
   to_vector(beta_free1) ~ normal(0, 1);
   to_vector(beta_free2) ~ normal(0, 1);
   to_vector(alpha) ~ normal(0, 10);

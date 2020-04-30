@@ -20,11 +20,13 @@ def get_FND_data(return_dict=True, alt_order=False):
                        'FNFREQ', 'FNNODAY', 'FNFORBDN', 'FNSICK']
     listofquestions2 = ['FNGIVEUP',
                         'FNFREQ', 'FNNODAY', 'FNFORBDN', 'FNSICK', 'FNFIRST']
+    listofquestions3 = ['FNGIVEUP', 'FNFIRST', 
+                       'FNFREQ', 'FNNODAY', 'FNFORBDN', 'FNSICK']
 
     dfq = dfq.loc[:, listofquestions]
 
     if alt_order:
-        dfq = dfq.loc[:, listofquestions2]
+        dfq = dfq.loc[:, listofquestions3]
 
     if return_dict:
         data = dict()
