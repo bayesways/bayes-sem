@@ -42,15 +42,13 @@ fit <- cfa(model, data=df, ordered=names(df))
 summary(fit, fit.measures=TRUE, standardized = T)
 ```
 
-
 ```{r}
-fit<- factanal(df, 2)
-fit
+library(psych)
+m = fa(df, nfactors=2, cor="poly", rotate = 'none')
+m$loadings
 ```
 
 ```{r}
-library(psych)
-m = fa(df, nfactors=2)
-m
+fa.diagram(m)
 ```
 

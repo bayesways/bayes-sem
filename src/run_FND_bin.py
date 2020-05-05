@@ -73,7 +73,7 @@ if args.existing_directory is None:
         print("Only Simulation Option is 1 or 2")
 
     # define number of factors for EFA only
-    if args.stan_model >= 4:
+    if args.stan_model >= 4 and args.stan_model <= 7:
         data['K'] = args.num_factors
 
     if args.ppp_cv == 'ppp':  # run PPP
@@ -158,9 +158,17 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/EFA/model2_lower.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-
+    elif args.stan_model == 8:  # alt param of model 2
+        with open('./codebase/stan_code/discr/CFA/logit/model5_n.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
+    elif args.stan_model == 9:  # alt param of model 2
+        with open('./codebase/stan_code/discr/CFA/logit/model5.stan', 'r') as file:
+            model_code = file.read()
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                       'Omega_cov', 'Phi_cov']                           
     else:
-        print('model is 1:5')
+        print('model is 1:9')
 
     if bool(args.print_model):
         print(model_code)
@@ -197,8 +205,13 @@ else:
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 7:  # EFA with u's
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 8:  # alt param of model 2 with cross loading on first variable no u's
+        param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
+    elif args.stan_model == 9:  # alt param of model 2 with cross loading on first variable
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                       'Omega_cov', 'Phi_cov']              
     else:
-        print('model is 1:5')
+        print('model is 1:9')
 
 ############################################################
 ################ Fit Model ##########
