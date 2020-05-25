@@ -213,7 +213,7 @@ if args.ppp_cv == 'ppp':  # run PPP
     fit_run = sm.sampling(data=stan_data,
                           iter=args.num_samples + args.num_warmup,
                           warmup=args.num_warmup, chains=args.num_chains,
-                          n_jobs=4, control={'max_treedepth': 15, 'adapt_delta': 0.99},
+                          n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9},
                           init = 0)
 
     try:
