@@ -147,7 +147,7 @@ if args.load_model == False:
 
     print("\n\nReading Stan Code from model %d" % args.stan_model)
     if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/CFA/model0.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/EFA/model0.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov', 'alpha']
     elif args.stan_model == 1 :
@@ -213,8 +213,8 @@ if args.ppp_cv == 'ppp':  # run PPP
     fit_run = sm.sampling(data=stan_data,
                           iter=args.num_samples + args.num_warmup,
                           warmup=args.num_warmup, chains=args.num_chains,
-                          n_jobs=4, control={'max_treedepth': 15, 'adapt_delta': 0.99})
-    # init = 0)
+                          n_jobs=4, control={'max_treedepth': 15, 'adapt_delta': 0.99},
+                          init = 0)
 
     try:
         print("\n\nSaving fitted model in directory %s" % log_dir)
