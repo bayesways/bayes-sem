@@ -61,9 +61,10 @@ for fold_index in range(3):
 
 # for each chain, sum the log_scores across 3 folds
 logscore_chains = np.sum(Ds, axis=0)
+avg_logscore =  np.round(np.mean(logscore_chains),4) # take the mean sum log-score)
 
-# take the mean sum log-score)
-avg_logscore = np.round(np.mean(np.sum(Ds, axis=0)), 4)
+avg_logscore_folds =  np.round(np.mean(Ds, axis=1),2) # take the mean sum log-score)
+print(avg_logscore_folds)
 
 print("Log score for each chain", logscore_chains)
 print("Avg Log score", avg_logscore)

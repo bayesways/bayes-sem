@@ -37,7 +37,7 @@ for fold_index in range(3):
     lgscr_vals, Dy = get_lgscr(complete_data[fold_index]['test'], model_posterior_samples[fold_index], num_chains, args.nsim_ppp)
     Ds[fold_index] = np.mean(lgscr_vals,0) #for each chain take the mean log_score across the MCMC iters
     
-logscore_chains = np.mean(Ds, axis=0) # for each chain, sum the log_scores across 3 folds
+logscore_chains = np.sum(Ds, axis=0) # for each chain, sum the log_scores across 3 folds
 avg_logscore =  np.round(np.mean(logscore_chains),4) # take the mean sum log-score)
 
 avg_logscore_folds =  np.round(np.mean(Ds, axis=1),2) # take the mean sum log-score)

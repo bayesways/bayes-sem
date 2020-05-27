@@ -36,6 +36,8 @@ parser.add_argument("-seed", "--random_seed",
                     help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c", "--c_param",
                     help="fixed variances of Theta", type=float, default=1)
+parser.add_argument("-cl_level", "--crossloading_level",
+                    help="level of cross loading magnitude", type=float, default=3)
 parser.add_argument("-nd", "--nsim_data", help="data size",
                     type=int, default=1000)
 parser.add_argument("-th", "--task_handle",
@@ -74,17 +76,25 @@ if args.existing_directory is None or args.gen_data == True:
 
     print("\n\nGenerating Continuous data for case %s"%args.sim_case)
     if args.sim_case == 0 :
-        data = gen_data(args.nsim_data, off_diag_residual=False,
-            random_seed = args.random_seed)
+        data = gen_data(args.nsim_data,
+                        off_diag_residual=False,
+                        random_seed = args.random_seed)
     elif args.sim_case == 1 :
-        data = gen_data(args.nsim_data, off_diag_residual=True,
-            random_seed = args.random_seed)
+        data = gen_data(args.nsim_data,
+                        off_diag_residual=True,
+                        random_seed = args.random_seed)
     elif args.sim_case == 2 :
-        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=False,
-            cross_loadings_level = 2, random_seed = args.random_seed)
+        data = gen_data(args.nsim_data,
+                        cross_loadings=True,
+                        off_diag_residual=False,
+                        cross_loadings_level = args.crossloading_level,
+                        random_seed = args.random_seed)
     elif args.sim_case == 3 :
-        data = gen_data(args.nsim_data, cross_loadings=True, off_diag_residual=True,
-            cross_loadings_level = 2, random_seed = args.random_seed)
+        data = gen_data(args.nsim_data,
+                        cross_loadings=True,
+                        off_diag_residual=True,
+                        cross_loadings_level = args.crossloading_level,
+                        random_seed = args.random_seed)
     else:
         print("Choose simulation case {0:diag Theta, \
             1:Theta with 6 off diag elements \
