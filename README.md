@@ -57,12 +57,14 @@ The results are processed using `compute_cv_cont.py`
 
 
 
-#### Real World Application (OLD might need rechecking)
+#### Real World Application 
 
-* To run the Muthen model run `run_muthen_exp1.py`. The command runs as follows
+We run the factor model on the Big 5 personality data. The data is examined in `2.0 Muthen Data.ipynb`. 
+
+* To run the Big 5 experiment run `run_big5.py`. 
 
   ```
-  run_muthen_exp1.py <num_warmup> <num_samples> <model_code>
+  run_big5.py <num_warmup> <num_samples> <model_code>
   ```
 
   with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), (`--num_chains`), 
@@ -70,44 +72,11 @@ The results are processed using `compute_cv_cont.py`
   `-xdir` (`--existing_directory`). The results are saved in
   `src/log/<date-time>_<task_handle>`.
   
-  To choose which model to run use the `<model_code>` option as follows:
-  "0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model"
-  
-  If an existing directory is given then the script looks for an existing compiled
-  stan model to load and run with the new number of iterations.
-  
-  The results are processed using `model-results.py`
+The results are processed using `compute_ppp_cont.py`
 
-* The same model but replacing 10% of the data with 10's `run_muthen_extreme_exp.py`.
-The command runs as follows
+* To run the cross validation version of this exdperiment with kfold splits run the same as above with the cv flag on `run_big5.py -cv cv`, and additional similar options as above. 
 
-    ```
-    run_muthen_extreme_exp.py <num_warmup> <num_samples> <num_chains> <men/women>
-    ```
-
-* Script `run_muthen_kfold.py` runs a kfold version of the `run_muthen_exp1`
-script. It works as follows
-
-    ```
-    run_muthen_kfold.py <num_warmup> <num_samples> <num_chains> <men/women> <model_code>
-    ```
-
-  with optional flags for `-th` (`--task_handle`), `-pm` (`--print_model`), `-nfl`
-  (`n_splits`) and `-xdir` (`--existing_directory`). The results are saved in
-  `src/log/<date-time>_<task_handle>`.
-  
-  To choose which model to run use the `<model_code>` option as follows:
-  "0:benchmark saturated model,1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model"
-  
-  If an existing directory is given then the script looks for an existing compiled
-  stan model to load and run with the new number of iterations.
-  
-  The results are processed using `kfold_results.py` by passing the two `log/<dir>`
-  of the two models to be compared. The order matters, as follows.
-    
-    ```
-    kfold_results.py <log_dir_benchmark_model> <log_dir_proposed_model> 
-    ```
+The results are processed using `compute_cv_cont.py`
 
 
 ### Discrete Data
@@ -138,19 +107,6 @@ Chris G. Richardson, Pamela A. Ratner.
 
 * Posterior Sample charts in `4.1-FDN-Plotting-CFA.ipynb` and `4.2-FDN-Plotting-EFA.ipynb`
 
-#### Results: 
-
-* `log/FND` contains results from running the algorithsm with the binary enconding 
-    
-      dfq['FNFIRST'] = (dfq.FNFIRST > 2).astype(int)
-      dfq['FNNODAY'] = (dfq.FNNODAY > 2).astype(int)
-    
-* `log/FND2` contains results from running the algorithsm with the binary enconding 
-    
-      dfq['FNFIRST'] = (dfq.FNFIRST > 2).astype(int)`
-      dfq['FNNODAY'] = (dfq.FNNODAY > 1).astype(int)`    
-    
-
 
 ### On Fabian
 
@@ -172,20 +128,6 @@ We installed pystan version 2.19 which should run the same scripts as local corr
 To save storage space you can remove old pickled files with 
 
     find . type f -name '*.p' -delete
-
-
-## (Results - OLD):
-
-* To run the experiment of Muthen data `run_muthen_exp1.py`. Usually we run this
-on the server, collect the results and visualize them locally with
-`1.1.Muthen-women` or `1.2.Muthen-men`. 
-
-* Compared the PPP values using `model-results.py` of model 1 and model 2.
-
-* Compared the kfold-PPP values using `kfold_results.py` of model 1 and model 2 as it compares to model 0.
-
-* The results of experiment of replacing 10% is in notebooks
-`2.1.Muthen-women-experiment` and `2.2.Muthen-men-experiment` but are outdated now, as we have not run them using the latest models.
 
 
 ## To Do
