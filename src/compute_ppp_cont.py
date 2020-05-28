@@ -38,3 +38,4 @@ for cn in range(num_chains):
     print(ppp_cn[cn])
 
 print(ppp_cn)
+print(np.round(np.mean(ppp_cn)))

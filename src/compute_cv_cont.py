@@ -67,4 +67,4 @@ avg_logscore_folds =  np.round(np.mean(Ds, axis=1),2) # take the mean sum log-sc
 print(avg_logscore_folds)
 
 print("Log score for each chain", logscore_chains)
-print("Avg Log score", avg_logscore)
+print("Avg Log score", np.int(avg_logscore))
