@@ -150,7 +150,7 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/model2_sim.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2_big5.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
@@ -240,8 +240,7 @@ elif args.ppp_cv == 'cv':  # run CV
         fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
                                            iter=args.num_samples + args.num_warmup,
                                            warmup=args.num_warmup, chains=args.num_chains,
-                                           n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9},
-                                           init = 0)
+                                           n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9})
         try:
             print("\n\nSaving fitted model in directory %s" % log_dir)
             save_obj(fit_runs, 'fit', log_dir)

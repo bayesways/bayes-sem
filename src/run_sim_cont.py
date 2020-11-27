@@ -166,7 +166,7 @@ if args.load_model == False:
             model_code = file.read()
         param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
     elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/model2_sim.stan', 'r') as file:
+        with open('./codebase/stan_code/cont/CFA/model2.stan', 'r') as file:
             model_code = file.read()
         param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
             'Theta', 'Omega']
