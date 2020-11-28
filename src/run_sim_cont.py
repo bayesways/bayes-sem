@@ -82,18 +82,17 @@ if args.existing_directory is None or args.gen_data == True:
     elif args.sim_case == 1 :
         data = gen_data(args.nsim_data,
                         off_diag_residual=True,
+                        cross_loadings=False,
                         random_seed = args.random_seed)
     elif args.sim_case == 2 :
         data = gen_data(args.nsim_data,
                         cross_loadings=True,
                         off_diag_residual=False,
-                        cross_loadings_level = args.crossloading_level,
                         random_seed = args.random_seed)
     elif args.sim_case == 3 :
         data = gen_data(args.nsim_data,
                         cross_loadings=True,
                         off_diag_residual=True,
-                        cross_loadings_level = args.crossloading_level,
                         random_seed = args.random_seed)
     else:
         print("Choose simulation case {0:diag Theta, \
