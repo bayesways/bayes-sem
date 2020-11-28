@@ -21,7 +21,7 @@ parser.add_argument(
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
 parser.add_argument("-lm", "--load_model",
-                    help="load model", type=bool, default=False)
+                    help="load model", type=bool, default=True)
 parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
@@ -37,7 +37,7 @@ parser.add_argument("-seed", "--random_seed",
 parser.add_argument("-c", "--c_param",
                     help="fixed variances of Theta", type=float, default=1)
 parser.add_argument("-cl_level", "--crossloading_level",
-                    help="level of cross loading magnitude", type=float, default=3)
+                    help="level of cross loading magnitude", type=float, default=4)
 parser.add_argument("-nd", "--nsim_data", help="data size",
                     type=int, default=1000)
 parser.add_argument("-th", "--task_handle",
@@ -154,66 +154,74 @@ else:
 
 ############################################################
 ################ Compile Model or Load ##########
-if args.load_model == False:
+path_to_stan = './codebase/stan_code/cont/'
 
-    print("\n\nReading Stan Code from model %d" % args.stan_model)
-    if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/EFA/model0.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'alpha']
-    elif args.stan_model == 1 :
-        with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 4 :
-        with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 5 :
-        with open('./codebase/stan_code/cont/EFA/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
-    else:
-        print("Choose stan model {0:benchmark saturated model," \
-            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
+print("\n\nReading Stan Code from model %d" % args.stan_model)
+if args.stan_model == 0 :
+    with open(path_to_stan+'EFA/model0.stan', 'r') as file:
+        model_code = file.read()        
+    param_names = ['Marg_cov', 'alpha']
+elif args.stan_model == 1 :
+    with open(path_to_stan+'CFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+elif args.stan_model == 2 :
+    with open(path_to_stan+'CFA/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+        'Theta', 'Omega']
+elif args.stan_model == 4 :
+    with open(path_to_stan+'EFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+elif args.stan_model == 5 :
+    with open(path_to_stan+'EFA/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+else:
+    print("Choose stan model {0:benchmark saturated model," \
+        "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
-    if bool(args.print_model):
-        print(model_code)
-    file = open(log_dir+"model.txt", "w")
-    file.write(model_code)
-    file.close()
+if bool(args.print_model):
+    print(model_code)
+file = open(log_dir+"model.txt", "w")
+file.write(model_code)
+file.close()
 
+if args.load_model:
+    with open('log/compiled_models/cont/model%s/model.txt' % args.stan_model, 'r') as file:
+        saved_model = file.read()
+    if saved_model == model_code:
+        sm = load_obj('sm', 'log/compiled_models/cont/model%s/' % args.stan_model)
+        if args.stan_model == 0:
+                param_names = ['Marg_cov', 'alpha']
+        elif args.stan_model == 1:
+            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        elif args.stan_model == 2:
+            param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+                'Theta', 'Omega']
+        elif args.stan_model == 4:
+            param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+        elif args.stan_model == 5:
+            param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+        else:
+            print("model option should be in [0,1,2,3]")
+
+else:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
     try:
         print("\n\nSaving compiled model in directory %s" % log_dir)
-        save_obj(sm, 'sm', log_dir)
+        save_obj(sm, 'sm', 'log/compiled_models/cont/model%s/' % args.stan_model)
+        file = open('log/compiled_models/cont/model%s/model.txt' %
+                    args.stan_model, "w")
+        file.write(model_code)
+        file.close()
     except:
-        # Print error message
-        print("could not save the stan model")
-else:
-    print("\n\nReading existing compiled model from directory %s" % log_dir)
-    sm = load_obj('sm', log_dir)
+        print("Couldn't save model in model bank")
 
-    if args.stan_model == 0 :
-        param_names = ['Marg_cov', 'alpha']
-    elif args.stan_model == 1 :
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 2 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 4 :
-        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 5 :
-        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
-    else:
-        print("Choose stan model {0 :benchmark saturated model," \
-            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
+print("\n\nSaving compiled model in directory %s" % log_dir)
+save_obj(sm, 'sm', log_dir)
 
 ############################################################
 ################ Fit Model ##########

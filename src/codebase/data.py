@@ -72,6 +72,13 @@ def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
                              [.5, 1],
                              [.5, b],
                              [0, b]], dtype=float)
+        elif cross_loadings_level == 4:
+            beta = np.array([[1, 0],
+                             [b, 0],
+                             [b, .6],
+                             [.6, 1],
+                             [0, b],
+                             [0, b]], dtype=float)
         else:
             print('Noisy Level should be in [1,2,3]')
 
