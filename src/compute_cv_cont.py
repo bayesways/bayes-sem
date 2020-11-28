@@ -55,7 +55,7 @@ for fold_index in range(3):
         complete_data[fold_index],
         args.nsim_ppp
         )
-fold_chain_average_matrix = np.mean(Ds_model>Ds_benchmark, 1)
+fold_chain_average_matrix = np.mean(Ds_model<Ds_benchmark, 1)
 print('\nChain/Fold Average %.2f'%np.mean(fold_chain_average_matrix))
 for f in range(3):
     chain_scores = fold_chain_average_matrix[f]
