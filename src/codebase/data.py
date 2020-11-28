@@ -44,44 +44,22 @@ def C_to_R(M):
 
 def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
              off_diag_residual=False, off_diag_corr=0.2,
-             cross_loadings=False, cross_loadings_level=2,
+             cross_loadings=False,
              random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
     alpha = np.zeros(J)
     if cross_loadings:
-        if cross_loadings_level == 1:
-            beta = np.array([[1, 0.2],
-                             [b, -0.3],
-                             [b, -.05],
-                             [-0.2, 1],
-                             [-.08, b],
-                             [0.15, b]], dtype=float)
-        elif cross_loadings_level == 2:
-            beta = np.array([[1, 0],
-                             [b, 0],
-                             [b, .4],
-                             [.4, 1],
-                             [0, b],
-                             [0, b]], dtype=float)
-        elif cross_loadings_level == 3:
-            beta = np.array([[1, 0],
-                             [b, .5],
-                             [b, .5],
-                             [.5, 1],
-                             [.5, b],
-                             [0, b]], dtype=float)
-        elif cross_loadings_level == 4:
-            beta = np.array([[1, 0],
-                             [b, 0],
-                             [b, .6],
-                             [.6, 1],
-                             [0, b],
-                             [0, b]], dtype=float)
-        else:
-            print('Noisy Level should be in [1,2,3]')
-
+        beta = np.array(
+            [[1, 0],
+            [b, 0],
+            [b, .6],
+            [.6, 1],
+            [0, b],
+            [0, b]],
+            dtype=float
+            )
     else:
         beta = np.array([[1, 0],
                          [b, 0],
@@ -96,22 +74,17 @@ def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
     Phi_corr[1, 0] = rho
     Phi_cov = np.diag(sigma_z) @ Phi_corr @  np.diag(sigma_z)
 
-    sigma_sq = 1 - np.diag(beta @ Phi_cov @ beta.T)
-    sigma = np.sqrt(sigma_sq)
+    sigma = np.ones(J)
 
     if off_diag_residual:
         Theta_corr = np.eye(J)
-#         Theta = np.diag(sigma_sq)
         for i in [1, 2, 5]:
             for j in [3, 4]:
-                #                 Theta[i,j] = off_diag_corr*sigma[i]*sigma[j]
-                #                 Theta[j,i] = off_diag_corr*sigma[i]*sigma[j]
                 Theta_corr[i, j] = off_diag_corr
                 Theta_corr[j, i] = off_diag_corr
-        Theta = np.diag(np.sqrt(sigma_sq)) @ Theta_corr @  np.diag(
-            np.sqrt(sigma_sq))
+        Theta = np.diag(sigma) @ Theta_corr @  np.diag(sigma)
     else:
-        Theta = np.diag(sigma_sq)
+        Theta = np.diag(sigma**2)
 
     Marg_cov = beta @ Phi_cov @ beta.T + Theta
     yy = multivariate_normal.rvs(mean=alpha, cov=Marg_cov, size=nsim_data)
