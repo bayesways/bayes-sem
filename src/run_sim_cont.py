@@ -21,7 +21,7 @@ parser.add_argument(
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
 parser.add_argument("-lm", "--load_model",
-                    help="load model", type=bool, default=True)
+                    help="load model", type=int, default=1)
 parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
@@ -123,18 +123,20 @@ if args.existing_directory is None or args.gen_data == True:
             data_fold = dict()
             data_fold['y_train'], data_fold['y_test'] = X[train_index], X[test_index]
             data_fold['N_train'], data_fold['N_test'] = data_fold['y_train'].shape[0], data_fold['y_test'].shape[0]
-            stan_data[fold_index] = dict(N = data_fold['N_train'],
-                                            K = data['K'],
-                                            J = data['J'],
-                                            yy = data_fold['y_train'],
-                                            sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_train'], rowvar=False)))
-                                            )
-            test_data_fold = dict(N = data_fold['N_test'],
-                                            K = data['K'],
-                                            J = data['J'],
-                                            yy = data_fold['y_test'],
-                                            sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_test'], rowvar=False)))
-                                            )
+            stan_data[fold_index] = dict(
+                N = data_fold['N_train'],
+                K = data['K'],
+                J = data['J'],
+                yy = data_fold['y_train'],
+                sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_train'], rowvar=False)))
+                )
+            test_data_fold = dict(
+                N = data_fold['N_test'],
+                K = data['K'],
+                J = data['J'],
+                yy = data_fold['y_test'],
+                sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_test'], rowvar=False)))
+                )
             complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
 
             fold_index += 1
@@ -169,6 +171,11 @@ elif args.stan_model == 2 :
         model_code = file.read()
     param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
         'Theta', 'Omega']
+elif args.stan_model == 3 :
+    with open(path_to_stan+'CFA/model3.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+        'Theta']
 elif args.stan_model == 4 :
     with open(path_to_stan+'EFA/model1.stan', 'r') as file:
         model_code = file.read()
@@ -199,6 +206,9 @@ if args.load_model:
         elif args.stan_model == 2:
             param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
                 'Theta', 'Omega']
+        elif args.stan_model == 3:
+            param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+                'Theta']
         elif args.stan_model == 4:
             param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
         elif args.stan_model == 5:
@@ -228,11 +238,14 @@ save_obj(sm, 'sm', log_dir)
 if args.ppp_cv == 'ppp':  # run PPP
     print("\n\nFitting model.... \n\n")
 
-    fit_run = sm.sampling(data=stan_data,
-                          iter=args.num_samples + args.num_warmup,
-                          warmup=args.num_warmup, chains=args.num_chains,
-                          n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9},
-                          init = 0)
+    fit_run = sm.sampling(
+        data=stan_data,
+        iter=args.num_samples + args.num_warmup,
+        warmup=args.num_warmup, chains=args.num_chains,
+        n_jobs=4,
+        control={'max_treedepth': 10, 'adapt_delta': 0.9},
+        init = 0
+        )
 
     try:
         print("\n\nSaving fitted model in directory %s" % log_dir)
@@ -260,11 +273,14 @@ elif args.ppp_cv == 'cv':  # run CV
     for fold_index in range(args.n_splits):
         print("\n\nFitting model.... \n\n")
 
-        fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
-                                           iter=args.num_samples + args.num_warmup,
-                                           warmup=args.num_warmup, chains=args.num_chains,
-                                           n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9},
-                                           init = 0)
+        fit_runs[fold_index] = sm.sampling(
+            data=stan_data[fold_index],
+            iter=args.num_samples + args.num_warmup,
+            warmup=args.num_warmup, chains=args.num_chains,
+            n_jobs=4,
+            control={'max_treedepth': 10, 'adapt_delta': 0.9},
+            init = 0
+            )
         try:
             print("\n\nSaving fitted model in directory %s" % log_dir)
             save_obj(fit_runs, 'fit', log_dir)
