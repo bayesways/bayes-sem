@@ -20,12 +20,12 @@ parser.add_argument("-gender","--gender", help="run men or women", type=str, def
 parser.add_argument("-std", "--standardize", help="standardize the data", type=int, default=1)
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
-parser.add_argument("-lm", "--load_model",
-                    help="load model", type=bool, default=False)
+parser.add_argument("-cm", "--compile_model",
+                    help="load model", type=int, default=0)
 parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
-                    help="gen fresh data", type=bool, default=False)
+                    help="gen fresh data", type=int, default=1)
 parser.add_argument("-rho", "--rho_param",
                     help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains", "--num_chains",
@@ -68,7 +68,7 @@ else:
 
 ############################################################
 ################ Create Data or Load ##########
-if args.existing_directory is None or args.gen_data == True:
+if args.gen_data == 1:
 
     print("\n\nReading data for %s"%args.gender)
     df = pd.read_csv("../dat/muthen_"+args.gender+".csv")
@@ -135,69 +135,85 @@ else:
     print("\n\nReading data from directory %s" % log_dir)
     stan_data = load_obj("stan_data", log_dir)
 
-
 ############################################################
 ################ Compile Model or Load ##########
-if args.load_model == False:
+path_to_stan = './codebase/stan_code/cont/'
 
-    print("\n\nReading Stan Code from model %d" % args.stan_model)
-    if args.stan_model == 0 :
-        with open('./codebase/stan_code/cont/EFA/model0.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'alpha']
-    elif args.stan_model == 1 :
-        with open('./codebase/stan_code/cont/CFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 2 :
-        with open('./codebase/stan_code/cont/CFA/model2_big5.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 4 :
-        with open('./codebase/stan_code/cont/EFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 5 :
-        with open('./codebase/stan_code/cont/EFA/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
-    else:
-        print("Choose stan model {0:benchmark saturated model," \
-            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
+print("\n\nReading Stan Code from model %d" % args.stan_model)
+if args.stan_model == 0 :
+    with open(path_to_stan+'EFA/model0.stan', 'r') as file:
+        model_code = file.read()        
+    param_names = ['Marg_cov', 'alpha']
+elif args.stan_model == 1 :
+    with open(path_to_stan+'CFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+elif args.stan_model == 2 :
+    with open(path_to_stan+'CFA/model2_big5.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+        'Theta', 'Omega']
+# elif args.stan_model == 3 :
+#     with open(path_to_stan+'CFA/model3.stan', 'r') as file:
+#         model_code = file.read()
+#     param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+#         'Theta']
+elif args.stan_model == 4 :
+    with open(path_to_stan+'EFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+elif args.stan_model == 5 :
+    with open(path_to_stan+'EFA/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+else:
+    print("Choose stan model {0:benchmark saturated model," \
+        "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
 
-    if bool(args.print_model):
-        print(model_code)
-    file = open(log_dir+"model.txt", "w")
-    file.write(model_code)
-    file.close()
+if bool(args.print_model):
+    print(model_code)
+file = open(log_dir+"model.txt", "w")
+file.write(model_code)
+file.close()
 
+if args.compile_model==0:
+    with open('log/compiled_models/big5/model%s/model.txt' % args.stan_model, 'r') as file:
+        saved_model = file.read()
+    if saved_model == model_code:
+        sm = load_obj('sm', 'log/compiled_models/big5/model%s/' % args.stan_model)
+        if args.stan_model == 0:
+                param_names = ['Marg_cov', 'alpha']
+        elif args.stan_model == 1:
+            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        elif args.stan_model == 2:
+            param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+                'Theta', 'Omega']
+        # elif args.stan_model == 3:
+        #     param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
+        #         'Theta']
+        elif args.stan_model == 4:
+            param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+        elif args.stan_model == 5:
+            param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+        else:
+            print("model option should be in [0,1,2,3]")
+
+else:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
     try:
         print("\n\nSaving compiled model in directory %s" % log_dir)
-        save_obj(sm, 'sm', log_dir)
+        save_obj(sm, 'sm', 'log/compiled_models/big5/model%s/' % args.stan_model)
+        file = open('log/compiled_models/big5/model%s/model.txt' %
+                    args.stan_model, "w")
+        file.write(model_code)
+        file.close()
     except:
-        # Print error message
-        print("could not save the stan model")
-else:
-    print("\n\nReading existing compiled model from directory %s" % log_dir)
-    sm = load_obj('sm', log_dir)
+        print("Couldn't save model in model bank")
 
-    if args.stan_model == 0 :
-        param_names = ['Marg_cov', 'alpha']
-    elif args.stan_model == 1 :
-        param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 2 :
-        param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-            'Theta', 'Omega']
-    elif args.stan_model == 4 :
-        param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
-    elif args.stan_model == 5 :
-        param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
-    else:
-        print("Choose stan model {0 :benchmark saturated model," \
-            "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
+print("\n\nSaving compiled model in directory %s" % log_dir)
+save_obj(sm, 'sm', log_dir)
+
 
 ############################################################
 ################ Fit Model ##########
@@ -205,11 +221,14 @@ else:
 if args.ppp_cv == 'ppp':  # run PPP
     print("\n\nFitting model.... \n\n")
 
-    fit_run = sm.sampling(data=stan_data,
-                          iter=args.num_samples + args.num_warmup,
-                          warmup=args.num_warmup, chains=args.num_chains,
-                          n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9},
-                          init = 0)
+    fit_run = sm.sampling(
+        data=stan_data,
+        iter=args.num_samples + args.num_warmup,
+        warmup=args.num_warmup, chains=args.num_chains,
+        n_jobs=4,
+        control={'max_treedepth': 10, 'adapt_delta': 0.9},
+        init = 0
+        )
 
     try:
         print("\n\nSaving fitted model in directory %s" % log_dir)
@@ -237,10 +256,14 @@ elif args.ppp_cv == 'cv':  # run CV
     for fold_index in range(args.n_splits):
         print("\n\nFitting model.... \n\n")
 
-        fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
-                                           iter=args.num_samples + args.num_warmup,
-                                           warmup=args.num_warmup, chains=args.num_chains,
-                                           n_jobs=4, control={'max_treedepth': 10, 'adapt_delta': 0.9})
+        fit_runs[fold_index] = sm.sampling(
+            data=stan_data[fold_index],
+            iter=args.num_samples + args.num_warmup,
+            warmup=args.num_warmup, chains=args.num_chains,
+            n_jobs=4,
+            control={'max_treedepth': 10, 'adapt_delta': 0.9},
+            init = 0
+            )
         try:
             print("\n\nSaving fitted model in directory %s" % log_dir)
             save_obj(fit_runs, 'fit', log_dir)

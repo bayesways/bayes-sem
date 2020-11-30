@@ -20,12 +20,12 @@ parser.add_argument(
 # Optional arguments
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
-parser.add_argument("-lm", "--load_model",
-                    help="load model", type=int, default=1)
+parser.add_argument("-cm", "--compile_model",
+                    help="load model", type=int, default=0)
 parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
-                    help="gen fresh data", type=bool, default=False)
+                    help="gen fresh data", type=int, default=1)
 parser.add_argument("-off", "--standardize",
                     help="standardize the data", type=int, default=1)
 parser.add_argument("-rho", "--rho_param",
@@ -70,7 +70,7 @@ else:
 
 ############################################################
 ################ Create Data or Load ##########
-if args.existing_directory is None or args.gen_data == True:
+if args.gen_data == 1:
 
     print("\n\nGenerating Continuous data for case")
 
@@ -194,7 +194,7 @@ file = open(log_dir+"model.txt", "w")
 file.write(model_code)
 file.close()
 
-if args.load_model:
+if args.compile_model==0:
     with open('log/compiled_models/cont/model%s/model.txt' % args.stan_model, 'r') as file:
         saved_model = file.read()
     if saved_model == model_code:
