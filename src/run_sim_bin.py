@@ -21,12 +21,12 @@ parser.add_argument(
 # Optional arguments
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
-parser.add_argument("-lm", "--load_model",
-                    help="load model", type=bool, default=False)
+parser.add_argument("-cm", "--compile_model",
+                    help="load model", type=int, default=0)
 parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
-                    help="gen fresh data", type=bool, default=False)
+                    help="gen fresh data", type=int, default=1)
 parser.add_argument("-rho", "--rho_param",
                     help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains", "--num_chains",
@@ -67,29 +67,34 @@ else:
 
 ############################################################
 ################ Create Data or Load ##########
-if args.existing_directory is None or args.gen_data == True:
+if args.gen_data == 1:
 
     print("\n\nGenerating Continuous data for case")
 
     if args.sim_case == 0:
-        data = gen_data_binary(args.nsim_data,
-                               c=args.c_param,
-                               off_diag_residual=False,
-                               random_seed=args.random_seed)
-
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            random_seed=args.random_seed
+            )
     elif args.sim_case == 1:
-        data = gen_data_binary(args.nsim_data,
-                               rho2=args.rho_param,
-                               c=args.c_param,
-                               off_diag_residual=True,
-                               random_seed=args.random_seed)
+        data = gen_data_binary(
+            args.nsim_data,
+            rho2=args.rho_param,
+            c=args.c_param,
+            off_diag_residual=True,
+            random_seed=args.random_seed
+            )
     elif args.sim_case == 2:
-        data = gen_data_binary(args.nsim_data,
-                               c=args.c_param,
-                               off_diag_residual=False,
-                               cross_loadings=True,
-                               cross_loadings_level=1,
-                               random_seed=args.random_seed)
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            cross_loadings=True,
+            cross_loadings_level=1,
+            random_seed=args.random_seed
+            )
     else:
         print("Choose simulation case 0:Clean data ")
         print("Choose simulation case 1:Off-diag residuals")
@@ -144,73 +149,84 @@ else:
 
 ############################################################
 ################ Compile Model or Load ##########
-if args.load_model == False:
+path_to_stan = './codebase/stan_code/discr/'
 
-    if args.stan_model == 1:
-        with open('./codebase/stan_code/discr/CFA/logit/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 2:
-        with open('./codebase/stan_code/discr/CFA/logit/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3:  # fixed variance of Omega
-        with open('./codebase/stan_code/discr/CFA/logit/model3.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 4:
-        with open('./codebase/stan_code/discr/CFA/logit/model4.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 5:
-        with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 6:
-        with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    else:
-        print('model is 1:6')
+print("\n\nReading Stan Code from model %d" % args.stan_model)
+if args.stan_model == 1 :
+    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+elif args.stan_model == 2 :
+    with open(path_to_stan+'CFA/logit/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 3 :
+    with open(path_to_stan+'CFA/logit/model3.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 4 :
+    with open(path_to_stan+'CFA/logit/model4.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 5 :
+    with open(path_to_stan+'EFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'yy']
+elif args.stan_model == 6 :
+    with open(path_to_stan+'EFA/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+else:
+    print('model is 1:6')
 
-    if bool(args.print_model):
-        print(model_code)
-    file = open(log_dir+"model.txt", "w")
-    file.write(model_code)
-    file.close()
+if bool(args.print_model):
+    print(model_code)
+file = open(log_dir+"model.txt", "w")
+file.write(model_code)
+file.close()
 
+if args.compile_model==0:
+    with open('log/compiled_models/discr/model%s/model.txt' % args.stan_model, 'r') as file:
+        saved_model = file.read()
+    if saved_model == model_code:
+        sm = load_obj('sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
+        if args.stan_model == 1:
+            param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+        elif args.stan_model == 2:
+            param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                'Omega_cov', 'Phi_cov']
+        elif args.stan_model == 3:
+           param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
+            'Omega_cov', 'Phi_cov']
+        elif args.stan_model == 4:
+            param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                    'Omega_cov', 'Phi_cov']
+        elif args.stan_model == 5:
+            param_names = ['beta', 'alpha', 'zz', 'yy']
+        elif args.stan_model == 6:
+            param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+        else:
+            print("model option should be in [0,1,2,3]")
+
+else:
     print("\n\nCompiling model")
     sm = pystan.StanModel(model_code=model_code, verbose=False)
     try:
         print("\n\nSaving compiled model in directory %s" % log_dir)
-        save_obj(sm, 'sm', log_dir)
+        save_obj(sm, 'sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
+        file = open('log/compiled_models/discr/model%s/model.txt' %
+                    args.stan_model, "w")
+        file.write(model_code)
+        file.close()
     except:
-        # Print error message
-        print("could not save the stan model")
-else:
-    print("\n\nReading existing compiled model from directory %s" % log_dir)
-    sm = load_obj('sm', log_dir)
+        print("Couldn't save model in model bank")
 
-    if args.stan_model == 1:
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 2:
-        param_names = ['alpha', 'yy',  'beta',
-                       'Marg_cov', 'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3:  # fixed variance of Omega
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 4:  # Omega = c Identity
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 5:
-        param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 6:
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    else:
-        print('model is 1:6')
+print("\n\nSaving compiled model in directory %s" % log_dir)
+save_obj(sm, 'sm', log_dir)
+
 
 ############################################################
 ################ Fit Model ##########
@@ -218,11 +234,14 @@ else:
 if args.ppp_cv == 'ppp':  # run PPP
     print("\n\nFitting model.... \n\n")
 
-    fit_run = sm.sampling(data=stan_data,
-                          iter=args.num_samples + args.num_warmup,
-                          warmup=args.num_warmup, chains=args.num_chains,
-                          n_jobs=4, control={'max_treedepth': 15, 'adapt_delta': 0.99})
-    # init = 0)
+    fit_run = sm.sampling(
+        data=stan_data,
+        iter=args.num_samples + args.num_warmup,
+        warmup=args.num_warmup, chains=args.num_chains,
+        n_jobs=4,
+        control={'max_treedepth': 15, 'adapt_delta': 0.99},
+        init = 0
+        )
 
     try:
         print("\n\nSaving fitted model in directory %s" % log_dir)
@@ -250,11 +269,14 @@ elif args.ppp_cv == 'cv':  # run CV
     for fold_index in range(args.n_splits):
         print("\n\nFitting model.... \n\n")
 
-        fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
-                                           iter=args.num_samples + args.num_warmup,
-                                           warmup=args.num_warmup, chains=args.num_chains,
-                                           n_jobs=4, control={'max_treedepth': 15, 'adapt_delta': 0.99})
-        # init = 0)
+        fit_runs[fold_index] = sm.sampling(
+            data=stan_data[fold_index],
+            iter=args.num_samples + args.num_warmup,
+            warmup=args.num_warmup, chains=args.num_chains,
+            n_jobs=4,
+            control={'max_treedepth': 15, 'adapt_delta': 0.99},
+            init = 0
+            )
         try:
             print("\n\nSaving fitted model in directory %s" % log_dir)
             save_obj(fit_runs, 'fit', log_dir)

@@ -7,7 +7,8 @@ from codebase.model_fit_bin import get_lgscr
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("logdir", help="path to files", type=str, default=None)
+parser.add_argument("logdir_model", help="path to files", type=str, default=None)
+parser.add_argument("logdir_benchmark", help="path to files", type=str, default=None)
 
 # Optional arguments
 parser.add_argument("-nsim", "--nsim_ppp",
@@ -15,33 +16,61 @@ parser.add_argument("-nsim", "--nsim_ppp",
 
 args = parser.parse_args()
 
-log_dir = args.logdir
-if log_dir[-1] != "/":
-    log_dir = log_dir + "/"
+logdir_model = args.logdir_model
+if logdir_model[-1] != "/":
+    logdir_model = logdir_model + "/"
 
 
-print("\n\nChecking data integrity...\n\n")
-complete_data = load_obj("complete_data", log_dir)
+logdir_benchmark = args.logdir_benchmark
+if logdir_benchmark[-1] != "/":
+    logdir_benchmark = logdir_benchmark + "/"
 
-model_posterior_samples = dict()
-model_posterior_samples[0] = load_obj('ps_0', log_dir)
-model_posterior_samples[1] = load_obj('ps_1', log_dir)
-model_posterior_samples[2] = load_obj('ps_2', log_dir)
+############################################################
+################ Load Model Data  ##########
+complete_data = load_obj("complete_data", logdir_model)
+model_ps = dict()
+model_ps = dict()
+model_ps[0] = load_obj('ps_0', logdir_model)
+model_ps[1] = load_obj('ps_1', logdir_model)
+model_ps[2] = load_obj('ps_2', logdir_model)
+mcmc_length = model_ps[0]['alpha'].shape[0]
+num_chains = model_ps[0]['alpha'].shape[1]
+Ds_model = np.empty((3, args.nsim_ppp, num_chains))
 
-
-num_chains = model_posterior_samples[0]['alpha'].shape[1]
-num_samples = model_posterior_samples[0]['alpha'].shape[0]
-
-Ds = np.empty((3,num_chains))
 for fold_index in range(3):
-    lgscr_vals, Dy = get_lgscr(complete_data[fold_index]['test'], model_posterior_samples[fold_index], num_chains, args.nsim_ppp)
-    Ds[fold_index] = np.mean(lgscr_vals,0) #for each chain take the mean log_score across the MCMC iters
-    
-logscore_chains = np.sum(Ds, axis=0) # for each chain, sum the log_scores across 3 folds
-avg_logscore =  np.round(np.mean(logscore_chains),4) # take the mean sum log-score)
+    Ds_model[fold_index] = get_lgscr(
+        model_ps[fold_index],
+        complete_data[fold_index],
+        args.nsim_ppp
+        )
 
-avg_logscore_folds =  np.round(np.mean(Ds, axis=1),2) # take the mean sum log-score)
-print(avg_logscore_folds)
 
-print("Log score for each chain", logscore_chains)
-print("Avg Log score", avg_logscore)
+############################################################
+################ Load Benchmark Data  ##########
+complete_data = load_obj("complete_data", logdir_benchmark)
+benchmark_ps = dict()
+benchmark_ps = dict()
+benchmark_ps[0] = load_obj('ps_0', logdir_benchmark)
+benchmark_ps[1] = load_obj('ps_1', logdir_benchmark)
+benchmark_ps[2] = load_obj('ps_2', logdir_benchmark)
+mcmc_length = benchmark_ps[0]['alpha'].shape[0]
+num_chains = benchmark_ps[0]['alpha'].shape[1]
+Ds_benchmark = np.empty((3, args.nsim_ppp, num_chains))
+for fold_index in range(3):
+    Ds_benchmark[fold_index] = get_lgscr(
+        benchmark_ps[fold_index],
+        complete_data[fold_index],
+        args.nsim_ppp
+        )
+
+############################################################
+################ Compare CV scores  ##########
+fold_chain_average_matrix = np.mean(Ds_model<Ds_benchmark, 1)
+print('\nChain/Fold Average %.2f'%np.mean(fold_chain_average_matrix))
+for f in range(3):
+    chain_scores = fold_chain_average_matrix[f]
+    print("\nFold %d Avg =  %.2f"%(
+        f,
+        np.mean(chain_scores))
+        )
+    print(chain_scores)

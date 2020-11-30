@@ -17,6 +17,10 @@ logdir_model = args.logdir_model
 if logdir_model[-1] != "/":
     logdir_model = logdir_model + "/"
 
+logdir_benchmark = args.logdir_benchmark
+if logdir_benchmark[-1] != "/":
+    logdir_benchmark = logdir_benchmark + "/"
+
 ############################################################
 ################ Load Model Data  ##########
 complete_data = load_obj("complete_data", logdir_model)
@@ -34,9 +38,7 @@ for fold_index in range(3):
         complete_data[fold_index],
         args.nsim_ppp
         )
-logdir_benchmark = args.logdir_benchmark
-if logdir_benchmark[-1] != "/":
-    logdir_benchmark = logdir_benchmark + "/"
+
 
 ############################################################
 ################ Load Benchmark Data  ##########
@@ -55,6 +57,9 @@ for fold_index in range(3):
         complete_data[fold_index],
         args.nsim_ppp
         )
+
+############################################################
+################ Compare CV scores  ##########
 fold_chain_average_matrix = np.mean(Ds_model<Ds_benchmark, 1)
 print('\nChain/Fold Average %.2f'%np.mean(fold_chain_average_matrix))
 for f in range(3):
