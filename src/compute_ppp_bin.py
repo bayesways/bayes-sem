@@ -10,8 +10,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("logdir", help="path to files", type=str, default=None)
 
 # Optional arguments
-parser.add_argument("-nsim", "--nsim_ppp",
-                    help="number of posterior samples to use for PPP", type=int, default=100)
+parser.add_argument(
+    "-nsim", "--nsim_ppp",
+    help="number of posterior samples to use for PPP",
+    type=int, default=100
+    )
 
 args = parser.parse_args()
 
