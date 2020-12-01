@@ -158,11 +158,11 @@ if args.load_model == False:
         with open('./codebase/stan_code/discr/EFA/model2_lower.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 8:  # alt param of model 2
+    elif args.stan_model == 8:  # First item loads on both factors (no u's)
         with open('./codebase/stan_code/discr/CFA/logit/model5_n.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
-    elif args.stan_model == 9:  # alt param of model 2
+    elif args.stan_model == 9:  # First item loads on both factors (no u's)
         with open('./codebase/stan_code/discr/CFA/logit/model5.stan', 'r') as file:
             model_code = file.read()
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
