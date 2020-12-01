@@ -111,7 +111,7 @@ def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
 
 def gen_data_binary(nsim_data, J=6, K=2, rho=0.2, b=0.8,
                     off_diag_residual=False, rho2=0.1, c=1,
-                    cross_loadings=False, cross_loadings_level=1,
+                    cross_loadings=False, cross_loadings_level=3,
                     method=3, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
@@ -131,7 +131,6 @@ def gen_data_binary(nsim_data, J=6, K=2, rho=0.2, b=0.8,
                              [0, 1],
                              [.4, b],
                              [0, b]], dtype=float)
-
         elif cross_loadings_level == 2:
             beta = np.array([[1, 0],
                              [b, .4],
@@ -139,6 +138,13 @@ def gen_data_binary(nsim_data, J=6, K=2, rho=0.2, b=0.8,
                              [0, 1],
                              [.4, b],
                              [.4, b]], dtype=float)
+        elif cross_loadings_level == 3:
+            beta = np.array([[1, 0],
+                             [b, 0],
+                             [b, .6],
+                             [.6, 1],
+                             [0, b],
+                             [0, b]], dtype=float)
         else:
             print('Noisy Level should be in [0,1,2]')
     else:

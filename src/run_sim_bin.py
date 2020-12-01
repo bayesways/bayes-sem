@@ -92,7 +92,7 @@ if args.gen_data == 1:
             c=args.c_param,
             off_diag_residual=False,
             cross_loadings=True,
-            cross_loadings_level=1,
+            cross_loadings_level=3,
             random_seed=args.random_seed
             )
     else:
@@ -161,16 +161,6 @@ elif args.stan_model == 2 :
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
         'Omega_cov', 'Phi_cov']
-elif args.stan_model == 3 :
-    with open(path_to_stan+'CFA/logit/model3.stan', 'r') as file:
-        model_code = file.read()
-    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-        'Omega_cov', 'Phi_cov']
-elif args.stan_model == 4 :
-    with open(path_to_stan+'CFA/logit/model4.stan', 'r') as file:
-        model_code = file.read()
-    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-        'Omega_cov', 'Phi_cov']
 elif args.stan_model == 5 :
     with open(path_to_stan+'EFA/model1.stan', 'r') as file:
         model_code = file.read()
@@ -198,12 +188,6 @@ if args.compile_model==0:
         elif args.stan_model == 2:
             param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                 'Omega_cov', 'Phi_cov']
-        elif args.stan_model == 3:
-           param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_corr',
-            'Omega_cov', 'Phi_cov']
-        elif args.stan_model == 4:
-            param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                    'Omega_cov', 'Phi_cov']
         elif args.stan_model == 5:
             param_names = ['beta', 'alpha', 'zz', 'yy']
         elif args.stan_model == 6:
