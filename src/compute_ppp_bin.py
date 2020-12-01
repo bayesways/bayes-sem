@@ -33,7 +33,7 @@ ppp_cn = np.empty(num_chains)
 for cn in range(num_chains):
     PPP_vals = get_PPP(data, ps, cn, args.nsim_ppp)
 
-    ppp_cn[cn] = 100*np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
+    ppp_cn[cn] = np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
     print(ppp_cn[cn])
 
-print(ppp_cn)
+print("Avg PPP %.2f"%ppp_cn.mean())
