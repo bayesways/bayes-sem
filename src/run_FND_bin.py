@@ -24,8 +24,8 @@ parser.add_argument("-sc", "--sim_case",
                     help="simulation case number", type=int, default=1)
 parser.add_argument("-nfac", "--num_factors",
                     help="number of factors for EFA", type=int, default=2)
-parser.add_argument("-lm", "--load_model",
-                    help="load model", type=bool, default=False)
+parser.add_argument("-cm", "--compile_model",
+                    help="load model", type=int, default=0)
 parser.add_argument("-num_chains", "--num_chains",
                     help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-sqz", "--squeeze_ps",
@@ -126,69 +126,61 @@ else:
 
 ############################################################
 ################ Compile Model or Load ##########
-if args.load_model == False:
+path_to_stan = './codebase/stan_code/discr/'
 
-    if args.stan_model == 1:
-        with open('./codebase/stan_code/discr/CFA/logit/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-    elif args.stan_model == 2:
-        with open('./codebase/stan_code/discr/CFA/logit/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 3:  # alt param of model 2
-        with open('./codebase/stan_code/discr/CFA/logit/model2_prm2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 4:  # EFA no u's
-        with open('./codebase/stan_code/discr/EFA/model1.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 5:  # EFA with u's
-        with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 6:  # EFA lower triang no u's
-        with open('./codebase/stan_code/discr/EFA/model1_lower.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 7:  # EFA lower triang with u's
-        with open('./codebase/stan_code/discr/EFA/model2_lower.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 8:  # First item loads on both factors (no u's)
-        with open('./codebase/stan_code/discr/CFA/logit/model5_n.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
-    elif args.stan_model == 9:  # First item loads on both factors (no u's)
-        with open('./codebase/stan_code/discr/CFA/logit/model5.stan', 'r') as file:
-            model_code = file.read()
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']                           
-    else:
-        print('model is 1:9')
-
-    if bool(args.print_model):
-        print(model_code)
-    file = open(log_dir+"model.txt", "w")
-    file.write(model_code)
-    file.close()
-
-    print("\n\nCompiling model")
-    sm = pystan.StanModel(model_code=model_code, verbose=False)
-    if args.save_stan:
-        try:
-            print("\n\nSaving compiled model in directory %s" % log_dir)
-            save_obj(sm, 'sm', log_dir)
-        except:
-            # Print error message
-            print("could not save the stan model")
+if args.stan_model == 1:
+    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+elif args.stan_model == 2:
+    with open(path_to_stan+'CFA/logit/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                    'Omega_cov', 'Phi_cov']
+elif args.stan_model == 3:  # alt param of model 2
+    with open(path_to_stan+'CFA/logit/model2_prm2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                    'Omega_cov', 'Phi_cov']
+elif args.stan_model == 5:  # EFA no u's
+    with open(path_to_stan+'EFA/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'yy']
+elif args.stan_model == 6:  # EFA with u's
+    with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+elif args.stan_model == 7:  # EFA lower triang no u's
+    with open(path_to_stan+'EFA/model1_lower.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'yy']
+elif args.stan_model == 8:  # EFA lower triang with u's
+    with open(path_to_stan+'EFA/model2_lower.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+elif args.stan_model == 9:  # First item loads on both factors (no u's)
+    with open(path_to_stan+'CFA/logit/model3.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
+elif args.stan_model == 10:  # First item loads on both factors
+    with open(path_to_stan+'CFA/logit/model4.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                    'Omega_cov', 'Phi_cov']                           
 else:
-    print("\n\nReading existing compiled model from directory %s" % log_dir)
-    sm = load_obj('sm', log_dir)
+    print('model is 1:9')
 
+if bool(args.print_model):
+    print(model_code)
+file = open(log_dir+"model.txt", "w")
+file.write(model_code)
+file.close()
+
+if args.compile_model==0:
+    with open('log/compiled_models/discr/model%s/model.txt' % args.stan_model, 'r') as file:
+        saved_model = file.read()
+    if saved_model == model_code:
+        sm = load_obj('sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
     if args.stan_model == 1:
         param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
     elif args.stan_model == 2:
@@ -197,21 +189,38 @@ else:
     elif args.stan_model == 3:  # alt param of model2
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                        'Omega_cov', 'Phi_cov']
-    elif args.stan_model == 4:
-        param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 5:
-        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 6:  # EFA no u's
         param_names = ['beta', 'alpha', 'zz', 'yy']
-    elif args.stan_model == 7:  # EFA with u's
+    elif args.stan_model == 6:
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 8:  # alt param of model 2 with cross loading on first variable no u's
+    elif args.stan_model == 7:  # EFA no u's
+        param_names = ['beta', 'alpha', 'zz', 'yy']
+    elif args.stan_model == 8:  # EFA with u's
+        param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+    elif args.stan_model == 9:  # alt param of model 2 with cross loading on first variable no u's
         param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
-    elif args.stan_model == 9:  # alt param of model 2 with cross loading on first variable
+    elif args.stan_model == 10:  # alt param of model 2 with cross loading on first variable
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                        'Omega_cov', 'Phi_cov']              
     else:
         print('model is 1:9')
+
+else:
+    print("\n\nCompiling model")
+    sm = pystan.StanModel(model_code=model_code, verbose=False)
+    try:
+        print("\n\nSaving compiled model in directory %s" % log_dir)
+        save_obj(sm, 'sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
+        file = open('log/compiled_models/discr/model%s/model.txt' %
+                    args.stan_model, "w")
+        file.write(model_code)
+        file.close()
+    except:
+        print("Couldn't save model in model bank")
+
+print("\n\nSaving compiled model in directory %s" % log_dir)
+save_obj(sm, 'sm', log_dir)
+
 
 ############################################################
 ################ Fit Model ##########
@@ -219,10 +228,14 @@ else:
 if args.ppp_cv == 'ppp':  # run PPP
     print("\n\nFitting model.... \n\n")
 
-    fit_run = sm.sampling(data=stan_data,
-                          iter=args.num_samples + args.num_warmup,
-                          warmup=args.num_warmup, chains=args.num_chains, n_jobs=4,
-                          control={'max_treedepth': 15, 'adapt_delta': 0.99}, init=0)
+    fit_run = sm.sampling(
+        data=stan_data,
+        iter=args.num_samples + args.num_warmup,
+        warmup=args.num_warmup, chains=args.num_chains,
+        n_jobs=4,
+        control={'max_treedepth': 15, 'adapt_delta': 0.99},
+        init=0
+        )
 
     if args.save_stan:
         try:
@@ -251,10 +264,14 @@ elif args.ppp_cv == 'cv':  # run CV
     for fold_index in range(args.n_splits):
         print("\n\nFitting model.... \n\n")
 
-        fit_runs[fold_index] = sm.sampling(data=stan_data[fold_index],
-                                           iter=args.num_samples + args.num_warmup,
-                                           warmup=args.num_warmup, chains=args.num_chains, n_jobs=args.num_chains,
-                                           control={'max_treedepth': 15, 'adapt_delta': 0.99}, init=0)
+        fit_runs[fold_index] = sm.sampling(
+            data=stan_data[fold_index],
+            iter=args.num_samples + args.num_warmup,
+            warmup=args.num_warmup, chains=args.num_chains,
+            n_jobs=4,
+            control={'max_treedepth': 15, 'adapt_delta': 0.99},
+            init=0
+            )
         if args.save_stan:
             try:
                 print("\n\nSaving fitted model in directory %s" % log_dir)
