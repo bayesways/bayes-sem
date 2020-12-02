@@ -30,7 +30,7 @@ parser.add_argument("-gd", "--gen_data",
 parser.add_argument("-rho", "--rho_param",
                     help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains", "--num_chains",
-                    help="number of MCMC chains", type=int, default=1)
+                    help="number of MCMC chains", type=int, default=4)
 parser.add_argument("-seed", "--random_seed",
                     help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c", "--c_param",
@@ -47,6 +47,8 @@ parser.add_argument("-sqz", "--squeeze_ps",
                     help="squeeze posterior samples vectors", type=int, default=0)
 parser.add_argument("-nfl", "--n_splits",
                     help="number of folds", type=int, default=3)
+parser.add_argument("-cv_seed", "--cv_seed",
+                    help="random seed for CV", type=int, default=34)
 
 
 args = parser.parse_args()
@@ -112,7 +114,11 @@ if args.gen_data == 1:
         save_obj(data, 'data', log_dir)
     elif args.ppp_cv == 'cv':  # run CV
         X = data['D']
-        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=34)
+        kf = KFold(
+            n_splits=args.n_splits,
+            shuffle=True,
+            random_state=args.cv_seed
+            )
         kf.get_n_splits(X)
 
         stan_data = dict()
