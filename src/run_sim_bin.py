@@ -36,7 +36,7 @@ parser.add_argument("-seed", "--random_seed",
 parser.add_argument("-c", "--c_param",
                     help="fixed variances of Theta", type=float, default=1)
 parser.add_argument("-nd", "--nsim_data", help="data size",
-                    type=int, default=2000)
+                    type=int, default=1000)
 parser.add_argument("-th", "--task_handle",
                     help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model",
