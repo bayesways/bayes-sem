@@ -142,6 +142,7 @@ if args.gen_data == 1:
             fold_index += 1
 
         print("\n\nSaving data folds at %s" % log_dir)
+        complete_data['cv_seed'] = args.cv_seed
         save_obj(stan_data, 'stan_data', log_dir)
         save_obj(complete_data, 'complete_data', log_dir)
         save_obj(data, 'data', log_dir)
