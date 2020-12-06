@@ -29,9 +29,8 @@ if logdir_benchmark[-1] != "/":
 ################ Load Model Data  ##########
 complete_data_model = load_obj("complete_data", logdir_model)
 model_ps = dict()
-model_ps[0] = load_obj('ps_0', logdir_model)
-model_ps[1] = load_obj('ps_1', logdir_model)
-model_ps[2] = load_obj('ps_2', logdir_model)
+for fold_index in range(complete_data_model['n_splits']):
+    model_ps[fold_index] = load_obj('ps_%s'%str(fold_index), logdir_model)
 mcmc_length = model_ps[0]['alpha'].shape[0]
 num_chains = model_ps[0]['alpha'].shape[1]
 Ds_model = np.empty((complete_data_model['n_splits'], args.nsim_ppp, num_chains))
@@ -51,9 +50,8 @@ complete_data_benchmark = load_obj("complete_data", logdir_benchmark)
 assert complete_data_benchmark['n_splits'] == complete_data_model['n_splits']
 
 benchmark_ps = dict()
-benchmark_ps[0] = load_obj('ps_0', logdir_benchmark)
-benchmark_ps[1] = load_obj('ps_1', logdir_benchmark)
-benchmark_ps[2] = load_obj('ps_2', logdir_benchmark)
+for fold_index in range(complete_data_benchmark['n_splits']):
+    benchmark_ps[fold_index] = load_obj('ps_%s'%str(fold_index), logdir_benchmark)
 mcmc_length = benchmark_ps[0]['alpha'].shape[0]
 num_chains = benchmark_ps[0]['alpha'].shape[1]
 Ds_benchmark = np.empty((complete_data_benchmark['n_splits'], args.nsim_ppp, num_chains))
