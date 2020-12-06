@@ -28,6 +28,8 @@ if logdir_benchmark[-1] != "/":
 ############################################################
 ################ Load Model Data  ##########
 complete_data_model = load_obj("complete_data", logdir_model)
+if 'n_splits' not in complete_data_model.keys():
+    complete_data_model['n_splits'] = 3
 model_ps = dict()
 for fold_index in range(complete_data_model['n_splits']):
     model_ps[fold_index] = load_obj('ps_%s'%str(fold_index), logdir_model)
@@ -46,6 +48,8 @@ for fold_index in range(complete_data_model['n_splits']):
 ############################################################
 ################ Load Benchmark Data  ##########
 complete_data_benchmark = load_obj("complete_data", logdir_benchmark)
+if 'n_splits' not in complete_data_benchmark.keys():
+    complete_data_benchmark['n_splits'] = 3
 
 assert complete_data_benchmark['n_splits'] == complete_data_model['n_splits']
 
