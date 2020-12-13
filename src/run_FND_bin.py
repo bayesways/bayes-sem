@@ -158,11 +158,11 @@ elif args.stan_model == 8:  # EFA lower triang with u's
     with open(path_to_stan+'EFA/model2_lower.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-elif args.stan_model == 9:  # First item loads on both factors (no u's)
+elif args.stan_model == 9:  # First item loads on both factors (AZ but no u's)
     with open(path_to_stan+'CFA/logit/model3.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
-elif args.stan_model == 10:  # First item loads on both factors
+elif args.stan_model == 10:  # First item loads on both factors (AZ and u's)
     with open(path_to_stan+'CFA/logit/model4.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
