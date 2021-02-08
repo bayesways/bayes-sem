@@ -55,7 +55,7 @@ def energy_score(y_pred, y_obs):
     s2 = pdist(y_pred, metric='euclidean').sum()
     
     # remove the 1/2 from the second sum because we summed each distinct pair only once
-    return (1./m)*s1 - (1./m**2)*s2
+    return ((1./m)*s1) - ((1./m**2)*s2)
 
 def energy_score_vector(y_pred, y_obs_vector):
     # y_obs has dim N x J (N observation)

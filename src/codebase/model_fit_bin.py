@@ -4,7 +4,7 @@ from scipy.stats import multivariate_normal, bernoulli
 from tqdm import tqdm
 from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
-
+from pdb import set_trace
 
 def to_str_pattern(y0):
     if np.ndim(y0) == 1:
@@ -38,7 +38,7 @@ def get_Ey(data_ptrn, prob, N):
     Ey = dict()
     for ptrn in distinct_patterns:
         prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p=prob)
-        Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix, 1)), 0)
+        Ey[ptrn] = N * np.exp(np.sum(prob_matrix))
     return Ey
 
 
@@ -107,7 +107,8 @@ def get_lgscr(ps, data, nsim):
         # compute Dy
         for cn in range(num_chains):
             pi = get_probs(data, ps, m, cn)
-            Ey = get_Ey(data_ptrn, pi, data['test']['N'])
+            pi_avg = pi.mean(axis=0)
+            Ey = get_Ey(data_ptrn, pi_avg, data['test']['N'])
             Dy = get_Dy(Oy, Ey, data_ptrn)
             lgscr_vals[m_ind, cn] = sum(Dy.values())
 
