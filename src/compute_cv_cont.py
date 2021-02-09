@@ -35,31 +35,9 @@ for fold_index in range(3):
         args.nsim_ppp,
         )
 
-# for fold_index in range(3):
-#     for cn in range(num_chains):
-#         Ds[fold_index, cn] = get_energy_scores(
-#             ps[fold_index],
-#             complete_data[fold_index]['test']['yy'],
-#             args.nsim_ppp,
-#             cn
-#             )
-
-
 ###########################################################
 ############### Compare CV scores  ##########
 print('\nFold Sum %.2f'%np.sum(Ds))
 for f in range(3):
     print('Fold %.2f'%Ds[f])
 
-###########################################################
-############### Compare CV scores  ##########
-# fold_chain_average_matrix = np.mean(Ds,axis=1)
-# print('\nChain/Fold Average %.2f'%np.mean(fold_chain_average_matrix))
-# for f in range(3):
-#     print(Ds[f])
-#     chain_scores = fold_chain_average_matrix[f]
-#     print("\nFold %d Avg =  %.2f"%(
-#         f,
-#         np.mean(chain_scores))
-#         )
-#     print(chain_scores)
