@@ -85,11 +85,14 @@ def get_energy_scores(ps, data, nsim):
             np.split(ps['Marg_cov'],4,  axis=1))
         )            
     
+    # method 1 
     # use posterior mean
     # m_alpha = alphas.mean(axis=0)
     # m_Cov = covs.mean(axis=0)
-    # post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=nsim)  
+    # post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
     
+    # method 2
+    # draw one y sample per posterior sample theta
     for m_ind in range(nsim):
         m = m_ind * skip_step
         mean = alphas[m]
