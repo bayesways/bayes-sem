@@ -62,20 +62,38 @@ def energy_score_vector(y_pred, y_obs_vector):
     # y_pred has dim m x J (m posterior samnples)
     N = y_obs_vector.shape[0]
     scores = np.empty(N)
-    for i in range(N):
+    for i in tqdm(range(N)):
         scores[i] = energy_score(y_pred, y_obs_vector[i])
     return scores
 
-def get_energy_scores(ps, data, nsim, cn):
-    mcmc_length = ps['alpha'].shape[0]
+def get_energy_scores(ps, data, nsim):
+# def get_energy_scores(ps, data, nsim, cn):
+    mcmc_length = ps['alpha'].shape[0]*ps['alpha'].shape[1]
     dim_J = ps['alpha'].shape[2]
+    if nsim>mcmc_length:
+        print('nsim > posterior sample size')
+        print('Using nsim = %d'%mcmc_length)
+        nsim = mcmc_length
     skip_step = int(mcmc_length/nsim)
     post_y = np.empty((nsim, dim_J), dtype = float)
-
+    alphas = np.vstack(
+        np.squeeze(
+            np.split(ps['alpha'],4,  axis=1))
+            )
+    covs = np.vstack(
+        np.squeeze(
+            np.split(ps['Marg_cov'],4,  axis=1))
+        )            
+    
+    # use posterior mean
+    # m_alpha = alphas.mean(axis=0)
+    # m_Cov = covs.mean(axis=0)
+    # post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=nsim)  
+    
     for m_ind in range(nsim):
         m = m_ind * skip_step
-        mean = ps['alpha'][m, cn]
-        Cov = ps['Marg_cov'][m, cn]
+        mean = alphas[m]
+        Cov = covs[m]
         post_y[m_ind] = multivariate_normal.rvs(mean=mean, cov = Cov)
 
     scores = energy_score_vector(
