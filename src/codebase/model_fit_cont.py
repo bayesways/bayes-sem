@@ -32,6 +32,8 @@ def compute_D(data, ps, mcmc_iter, cn, pred=True):
         return ff2(data['yy'], ps['alpha'][mcmc_iter, cn], ps['Marg_cov'][mcmc_iter, cn],
                    p=J)
 
+def Nlogpdf(yy, mean, cov):
+    return multivariate_normal.logpdf(yy, mean, cov, allow_singular=True)
 
 def get_PPP(data, ps, cn, nsim):
     mcmc_length = ps['alpha'].shape[0]
@@ -57,6 +59,24 @@ def energy_score(y_pred, y_obs):
     # remove the 1/2 from the second sum because we summed each distinct pair only once
     return ((1./m)*s1) - ((1./m**2)*s2)
 
+def variogram_score(y_pred, y_obs, p = 0.5):
+    mcmc_lenght = y_pred.shape[0]
+    y_obs_length = y_obs.shape[0]
+    p = 0.5
+
+    s = 0.
+    for i in range(y_obs_length):
+        for j in range(y_obs_length):
+            s1 = np.abs(y_obs[i] - y_obs[j])**p
+            s2 = (-1./mcmc_lenght) * np.array(
+                [
+                    np.abs(y_pred[k,i] - y_pred[k,j])**p
+                    for k in range(mcmc_lenght)
+                ]).sum()
+            s_ij = (s1 + s2)**2
+            s = s + s_ij
+    return s
+
 def energy_score_vector(y_pred, y_obs_vector):
     # y_obs has dim N x J (N observation)
     # y_pred has dim m x J (m posterior samnples)
@@ -64,6 +84,15 @@ def energy_score_vector(y_pred, y_obs_vector):
     scores = np.empty(N)
     for i in tqdm(range(N)):
         scores[i] = energy_score(y_pred, y_obs_vector[i])
+    return scores
+
+def variogram_score_vector(y_pred, y_obs_vector):
+    # y_obs has dim N x J (N observation)
+    # y_pred has dim m x J (m posterior samnples)
+    N = y_obs_vector.shape[0]
+    scores = np.empty(N)
+    for i in tqdm(range(N)):
+        scores[i] = variogram_score(y_pred, y_obs_vector[i])
     return scores
 
 def get_energy_scores(ps, data, nsim):
@@ -87,19 +116,31 @@ def get_energy_scores(ps, data, nsim):
     
     # method 1 
     # use posterior mean
-    # m_alpha = alphas.mean(axis=0)
-    # m_Cov = covs.mean(axis=0)
-    # post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
+    m_alpha = alphas.mean(axis=0)
+    m_Cov = covs.mean(axis=0)
+    post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
     
     # method 2
     # draw one y sample per posterior sample theta
-    for m_ind in range(nsim):
-        m = m_ind * skip_step
-        mean = alphas[m]
-        Cov = covs[m]
-        post_y[m_ind] = multivariate_normal.rvs(mean=mean, cov = Cov)
+    # for m_ind in range(nsim):
+    #     m = m_ind * skip_step
+    #     mean = alphas[m]
+    #     Cov = covs[m]
+    #     post_y[m_ind] = multivariate_normal.rvs(mean=mean, cov = Cov)
 
-    scores = energy_score_vector(
+    # scores = energy_score_vector(
+    #     y_pred=post_y,
+    #     y_obs_vector=data).sum()
+
+    scores = variogram_score_vector(
         y_pred=post_y,
         y_obs_vector=data).sum()
+
+
+    # method 3 
+    # use posterior median and log
+    # m_alpha = np.median(alphas, axis=0)
+    # m_Cov = np.median(covs, axis=0)
+    # scores = -1.* Nlogpdf(data, m_alpha, m_Cov).sum()
+
     return scores
