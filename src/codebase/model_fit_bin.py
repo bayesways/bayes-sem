@@ -32,14 +32,30 @@ def get_probs(data, ps, m, cn):
     return pistr
 
 
+def get_probs(data, ps, m, cn):
+    pistr = expit(ps['yy'][m, cn])
+    return pistr
+
 def get_Ey(data_ptrn, prob, N):
     distinct_patterns = np.unique(data_ptrn)
     ## compute E_y(theta) for a specific pattern y
     Ey = dict()
     for ptrn in distinct_patterns:
         prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p=prob)
-        Ey[ptrn] = N * np.exp(np.sum(prob_matrix))
+        Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix, 1)), 0)
     return Ey
+
+
+# def get_Ey(data_ptrn, prob_logitinv, N):
+#     distinct_patterns = np.unique(data_ptrn)
+#     ## compute E_y(theta) for a specific pattern y
+#     Ey = dict()
+#     for ptrn in distinct_patterns:
+#         prob_vector = bernoulli.logpmf(k=to_nparray_data(ptrn), p=expit(prob_logitinv))
+#         Ey[ptrn] = N * np.exp(np.sum(prob_vector))
+#         # set_trace()
+#     return Ey
+
 
 
 def get_Oy(data_ptrn):
@@ -91,25 +107,100 @@ def get_PPP(data, ps, cn, nsim=100):
     return PPP_vals
 
 
+# def get_lgscr(ps, data, nsim):
+#     mcmc_length = ps['alpha'].shape[0]*ps['alpha'].shape[1]
+#     num_chains = ps['alpha'].shape[1]
+
+#     if nsim>mcmc_length:
+#         print('nsim > posterior sample size')
+#         print('Using nsim = %d'%mcmc_length)
+#         nsim = mcmc_length
+#     skip_step = int(mcmc_length/nsim)
+#     post_y_invlogit = np.vstack(
+#         np.squeeze(
+#             np.split(ps['yy'],num_chains,  axis=1))
+#             )
+#     # set_trace()
+
+#     skip_step = int(mcmc_length/nsim)
+#     data_ptrn = to_str_pattern(data['test']['DD'])
+#     Oy = get_Oy(data_ptrn)
+
+#     # method 1 
+#     # logscore with values fixed at posterior mean
+#     m_alpha = alphas.mean(axis=0)
+#     m_Cov = covs.mean(axis=0)
+#     post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
+
+
+#     # for m_ind in tqdm(range(nsim)):
+#     #     m = skip_step*m_ind
+#     #     pi = get_probs(data, ps, m, cn)
+#     #     pi_avg = pi.mean(axis=0)
+#     #     Ey = get_Ey(data_ptrn, pi_avg, data['test']['N'])
+#     #     Dy = get_Dy(Oy, Ey, data_ptrn)
+#     #     lgscr_vals[m_ind, cn] = sum(Dy.values())
+
+#     return scores
+
+
+
 def get_lgscr(ps, data, nsim):
 
-    mcmc_length = ps['alpha'].shape[0]
+    mcmc_length = ps['alpha'].shape[0]*ps['alpha'].shape[1]
     num_chains = ps['alpha'].shape[1]
-
+    K = ps['beta'].shape[-1]
+    if nsim>mcmc_length:
+        print('nsim > posterior sample size')
+        print('Using nsim = %d'%mcmc_length)
+        nsim = mcmc_length
     skip_step = int(mcmc_length/nsim)
-    
+    stacked_ps = dict()
+    for name in ps.keys():
+        stacked_ps[name] = np.vstack(
+            np.squeeze(
+                np.split(ps[name],num_chains,  axis=1))
+                )
+
     data_ptrn = to_str_pattern(data['test']['DD'])
     Oy = get_Oy(data_ptrn)
 
-    lgscr_vals = np.empty((nsim,num_chains))
-    for m_ind in tqdm(range(nsim)):
-        m = skip_step*m_ind
-        # compute Dy
-        for cn in range(num_chains):
-            pi = get_probs(data, ps, m, cn)
-            pi_avg = pi.mean(axis=0)
-            Ey = get_Ey(data_ptrn, pi_avg, data['test']['N'])
-            Dy = get_Dy(Oy, Ey, data_ptrn)
-            lgscr_vals[m_ind, cn] = sum(Dy.values())
+    
 
-    return lgscr_vals
+    # method 1
+    nsim_int = 1000
+    
+    m_alpha = stacked_ps['alpha'].mean(axis=0)
+    
+    if 'Marg_cov' in stacked_ps.keys():
+        m_Marg_cov = stacked_ps['Marg_cov'].mean(axis=0)
+        post_y = multivariate_normal.rvs(
+        mean = m_alpha, 
+        cov = m_Marg_cov, 
+        size = nsim_int)
+    else: 
+        m_beta = stacked_ps['beta'].mean(axis=0)
+        if 'Phi_cov' in stacked_ps.keys():
+            m_Phi_cov = stacked_ps['Phi_cov'].mean(axis=0)
+        else:
+            m_Phi_cov = np.eye(K)
+        zz_from_prior = multivariate_normal.rvs(
+            mean = np.zeros(K),
+            cov = m_Phi_cov, 
+            size = nsim_int)
+        post_y = m_alpha + zz_from_prior @ m_beta.T   
+    Ey = get_Ey(data_ptrn, expit(post_y), data['test']['N'])
+    Dy = get_Dy(Oy, Ey, data_ptrn)
+
+    scores = sum(Dy.values())
+
+    # lgscr_vals = np.empty((nsim,num_chains))
+    # for m_ind in tqdm(range(nsim)):
+    #     m = skip_step*m_ind
+    # # compute Dy
+    #     # pi = get_probs(data, ps, m)
+    #     Ey = get_Ey(data_ptrn, pi, data['test']['N'])
+    #     Dy = get_Dy(Oy, Ey, data_ptrn)
+    #     lgscr_vals[m_ind] = sum(Dy.values())
+
+    return scores

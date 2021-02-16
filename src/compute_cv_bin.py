@@ -28,25 +28,17 @@ if 'n_splits' not in complete_data.keys():
 ps = dict()
 for fold_index in range(complete_data['n_splits']):
     ps[fold_index] = load_obj('ps_%s'%str(fold_index), logdir)
-mcmc_length = ps[0]['alpha'].shape[0]
-num_chains = ps[0]['alpha'].shape[1]
-Ds_model = np.empty((complete_data['n_splits'], args.nsim_ppp, num_chains))
-
+Ds = np.empty(3)
 for fold_index in range(complete_data['n_splits']):
-    Ds_model[fold_index] = get_lgscr(
+    Ds[fold_index] = get_lgscr(
         ps[fold_index],
         complete_data[fold_index],
         args.nsim_ppp
         )
 
-############################################################
-################ Compare CV scores  ##########
-fold_chain_average_matrix = np.mean(Ds_model, 1)
-print('\nChain/Fold Average %.2f'%np.mean(fold_chain_average_matrix))
-for f in range(complete_data['n_splits']):
-    chain_scores = fold_chain_average_matrix[f]
-    print("\nFold %d Avg =  %.2f"%(
-        f,
-        np.mean(chain_scores))
-        )
-    print(chain_scores)
+###########################################################
+############### Compare CV scores  ##########
+print('\nFold Sum %.2f'%np.sum(Ds))
+for f in range(3):
+    print('Fold %.2f'%Ds[f])
+

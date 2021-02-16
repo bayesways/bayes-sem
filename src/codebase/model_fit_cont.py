@@ -116,17 +116,17 @@ def get_energy_scores(ps, data, nsim):
     
     # method 1 
     # use posterior mean
-    m_alpha = alphas.mean(axis=0)
-    m_Cov = covs.mean(axis=0)
-    post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
+    # m_alpha = alphas.mean(axis=0)
+    # m_Cov = covs.mean(axis=0)
+    # post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
     
     # method 2
     # draw one y sample per posterior sample theta
-    # for m_ind in range(nsim):
-    #     m = m_ind * skip_step
-    #     mean = alphas[m]
-    #     Cov = covs[m]
-    #     post_y[m_ind] = multivariate_normal.rvs(mean=mean, cov = Cov)
+    for m_ind in range(nsim):
+        m = m_ind * skip_step
+        mean = alphas[m]
+        Cov = covs[m]
+        post_y[m_ind] = multivariate_normal.rvs(mean=mean, cov = Cov)
 
     # scores = energy_score_vector(
     #     y_pred=post_y,
