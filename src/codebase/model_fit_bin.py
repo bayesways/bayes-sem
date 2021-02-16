@@ -6,12 +6,13 @@ from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
 from pdb import set_trace
 
+
 def to_str_pattern(y0):
     if np.ndim(y0) == 1:
-        return ''.join(y0.astype(str))
+        return "".join(y0.astype(str))
     if np.ndim(y0) == 2:
         y = pd.DataFrame(y0)
-        yresp = y.apply(lambda x: ''.join(x.astype(str)), axis=1)
+        yresp = y.apply(lambda x: "".join(x.astype(str)), axis=1)
         return yresp
 
 
@@ -28,13 +29,14 @@ def to_nparray_data(yresp):
 
 
 def get_probs(data, ps, m, cn):
-    pistr = expit(ps['yy'][m, cn])
+    pistr = expit(ps["yy"][m, cn])
     return pistr
 
 
 def get_probs(data, ps, m, cn):
-    pistr = expit(ps['yy'][m, cn])
+    pistr = expit(ps["yy"][m, cn])
     return pistr
+
 
 def get_Ey(data_ptrn, prob, N):
     distinct_patterns = np.unique(data_ptrn)
@@ -57,7 +59,6 @@ def get_Ey(data_ptrn, prob, N):
 #     return Ey
 
 
-
 def get_Oy(data_ptrn):
     distinct_patterns = np.unique(data_ptrn)
     # compute observed pattern occurences
@@ -72,25 +73,25 @@ def get_Dy(Oy, Ey, data_ptrn):
     # compute the discrepancy D
     Dy = dict()
     for ptrn in distinct_patterns:
-        Dy[ptrn] = Oy[ptrn] * np.log(Oy[ptrn]/Ey[ptrn])
+        Dy[ptrn] = Oy[ptrn] * np.log(Oy[ptrn] / Ey[ptrn])
 
     return Dy
 
 
 def get_PPP(data, ps, cn, nsim=100):
 
-    nsim_N = ps['alpha'].shape[0]
-    skip_step = int(nsim_N/nsim)
+    nsim_N = ps["alpha"].shape[0]
+    skip_step = int(nsim_N / nsim)
 
-    data_ptrn = to_str_pattern(data['D'])
+    data_ptrn = to_str_pattern(data["D"])
     Oy = get_Oy(data_ptrn)
 
     PPP_vals = np.empty((nsim, 2))
     for m_ind in tqdm(range(nsim)):
-        m = skip_step*m_ind
+        m = skip_step * m_ind
         # compute Dy
         pi = get_probs(data, ps, m, cn)
-        Ey = get_Ey(data_ptrn, pi, data['N'])
+        Ey = get_Ey(data_ptrn, pi, data["N"])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
         # compute Dy
@@ -98,7 +99,7 @@ def get_PPP(data, ps, cn, nsim=100):
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
-        Eystr = get_Ey(ppddata_ptrn, pi, data['N'])
+        Eystr = get_Ey(ppddata_ptrn, pi, data["N"])
         Dystr = get_Dy(Oystr, Eystr, ppddata_ptrn)
 
         PPP_vals[m_ind, 0] = sum(Dy.values())
@@ -126,11 +127,11 @@ def get_PPP(data, ps, cn, nsim=100):
 #     data_ptrn = to_str_pattern(data['test']['DD'])
 #     Oy = get_Oy(data_ptrn)
 
-#     # method 1 
+#     # method 1
 #     # logscore with values fixed at posterior mean
 #     m_alpha = alphas.mean(axis=0)
 #     m_Cov = covs.mean(axis=0)
-#     post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)  
+#     post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)
 
 
 #     # for m_ind in tqdm(range(nsim)):
@@ -144,52 +145,40 @@ def get_PPP(data, ps, cn, nsim=100):
 #     return scores
 
 
-
 def get_lgscr(ps, data, nsim):
 
-    mcmc_length = ps['alpha'].shape[0]*ps['alpha'].shape[1]
-    num_chains = ps['alpha'].shape[1]
-    K = ps['beta'].shape[-1]
-    if nsim>mcmc_length:
-        print('nsim > posterior sample size')
-        print('Using nsim = %d'%mcmc_length)
+    mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
+    num_chains = ps["alpha"].shape[1]
+    K = ps["beta"].shape[-1]
+    if nsim > mcmc_length:
+        print("nsim > posterior sample size")
+        print("Using nsim = %d" % mcmc_length)
         nsim = mcmc_length
-    skip_step = int(mcmc_length/nsim)
+    skip_step = int(mcmc_length / nsim)
     stacked_ps = dict()
     for name in ps.keys():
-        stacked_ps[name] = np.vstack(
-            np.squeeze(
-                np.split(ps[name],num_chains,  axis=1))
-                )
+        stacked_ps[name] = np.vstack(np.squeeze(np.split(ps[name], num_chains, axis=1)))
 
-    data_ptrn = to_str_pattern(data['test']['DD'])
+    data_ptrn = to_str_pattern(data["test"]["DD"])
     Oy = get_Oy(data_ptrn)
 
-    
-
     # method 1
-    nsim_int = 1000
-    
-    m_alpha = stacked_ps['alpha'].mean(axis=0)
-    
-    if 'Marg_cov' in stacked_ps.keys():
-        m_Marg_cov = stacked_ps['Marg_cov'].mean(axis=0)
-        post_y = multivariate_normal.rvs(
-        mean = m_alpha, 
-        cov = m_Marg_cov, 
-        size = nsim_int)
-    else: 
-        m_beta = stacked_ps['beta'].mean(axis=0)
-        if 'Phi_cov' in stacked_ps.keys():
-            m_Phi_cov = stacked_ps['Phi_cov'].mean(axis=0)
+    m_alpha = stacked_ps["alpha"].mean(axis=0)
+
+    if "Marg_cov" in stacked_ps.keys():
+        m_Marg_cov = stacked_ps["Marg_cov"].mean(axis=0)
+        post_y = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
+    else:
+        m_beta = stacked_ps["beta"].mean(axis=0)
+        if "Phi_cov" in stacked_ps.keys():
+            m_Phi_cov = stacked_ps["Phi_cov"].mean(axis=0)
         else:
             m_Phi_cov = np.eye(K)
         zz_from_prior = multivariate_normal.rvs(
-            mean = np.zeros(K),
-            cov = m_Phi_cov, 
-            size = nsim_int)
-        post_y = m_alpha + zz_from_prior @ m_beta.T   
-    Ey = get_Ey(data_ptrn, expit(post_y), data['test']['N'])
+            mean=np.zeros(K), cov=m_Phi_cov, size=nsim
+        )
+        post_y = m_alpha + zz_from_prior @ m_beta.T
+    Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
     Dy = get_Dy(Oy, Ey, data_ptrn)
 
     scores = sum(Dy.values())

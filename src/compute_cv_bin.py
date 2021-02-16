@@ -11,8 +11,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("logdir", help="path to files", type=str, default=None)
 
 # Optional arguments
-parser.add_argument("-nsim", "--nsim_ppp",
-                    help="number of posterior samples to use for PPP", type=int, default=8000)
+parser.add_argument(
+    "-nsim",
+    "--nsim_ppp",
+    help="number of posterior samples to use for PPP",
+    type=int,
+    default=8000,
+)
 
 args = parser.parse_args()
 
@@ -23,22 +28,17 @@ if logdir[-1] != "/":
 ############################################################
 ################ Load Model Data  ##########
 complete_data = load_obj("complete_data", logdir)
-if 'n_splits' not in complete_data.keys():
-    complete_data['n_splits'] = 3
+if "n_splits" not in complete_data.keys():
+    complete_data["n_splits"] = 3
 ps = dict()
-for fold_index in range(complete_data['n_splits']):
-    ps[fold_index] = load_obj('ps_%s'%str(fold_index), logdir)
+for fold_index in range(complete_data["n_splits"]):
+    ps[fold_index] = load_obj("ps_%s" % str(fold_index), logdir)
 Ds = np.empty(3)
-for fold_index in range(complete_data['n_splits']):
-    Ds[fold_index] = get_lgscr(
-        ps[fold_index],
-        complete_data[fold_index],
-        args.nsim_ppp
-        )
+for fold_index in range(complete_data["n_splits"]):
+    Ds[fold_index] = get_lgscr(ps[fold_index], complete_data[fold_index], args.nsim_ppp)
 
 ###########################################################
 ############### Compare CV scores  ##########
-print('\nFold Sum %.2f'%np.sum(Ds))
+print("\nFold Sum %.2f" % np.sum(Ds))
 for f in range(3):
-    print('Fold %.2f'%Ds[f])
-
+    print("Fold %.2f" % Ds[f])
