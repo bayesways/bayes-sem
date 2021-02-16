@@ -165,42 +165,42 @@ def get_lgscr(ps, data, nsim):
     Oy = get_Oy(data_ptrn)
 
     # # method 1
-    m_alpha = stacked_ps["alpha"].mean(axis=0)
+    # m_alpha = stacked_ps["alpha"].mean(axis=0)
 
-    if "Marg_cov" in stacked_ps.keys():
-        m_Marg_cov = stacked_ps["Marg_cov"].mean(axis=0)
-        post_y = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
-    else:
-        m_beta = stacked_ps["beta"].mean(axis=0)
-        if "Phi_cov" in stacked_ps.keys():
-            m_Phi_cov = stacked_ps["Phi_cov"].mean(axis=0)
-        else:
-            m_Phi_cov = np.eye(dim_K)
-        zz_from_prior = multivariate_normal.rvs(
-            mean=np.zeros(dim_K), cov=m_Phi_cov, size=nsim
-        )
-        post_y = m_alpha + zz_from_prior @ m_beta.T
+    # if "Marg_cov" in stacked_ps.keys():
+    #     m_Marg_cov = stacked_ps["Marg_cov"].mean(axis=0)
+    #     post_y = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
+    # else:
+    #     m_beta = stacked_ps["beta"].mean(axis=0)
+    #     if "Phi_cov" in stacked_ps.keys():
+    #         m_Phi_cov = stacked_ps["Phi_cov"].mean(axis=0)
+    #     else:
+    #         m_Phi_cov = np.eye(dim_K)
+    #     zz_from_prior = multivariate_normal.rvs(
+    #         mean=np.zeros(dim_K), cov=m_Phi_cov, size=nsim
+    #     )
+    #     post_y = m_alpha + zz_from_prior @ m_beta.T
    
 
     # method 2
-    # post_y = np.empty((nsim, dim_J))
-    # for m_ind in tqdm(range(nsim)):
-    #     m = skip_step*m_ind
-    #     m_alpha = stacked_ps["alpha"][m]
-    #     if "Marg_cov" in stacked_ps.keys():
-    #         m_Marg_cov = stacked_ps["Marg_cov"][m]
-    #         post_y_sample = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
-    #     else:
-    #         m_beta = stacked_ps["beta"][m]
-    #         if "Phi_cov" in stacked_ps.keys():
-    #             m_Phi_cov = stacked_ps["Phi_cov"][m]
-    #         else:
-    #             m_Phi_cov = np.eye(dim_K)
-    #         zz_from_prior = multivariate_normal.rvs(
-    #             mean=np.zeros(dim_K), cov=m_Phi_cov, size=1
-    #         )
-    #         post_y_sample = m_alpha + zz_from_prior @ m_beta.T
-    #     post_y[m_ind] = post_y_sample
+    post_y = np.empty((nsim, dim_J))
+    for m_ind in tqdm(range(nsim)):
+        m = skip_step*m_ind
+        m_alpha = stacked_ps["alpha"][m]
+        if "Marg_cov" in stacked_ps.keys():
+            m_Marg_cov = stacked_ps["Marg_cov"][m]
+            post_y_sample = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=1)
+        else:
+            m_beta = stacked_ps["beta"][m]
+            if "Phi_cov" in stacked_ps.keys():
+                m_Phi_cov = stacked_ps["Phi_cov"][m]
+            else:
+                m_Phi_cov = np.eye(dim_K)
+            zz_from_prior = multivariate_normal.rvs(
+                mean=np.zeros(dim_K), cov=m_Phi_cov, size=1
+            )
+            post_y_sample = m_alpha + zz_from_prior @ m_beta.T
+        post_y[m_ind] = post_y_sample
     
 
     
