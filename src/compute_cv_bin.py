@@ -16,7 +16,14 @@ parser.add_argument(
     "--nsim_ppp",
     help="number of posterior samples to use for PPP",
     type=int,
-    default=8000,
+    default=None,
+)
+parser.add_argument(
+    "-scr",
+    "--scr_method",
+    help="method used for score",
+    type=int,
+    default=1,
 )
 
 args = parser.parse_args()
@@ -35,7 +42,12 @@ for fold_index in range(complete_data["n_splits"]):
     ps[fold_index] = load_obj("ps_%s" % str(fold_index), logdir)
 Ds = np.empty(3)
 for fold_index in range(complete_data["n_splits"]):
-    Ds[fold_index] = get_lgscr(ps[fold_index], complete_data[fold_index], args.nsim_ppp)
+    Ds[fold_index] = get_lgscr(
+        ps[fold_index],
+        complete_data[fold_index],
+        args.nsim_ppp,
+        args.scr_method
+        )
 
 ###########################################################
 ############### Compare CV scores  ##########
