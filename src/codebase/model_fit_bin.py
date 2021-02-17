@@ -4,6 +4,7 @@ from scipy.stats import multivariate_normal, bernoulli
 from tqdm import tqdm
 from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
+from pdb import set_trace
 
 def to_str_pattern(y0):
     if np.ndim(y0) == 1:
@@ -105,43 +106,71 @@ def get_PPP(data, ps, cn, nsim=100):
 
     return PPP_vals
 
+def stack_samples(ps, num_chains):
+    stacked_ps = dict()
+    for name in ps.keys():
+        stacked_ps[name] = np.vstack(
+            np.squeeze(np.split(ps[name], num_chains, axis=1))
+            )
+    return stacked_ps
 
-# def get_lgscr(ps, data, nsim):
-#     mcmc_length = ps['alpha'].shape[0]*ps['alpha'].shape[1]
-#     num_chains = ps['alpha'].shape[1]
+def adjust_beta_sign(ps):
+    num_samples = ps['alpha'].shape[0]
+    ps['beta_rot'] = ps['beta'].copy()
+    if 'Phi_cov' in ps.keys():
+        ps['Phi_cov_rot'] = ps['Phi_cov'].copy()
+    for i in range(num_samples):
+        sign1 = np.sign(ps['beta'][i,0,0])
+        sign2 = np.sign(ps['beta'][i,3,1])
+        ps['beta_rot'][i,:3,0] = ps['beta'][i,:3,0] * sign1
+        ps['beta_rot'][i,3:,1] = ps['beta'][i,3:,1] * sign2
 
-#     if nsim>mcmc_length:
-#         print('nsim > posterior sample size')
-#         print('Using nsim = %d'%mcmc_length)
-#         nsim = mcmc_length
-#     skip_step = int(mcmc_length/nsim)
-#     post_y_invlogit = np.vstack(
-#         np.squeeze(
-#             np.split(ps['yy'],num_chains,  axis=1))
-#             )
-#     # set_trace()
+        if 'Phi_cov' in ps.keys():
+            ps['Phi_cov_rot'][i,0,1] = sign1 * sign2 * ps['Phi_cov'][i,0,1]
+            ps['Phi_cov_rot'][i,1,0] = ps['Phi_cov'][i,0,1]
+    
+    ps['beta'] = ps['beta_rot'].copy()
+    if 'Phi_cov' in ps.keys():
+        ps['Phi_cov'] = ps['Phi_cov_rot'].copy()
+    return ps
 
-#     skip_step = int(mcmc_length/nsim)
-#     data_ptrn = to_str_pattern(data['test']['DD'])
-#     Oy = get_Oy(data_ptrn)
+def get_method1(ps, dim_K, nsim):
+    m_alpha = ps["alpha"].mean(axis=0)
+    if "Marg_cov" in ps.keys():
+        m_Marg_cov = ps["Marg_cov"].mean(axis=0)
+        post_y = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
+    else:
+        m_beta = ps["beta"].mean(axis=0)
+        if "Phi_cov" in ps.keys():
+            m_Phi_cov = ps["Phi_cov"].mean(axis=0)
+        else:
+            m_Phi_cov = np.eye(dim_K)
+        zz_from_prior = multivariate_normal.rvs(
+            mean=np.zeros(dim_K), cov=m_Phi_cov, size=nsim
+        )
+        post_y = m_alpha + zz_from_prior @ m_beta.T
+    return post_y
 
-#     # method 1
-#     # logscore with values fixed at posterior mean
-#     m_alpha = alphas.mean(axis=0)
-#     m_Cov = covs.mean(axis=0)
-#     post_y = multivariate_normal.rvs(mean=m_alpha, cov = m_Cov, size=10000)
-
-
-#     # for m_ind in tqdm(range(nsim)):
-#     #     m = skip_step*m_ind
-#     #     pi = get_probs(data, ps, m, cn)
-#     #     pi_avg = pi.mean(axis=0)
-#     #     Ey = get_Ey(data_ptrn, pi_avg, data['test']['N'])
-#     #     Dy = get_Dy(Oy, Ey, data_ptrn)
-#     #     lgscr_vals[m_ind, cn] = sum(Dy.values())
-
-#     return scores
-
+def get_method2(ps, dim_J, dim_K, nsim, skip_step):
+    post_y = np.empty((nsim, dim_J))
+    for m_ind in tqdm(range(nsim)):
+        m = skip_step*m_ind
+        m_alpha = ps["alpha"][m]
+        if "Marg_cov" in ps.keys():
+            m_Marg_cov = ps["Marg_cov"][m]
+            post_y_sample = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=1)
+        else:
+            m_beta = ps["beta"][m]
+            if "Phi_cov" in ps.keys():
+                m_Phi_cov = ps["Phi_cov"][m]
+            else:
+                m_Phi_cov = np.eye(dim_K)
+            zz_from_prior = multivariate_normal.rvs(
+                mean=np.zeros(dim_K), cov=m_Phi_cov, size=1
+            )
+            post_y_sample = m_alpha + zz_from_prior @ m_beta.T
+        post_y[m_ind] = post_y_sample
+    return post_y
 
 def get_lgscr(ps, data, nsim, method_num):
 
@@ -159,50 +188,27 @@ def get_lgscr(ps, data, nsim, method_num):
             print("Using nsim = %d" % mcmc_length)
             nsim = mcmc_length
     skip_step = int(mcmc_length / nsim)
-    stacked_ps = dict()
-    for name in ps.keys():
-        stacked_ps[name] = np.vstack(np.squeeze(np.split(ps[name], num_chains, axis=1)))
+    stacked_ps = adjust_beta_sign(
+        stack_samples(ps, num_chains)
+    )
+
 
     data_ptrn = to_str_pattern(data["test"]["DD"])
     Oy = get_Oy(data_ptrn)
-
     if method_num == 1:
-        # method 1
-        m_alpha = stacked_ps["alpha"].mean(axis=0)
-        if "Marg_cov" in stacked_ps.keys():
-            m_Marg_cov = stacked_ps["Marg_cov"].mean(axis=0)
-            post_y = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=nsim)
-        else:
-            m_beta = stacked_ps["beta"].mean(axis=0)
-            if "Phi_cov" in stacked_ps.keys():
-                m_Phi_cov = stacked_ps["Phi_cov"].mean(axis=0)
-            else:
-                m_Phi_cov = np.eye(dim_K)
-            zz_from_prior = multivariate_normal.rvs(
-                mean=np.zeros(dim_K), cov=m_Phi_cov, size=nsim
-            )
-            post_y = m_alpha + zz_from_prior @ m_beta.T
-   
+        post_y = get_method1(
+            stacked_ps, 
+            dim_K, 
+            nsim
+        )
     elif method_num == 2:
         # method 2
-        post_y = np.empty((nsim, dim_J))
-        for m_ind in tqdm(range(nsim)):
-            m = skip_step*m_ind
-            m_alpha = stacked_ps["alpha"][m]
-            if "Marg_cov" in stacked_ps.keys():
-                m_Marg_cov = stacked_ps["Marg_cov"][m]
-                post_y_sample = multivariate_normal.rvs(mean=m_alpha, cov=m_Marg_cov, size=1)
-            else:
-                m_beta = stacked_ps["beta"][m]
-                if "Phi_cov" in stacked_ps.keys():
-                    m_Phi_cov = stacked_ps["Phi_cov"][m]
-                else:
-                    m_Phi_cov = np.eye(dim_K)
-                zz_from_prior = multivariate_normal.rvs(
-                    mean=np.zeros(dim_K), cov=m_Phi_cov, size=1
-                )
-                post_y_sample = m_alpha + zz_from_prior @ m_beta.T
-            post_y[m_ind] = post_y_sample
+        post_y = get_method2(
+            stacked_ps,
+            dim_J,
+            dim_K, 
+            nsim,
+            skip_step)
     else:
         print('method_num not found')
         
