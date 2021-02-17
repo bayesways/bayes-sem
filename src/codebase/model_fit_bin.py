@@ -187,7 +187,7 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
         post_y[m_ind] = post_y_sample
     return post_y
 
-def get_scores(ps, data, nsim, score_metric, method_num = 1):
+def get_scores(ps, data, nsim, score_metric, method_num = 2):
 
     mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
     num_chains = ps["alpha"].shape[1]
