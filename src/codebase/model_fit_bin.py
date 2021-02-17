@@ -31,12 +31,6 @@ def get_probs(data, ps, m, cn):
     pistr = expit(ps["yy"][m, cn])
     return pistr
 
-
-def get_probs(data, ps, m, cn):
-    pistr = expit(ps["yy"][m, cn])
-    return pistr
-
-
 def get_Ey(data_ptrn, prob, N):
     distinct_patterns = np.unique(data_ptrn)
     ## compute E_y(theta) for a specific pattern y
@@ -46,16 +40,14 @@ def get_Ey(data_ptrn, prob, N):
         Ey[ptrn] = N * np.mean(np.exp(np.sum(prob_matrix, 1)), 0)
     return Ey
 
-
-# def get_Ey(data_ptrn, prob_logitinv, N):
-#     distinct_patterns = np.unique(data_ptrn)
-#     ## compute E_y(theta) for a specific pattern y
-#     Ey = dict()
-#     for ptrn in distinct_patterns:
-#         prob_vector = bernoulli.logpmf(k=to_nparray_data(ptrn), p=expit(prob_logitinv))
-#         Ey[ptrn] = N * np.exp(np.sum(prob_vector))
-#         # set_trace()
-#     return Ey
+def get_response_probs(data_ptrn, prob):
+    distinct_patterns = np.unique(data_ptrn)
+    ## compute E_y(theta) for a specific pattern y
+    Ey = dict()
+    for ptrn in distinct_patterns:
+        prob_matrix = bernoulli.logpmf(k=to_nparray_data(ptrn), p=prob)
+        Ey[ptrn] = np.mean(np.exp(np.sum(prob_matrix, 1)), 0)
+    return Ey
 
 
 def get_Oy(data_ptrn):
@@ -105,6 +97,22 @@ def get_PPP(data, ps, cn, nsim=100):
         PPP_vals[m_ind, 1] = sum(Dystr.values())
 
     return PPP_vals
+
+def compute_brier_individual(probs_dict, obs):
+    p_obs = probs_dict[obs]
+    probs = np.array(list(probs_dict.values()))
+    probs_sum = np.sum(probs**2) - p_obs**2
+    return probs_sum + (1.-p_obs)**2
+
+
+def compute_brier(probs_dict, data):
+    n = data.shape[0]
+    score = 0.
+    for i in range(n):
+        score = score + compute_brier_individual(
+            probs_dict, data[i]
+            )
+    return score 
 
 def stack_samples(ps, num_chains):
     stacked_ps = dict()
@@ -172,7 +180,7 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
         post_y[m_ind] = post_y_sample
     return post_y
 
-def get_lgscr(ps, data, nsim, method_num):
+def get_lgscr(ps, data, nsim, method_num, score_metric = 'brier'):
 
     mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
     num_chains = ps["alpha"].shape[1]
@@ -192,7 +200,7 @@ def get_lgscr(ps, data, nsim, method_num):
 
 
     data_ptrn = to_str_pattern(data["test"]["DD"])
-    Oy = get_Oy(data_ptrn)
+    
     if method_num == 1:
         stacked_ps = adjust_beta_sign(stacked_ps)
         post_y = get_method1(
@@ -210,10 +218,13 @@ def get_lgscr(ps, data, nsim, method_num):
             skip_step)
     else:
         print('method_num not found')
-        
-    
-    Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
-    Dy = get_Dy(Oy, Ey, data_ptrn)
-    scores = sum(Dy.values())
-
-    return scores
+    if score_metric is 'logscore':
+        Oy = get_Oy(data_ptrn)   
+        Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
+        Dy = get_Dy(Oy, Ey, data_ptrn)
+        scores = sum(Dy.values())
+        return scores
+    else:                  
+        E_prob = get_response_probs(data_ptrn, expit(post_y))
+        scores = compute_brier(E_prob, data_ptrn)
+        return scores
