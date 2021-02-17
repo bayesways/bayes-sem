@@ -117,21 +117,21 @@ def stack_samples(ps, num_chains):
 def adjust_beta_sign(ps):
     num_samples = ps['alpha'].shape[0]
     ps['beta_rot'] = ps['beta'].copy()
-    if 'Phi_cov' in ps.keys():
-        ps['Phi_cov_rot'] = ps['Phi_cov'].copy()
+    # if 'Phi_cov' in ps.keys():
+    #     ps['Phi_cov_rot'] = ps['Phi_cov'].copy()
     for i in range(num_samples):
         sign1 = np.sign(ps['beta'][i,0,0])
         sign2 = np.sign(ps['beta'][i,3,1])
         ps['beta_rot'][i,:3,0] = ps['beta'][i,:3,0] * sign1
         ps['beta_rot'][i,3:,1] = ps['beta'][i,3:,1] * sign2
 
-        if 'Phi_cov' in ps.keys():
-            ps['Phi_cov_rot'][i,0,1] = sign1 * sign2 * ps['Phi_cov'][i,0,1]
-            ps['Phi_cov_rot'][i,1,0] = ps['Phi_cov'][i,0,1]
+        # if 'Phi_cov' in ps.keys():
+        #     ps['Phi_cov_rot'][i,0,1] = sign1 * sign2 * ps['Phi_cov'][i,0,1]
+        #     ps['Phi_cov_rot'][i,1,0] = ps['Phi_cov'][i,0,1]
     
     ps['beta'] = ps['beta_rot'].copy()
-    if 'Phi_cov' in ps.keys():
-        ps['Phi_cov'] = ps['Phi_cov_rot'].copy()
+    # if 'Phi_cov' in ps.keys():
+    #     ps['Phi_cov'] = ps['Phi_cov_rot'].copy()
     return ps
 
 def get_method1(ps, dim_K, nsim):
