@@ -3,7 +3,7 @@ import pandas as pd
 import pystan
 import os
 from codebase.file_utils import save_obj, load_obj
-from codebase.model_fit_bin import get_lgscr
+from codebase.model_fit_bin import get_scores
 import argparse
 from pdb import set_trace
 
@@ -20,10 +20,10 @@ parser.add_argument(
 )
 parser.add_argument(
     "-scr",
-    "--scr_method",
-    help="method used for score",
-    type=int,
-    default=1,
+    "--scr_metric",
+    help="score metric used - choose from [g2, logscore, brier]",
+    type=str,
+    default='g2',
 )
 
 args = parser.parse_args()
@@ -42,11 +42,11 @@ for fold_index in range(complete_data["n_splits"]):
     ps[fold_index] = load_obj("ps_%s" % str(fold_index), logdir)
 Ds = np.empty(3)
 for fold_index in range(complete_data["n_splits"]):
-    Ds[fold_index] = get_lgscr(
+    Ds[fold_index] = get_scores(
         ps[fold_index],
         complete_data[fold_index],
         args.nsim_ppp,
-        args.scr_method
+        args.scr_metric
         )
 
 ###########################################################

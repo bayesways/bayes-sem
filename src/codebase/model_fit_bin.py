@@ -104,7 +104,6 @@ def compute_brier_individual(probs_dict, obs):
     probs_sum = np.sum(probs**2) - p_obs**2
     return probs_sum + (1.-p_obs)**2
 
-
 def compute_brier(probs_dict, data):
     n = data.shape[0]
     score = 0.
@@ -113,6 +112,14 @@ def compute_brier(probs_dict, data):
             probs_dict, data[i]
             )
     return score 
+
+def compute_log_score(probs_dict, data):
+    n = data.shape[0]
+    score = 0.
+    for i in range(n):
+        score_individual = -np.log(probs_dict[data[i]])
+        score = score + score_individual
+    return score
 
 def stack_samples(ps, num_chains):
     stacked_ps = dict()
@@ -180,7 +187,7 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
         post_y[m_ind] = post_y_sample
     return post_y
 
-def get_lgscr(ps, data, nsim, method_num, score_metric = 'brier'):
+def get_scores(ps, data, nsim, score_metric, method_num = 1):
 
     mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
     num_chains = ps["alpha"].shape[1]
@@ -202,6 +209,7 @@ def get_lgscr(ps, data, nsim, method_num, score_metric = 'brier'):
     data_ptrn = to_str_pattern(data["test"]["DD"])
     
     if method_num == 1:
+        # fix at posterior mean
         stacked_ps = adjust_beta_sign(stacked_ps)
         post_y = get_method1(
             stacked_ps, 
@@ -209,7 +217,7 @@ def get_lgscr(ps, data, nsim, method_num, score_metric = 'brier'):
             nsim
         )
     elif method_num == 2:
-        # method 2
+        # fix use whole distribution
         post_y = get_method2(
             stacked_ps,
             dim_J,
@@ -218,13 +226,24 @@ def get_lgscr(ps, data, nsim, method_num, score_metric = 'brier'):
             skip_step)
     else:
         print('method_num not found')
-    if score_metric is 'logscore':
+
+
+    print('\nUsing %s'%score_metric)
+    if score_metric == 'g2':
         Oy = get_Oy(data_ptrn)   
         Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
         Dy = get_Dy(Oy, Ey, data_ptrn)
         scores = sum(Dy.values())
         return scores
-    else:                  
+    elif score_metric == 'logscore':
+        E_prob = get_response_probs(data_ptrn, expit(post_y))
+        scores = compute_log_score(E_prob, data_ptrn)
+        return scores
+
+    elif score_metric == 'brier':                  
         E_prob = get_response_probs(data_ptrn, expit(post_y))
         scores = compute_brier(E_prob, data_ptrn)
         return scores
+    else:
+        print('score_metric not found')
+        return 0
