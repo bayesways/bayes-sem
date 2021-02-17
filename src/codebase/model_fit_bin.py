@@ -188,14 +188,13 @@ def get_lgscr(ps, data, nsim, method_num):
             print("Using nsim = %d" % mcmc_length)
             nsim = mcmc_length
     skip_step = int(mcmc_length / nsim)
-    stacked_ps = adjust_beta_sign(
-        stack_samples(ps, num_chains)
-    )
+    stacked_ps = stack_samples(ps, num_chains)
 
 
     data_ptrn = to_str_pattern(data["test"]["DD"])
     Oy = get_Oy(data_ptrn)
     if method_num == 1:
+        stacked_ps = adjust_beta_sign(stacked_ps)
         post_y = get_method1(
             stacked_ps, 
             dim_K, 
