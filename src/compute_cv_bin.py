@@ -40,17 +40,18 @@ if "n_splits" not in complete_data.keys():
 ps = dict()
 for fold_index in range(complete_data["n_splits"]):
     ps[fold_index] = load_obj("ps_%s" % str(fold_index), logdir)
-Ds = np.empty(3)
+Ds = dict()
 for fold_index in range(complete_data["n_splits"]):
+    print('Fold %d'%fold_index)
     Ds[fold_index] = get_scores(
         ps[fold_index],
         complete_data[fold_index],
         args.nsim_ppp,
         args.scr_metric
         )
-
 ###########################################################
 ############### Compare CV scores  ##########
-print("\nFold Sum %.2f" % np.sum(Ds))
-for f in range(3):
-    print("Fold %.2f" % Ds[f])
+score_names = ['g2', 'logscore', 'brier']
+for name in score_names:
+    a = [Ds[fold][name] for fold in range(3)]
+    print("\n%s Fold Sum %.2f" %(name, np.sum(a)))

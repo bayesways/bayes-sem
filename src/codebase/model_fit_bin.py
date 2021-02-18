@@ -129,6 +129,30 @@ def stack_samples(ps, num_chains):
             )
     return stacked_ps
 
+def get_g2_score(data_ptrn, post_y, N):
+    Oy = get_Oy(data_ptrn)   
+    Ey = get_Ey(data_ptrn, expit(post_y), N)
+    Dy = get_Dy(Oy, Ey, data_ptrn)
+    return sum(Dy.values())
+
+def get_logscore1(data_ptrn, post_y):
+    E_prob = get_response_probs(data_ptrn, expit(post_y))
+    return compute_log_score(E_prob, data_ptrn)
+
+def get_logscore2(data_ptrn, post_y):
+    distinct_patterns = np.unique(data_ptrn)
+    E_prob = get_response_probs(data_ptrn, expit(post_y))
+    Oy = get_Oy(data_ptrn)           
+    scores = 0.
+    for ptrn in distinct_patterns:
+        lgscr = Oy[ptrn] * np.log(E_prob[ptrn])
+        scores = scores - lgscr
+    return scores
+
+def get_brier_score(data_ptrn, post_y):
+    E_prob = get_response_probs(data_ptrn, expit(post_y))
+    return compute_brier(E_prob, data_ptrn)
+
 def adjust_beta_sign(ps):
     num_samples = ps['alpha'].shape[0]
     ps['beta_rot'] = ps['beta'].copy()
@@ -187,7 +211,7 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
         post_y[m_ind] = post_y_sample
     return post_y
 
-def get_scores(ps, data, nsim, score_metric, method_num = 1):
+def get_scores(ps, data, nsim, score_metric, method_num = 2):
 
     mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
     num_chains = ps["alpha"].shape[1]
@@ -228,39 +252,54 @@ def get_scores(ps, data, nsim, score_metric, method_num = 1):
         print('method_num not found')
 
 
-    print('\nUsing %s'%score_metric)
-    if score_metric == 'g2':
-        Oy = get_Oy(data_ptrn)   
-        Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
-        Dy = get_Dy(Oy, Ey, data_ptrn)
-        scores = sum(Dy.values())
-        return scores
-    elif score_metric == 'logscore':
-        E_prob = get_response_probs(data_ptrn, expit(post_y))
-        scores = compute_log_score(E_prob, data_ptrn)
-        return scores
-    elif score_metric == 'logscore2':
-        distinct_patterns = np.unique(data_ptrn)
-        E_prob = get_response_probs(data_ptrn, expit(post_y))
-        Oy = get_Oy(data_ptrn)           
-        scores = 0.
-        for ptrn in distinct_patterns:
-            lgscr = Oy[ptrn] * np.log(E_prob[ptrn])
-            scores = scores - lgscr
+    # E_prob = get_response_probs(data_ptrn, expit(post_y))
 
+    
+    # n = data_ptrn.shape[0]
+    # score = 0.
+    # for i in range(n):
+    #     score_individual = -np.log(E_prob[data_ptrn[i]])
+    #     score = score + score_individual
+    
+    # distinct_patterns = np.unique(data_ptrn)
+    # Oy = get_Oy(data_ptrn)           
+    # score2 = 0.
+    # for ptrn in distinct_patterns:
+    #     lgscr = Oy[ptrn] * np.log(E_prob[ptrn])
+    #     score2 = score2 - lgscr
 
-        Oy = get_Oy(data_ptrn)   
-        Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
-        Dy = get_Dy(Oy, Ey, data_ptrn)
-        scores2 = sum(Dy.values())
-        constant = scores - scores2
-        print(constant)
-        return scores
+    # set_trace()
+    scores = dict()
+    g2_score = get_g2_score(
+            data_ptrn, post_y, data["test"]['N']
+            )
+    lgscr1 = get_logscore1(data_ptrn, post_y)
+    lgscr2 = get_logscore2(data_ptrn, post_y)
+    diff = g2_score - lgscr1
+    brier_score = get_brier_score(data_ptrn, post_y)
+    print('G2 = %.2f'%g2_score)
+    print('logscore = %.2f'%lgscr1)
+    print('logscore2 = %.2f'%lgscr2)
+    print('G2-logscore = %.2f'%diff)
+    print('brier = %.2f'%brier_score)
+    print('\n\n')
 
-    elif score_metric == 'brier':                  
-        E_prob = get_response_probs(data_ptrn, expit(post_y))
-        scores = compute_brier(E_prob, data_ptrn)
-        return scores
-    else:
-        print('score_metric not found')
-        return 0
+    scores['g2'] = g2_score
+    scores['logscore'] = lgscr1
+    scores['brier'] = brier_score
+    return scores
+    
+    # print('\nUsing %s'%score_metric)
+    # if score_metric == 'g2':
+    #     return get_g2_score(
+    #         data_ptrn, post_y, data["test"]['N']
+    #         )
+    # elif score_metric == 'logscore':
+    #     return get_logscore1(data_ptrn, post_y)
+    # elif score_metric == 'logscore2':
+    #     return get_logscore2(data_ptrn, post_y)
+    # elif score_metric == 'brier':                  
+    #     return get_brier_score(data_ptrn, post_y)
+    # else:
+    #     print('score_metric not found')
+    #     return 0
