@@ -187,7 +187,7 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
         post_y[m_ind] = post_y_sample
     return post_y
 
-def get_scores(ps, data, nsim, score_metric, method_num = 2):
+def get_scores(ps, data, nsim, score_metric, method_num = 1):
 
     mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
     num_chains = ps["alpha"].shape[1]
@@ -238,6 +238,23 @@ def get_scores(ps, data, nsim, score_metric, method_num = 2):
     elif score_metric == 'logscore':
         E_prob = get_response_probs(data_ptrn, expit(post_y))
         scores = compute_log_score(E_prob, data_ptrn)
+        return scores
+    elif score_metric == 'logscore2':
+        distinct_patterns = np.unique(data_ptrn)
+        E_prob = get_response_probs(data_ptrn, expit(post_y))
+        Oy = get_Oy(data_ptrn)           
+        scores = 0.
+        for ptrn in distinct_patterns:
+            lgscr = Oy[ptrn] * np.log(E_prob[ptrn])
+            scores = scores - lgscr
+
+
+        Oy = get_Oy(data_ptrn)   
+        Ey = get_Ey(data_ptrn, expit(post_y), data["test"]["N"])
+        Dy = get_Dy(Oy, Ey, data_ptrn)
+        scores2 = sum(Dy.values())
+        constant = scores - scores2
+        print(constant)
         return scores
 
     elif score_metric == 'brier':                  
