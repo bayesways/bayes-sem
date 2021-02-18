@@ -154,7 +154,6 @@ def get_brier_score(data_ptrn, post_y):
     n = data_ptrn.shape[0]
     score = 0.0
     for i in range(n):
-        set_trace()
         score_i = compute_brier_individual(E_prob, data_ptrn[i])
         score += score_i
     return score
