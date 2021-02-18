@@ -101,17 +101,9 @@ def get_PPP(data, ps, cn, nsim=100):
 def compute_brier_individual(probs_dict, obs):
     p_obs = probs_dict[obs]
     probs = np.array(list(probs_dict.values()))
-    probs_sum = np.sum(probs**2) - p_obs**2
-    return probs_sum + (1.-p_obs)**2
-
-def compute_brier(probs_dict, data):
-    n = data.shape[0]
-    score = 0.
-    for i in range(n):
-        score = score + compute_brier_individual(
-            probs_dict, data[i]
-            )
-    return score 
+    probs_sum = np.sum(probs**2) - (p_obs**2)
+    score = ((1.-p_obs)**2) + probs_sum 
+    return score
 
 def compute_log_score(probs_dict, data):
     n = data.shape[0]
@@ -151,7 +143,13 @@ def get_logscore2(data_ptrn, post_y):
 
 def get_brier_score(data_ptrn, post_y):
     E_prob = get_response_probs(data_ptrn, expit(post_y))
-    return compute_brier(E_prob, data_ptrn)
+    n = data_ptrn.shape[0]
+    score = 0.
+    for i in range(n):
+        set_trace()
+        score_i = compute_brier_individual(E_prob, data_ptrn[i])
+        score += score_i
+    return score
 
 def adjust_beta_sign(ps):
     num_samples = ps['alpha'].shape[0]
@@ -252,23 +250,24 @@ def get_scores(ps, data, nsim, score_metric, method_num = 2):
         print('method_num not found')
 
 
-    # E_prob = get_response_probs(data_ptrn, expit(post_y))
-
+    tpro = dict()
+    tpro['000000'] = 0.8
+    tpro['111111'] = 0.2
+    dd = np.array([
+        '000000',
+        '111111',
+        '000000'
+    ])
+    test1 = compute_brier_individual(tpro, dd[0])
+    test2 = compute_brier_individual(tpro, dd[1])
+    testtotal = 0.
+    for i in range(dd.shape[0]):
+        score_i = compute_brier_individual(tpro, dd[i])
+        testtotal += score_i
     
-    # n = data_ptrn.shape[0]
-    # score = 0.
-    # for i in range(n):
-    #     score_individual = -np.log(E_prob[data_ptrn[i]])
-    #     score = score + score_individual
-    
-    # distinct_patterns = np.unique(data_ptrn)
-    # Oy = get_Oy(data_ptrn)           
-    # score2 = 0.
-    # for ptrn in distinct_patterns:
-    #     lgscr = Oy[ptrn] * np.log(E_prob[ptrn])
-    #     score2 = score2 - lgscr
+    set_trace()
 
-    # set_trace()
+
     scores = dict()
     g2_score = get_g2_score(
             data_ptrn, post_y, data["test"]['N']
