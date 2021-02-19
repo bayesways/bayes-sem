@@ -45,3 +45,6 @@ es_sample(obs, dat = X)
 vs_sample(obs, dat = X, p = 2)
 
 dim(X)
+
+
+## 
