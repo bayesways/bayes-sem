@@ -147,7 +147,7 @@ elif args.stan_model == 5:  # EFA no u's
         model_code = file.read()
     param_names = ['beta', 'alpha', 'zz', 'yy']
 elif args.stan_model == 6:  # EFA with u's
-    with open('./codebase/stan_code/discr/EFA/model2.stan', 'r') as file:
+    with open(path_to_stan+'EFA/model2.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
 elif args.stan_model == 7:  # EFA lower triang no u's
