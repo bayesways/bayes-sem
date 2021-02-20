@@ -167,8 +167,13 @@ elif args.stan_model == 10:  # First item loads on both factors (AZ and u's)
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                     'Omega_cov', 'Phi_cov']                           
+elif args.stan_model == 11:  # First item loads on both factors (EZ)
+    with open(path_to_stan+'CFA/logit/model5.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Phi_cov']                           
+
 else:
-    print('model is 1:9')
+    print('model is 1:11')
 
 if bool(args.print_model):
     print(model_code)
@@ -197,13 +202,15 @@ if args.compile_model==0:
         param_names = ['beta', 'alpha', 'zz', 'yy']
     elif args.stan_model == 8:  # EFA with u's
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
-    elif args.stan_model == 9:  # alt param of model 2 with cross loading on first variable no u's
+    elif args.stan_model == 9:  # First item loads on both factors (AZ no u's)
         param_names = ['alpha', 'yy',  'beta', 'Phi_cov']    
-    elif args.stan_model == 10:  # alt param of model 2 with cross loading on first variable
+    elif args.stan_model == 10:  # First item loads on both factors (AZ and u's)
         param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
-                       'Omega_cov', 'Phi_cov']              
+                       'Omega_cov', 'Phi_cov']
+    elif args.stan_model == 11: # First item loads on both factors (EZ)
+        param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']       
     else:
-        print('model is 1:9')
+        print('model is 1:11')
 
 else:
     print("\n\nCompiling model")
