@@ -102,3 +102,35 @@ def samples_to_df(ps, param_name):
                 post_dfs.append(return_post_df(ps, param_name, cn, row, None))
 
     return pd.concat(post_dfs, axis=0)
+
+
+def stack_samples(ps, num_chains):
+    stacked_ps = np.vstack(np.squeeze(np.split(ps, num_chains, axis=1)))
+    return stacked_ps
+
+
+def form_df(samples, rows):
+    dfs = []
+    for r in range(rows):
+        if rows>1:
+            df = pd.DataFrame(samples[:,r])
+        else:
+            df = pd.DataFrame(samples)
+        df.insert(0, 'idx', np.arange(df.shape[0]))
+        df = df.melt(id_vars ='idx', var_name = 'col')
+        df.insert(1, 'row' , r)
+        dfs.append(df)
+    return pd.concat(dfs).reset_index(drop=True)
+
+
+def get_post_df(samples):
+    num_chains = samples.shape[1]
+    samples = stack_samples(samples, num_chains)
+    if samples.ndim > 2:
+        rows = samples.shape[1]
+        df = form_df(samples, rows)
+    else:
+        rows = 1
+        df = form_df(samples, 1)
+    return df
+

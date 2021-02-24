@@ -2,11 +2,13 @@ import numpy as np
 import pandas as pd
 import pystan
 import datetime
+import sys
 import os
 from codebase.file_utils import save_obj, load_obj
-from codebase.data import gen_data
+from codebase.data import gen_data_binary
 from sklearn.model_selection import KFold
 import argparse
+from collections import OrderedDict
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -24,20 +26,16 @@ parser.add_argument("-odr", "--off_diag_residual",
                     help="off_diag_residual", type=bool, default=False)
 parser.add_argument("-gd", "--gen_data",
                     help="gen fresh data", type=int, default=1)
-parser.add_argument("-off", "--standardize",
-                    help="standardize the data", type=int, default=1)
 parser.add_argument("-rho", "--rho_param",
                     help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains", "--num_chains",
-                    help="number of MCMC chains", type=int, default=1)
+                    help="number of MCMC chains", type=int, default=4)
 parser.add_argument("-seed", "--random_seed",
                     help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c", "--c_param",
                     help="fixed variances of Theta", type=float, default=1)
-parser.add_argument("-cl_level", "--crossloading_level",
-                    help="level of cross loading magnitude", type=float, default=4)
 parser.add_argument("-nd", "--nsim_data", help="data size",
-                    type=int, default=1000)
+                    type=int, default=2000)
 parser.add_argument("-th", "--task_handle",
                     help="hande for task", type=str, default="_")
 parser.add_argument("-prm", "--print_model",
@@ -48,12 +46,11 @@ parser.add_argument("-sqz", "--squeeze_ps",
                     help="squeeze posterior samples vectors", type=int, default=0)
 parser.add_argument("-nfl", "--n_splits",
                     help="number of folds", type=int, default=3)
+parser.add_argument("-cv_seed", "--cv_seed",
+                    help="random seed for CV", type=int, default=34)
 
 
 args = parser.parse_args()
-
-
-from collections import OrderedDict
 
 def pystan_vb_extract(results):
     param_specs = results['sampler_param_names']
@@ -86,6 +83,7 @@ def pystan_vb_extract(results):
 
     return params
 
+
 ############################################################
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
@@ -106,46 +104,52 @@ if args.gen_data == 1:
 
     print("\n\nGenerating Continuous data for case")
 
-    print("\n\nGenerating Continuous data for case %s"%args.sim_case)
-    if args.sim_case == 0 :
-        data = gen_data(args.nsim_data,
-                        off_diag_residual=False,
-                        random_seed = args.random_seed)
-    elif args.sim_case == 1 :
-        data = gen_data(args.nsim_data,
-                        off_diag_residual=True,
-                        cross_loadings=False,
-                        random_seed = args.random_seed)
-    elif args.sim_case == 2 :
-        data = gen_data(args.nsim_data,
-                        cross_loadings=True,
-                        off_diag_residual=False,
-                        random_seed = args.random_seed)
-    elif args.sim_case == 3 :
-        data = gen_data(args.nsim_data,
-                        cross_loadings=True,
-                        off_diag_residual=True,
-                        random_seed = args.random_seed)
+    if args.sim_case == 0:
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            random_seed=args.random_seed
+            )
+    elif args.sim_case == 1:
+        data = gen_data_binary(
+            args.nsim_data,
+            rho2=args.rho_param,
+            c=args.c_param,
+            off_diag_residual=True,
+            random_seed=args.random_seed
+            )
+    elif args.sim_case == 2:
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            cross_loadings=True,
+            cross_loadings_level=3,
+            random_seed=args.random_seed
+            )
     else:
-        print("Choose simulation case {0:diag Theta, \
-            1:Theta with 6 off diag elements \
-            2:Cross loadings}\
-            3:Cross loadings  + Residual Correlated Errors}")
+        print("Choose simulation case 0:Clean data ")
+        print("Choose simulation case 1:Off-diag residuals")
+        print("Choose simulation case 2:Cross loadings")
 
     if args.ppp_cv == 'ppp':  # run PPP
-        print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
-        data['sigma_prior'] = np.diag(np.linalg.inv(np.cov(data['y'], rowvar=False)))
-        stan_data = dict(N = data['N'], K = data['K'], J = data['J'],
-            yy = data['y'], sigma_prior = data['sigma_prior'])
-        print("\n\nSaving data to directory %s"% log_dir)
+        stan_data = dict(
+            N=data['N'],
+            J=data['J'],
+            K=data['K'],
+            DD=data['D']
+        )
+        print("\n\nSaving data to directory %s" % log_dir)
         save_obj(stan_data, 'stan_data', log_dir)
         save_obj(data, 'data', log_dir)
-
-
     elif args.ppp_cv == 'cv':  # run CV
-        print("\n\nN = %d, J= %d, K =%d"%(data['N'],data['J'], data['K'] ))
-        X = data['y']
-        kf = KFold(n_splits=args.n_splits, shuffle=True, random_state=34)
+        X = data['D']
+        kf = KFold(
+            n_splits=args.n_splits,
+            shuffle=True,
+            random_state=args.cv_seed
+            )
         kf.get_n_splits(X)
 
         stan_data = dict()
@@ -153,27 +157,24 @@ if args.gen_data == 1:
         fold_index = 0
         for train_index, test_index in kf.split(X):
             data_fold = dict()
-            data_fold['y_train'], data_fold['y_test'] = X[train_index], X[test_index]
-            data_fold['N_train'], data_fold['N_test'] = data_fold['y_train'].shape[0], data_fold['y_test'].shape[0]
-            stan_data[fold_index] = dict(
-                N = data_fold['N_train'],
-                K = data['K'],
-                J = data['J'],
-                yy = data_fold['y_train'],
-                sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_train'], rowvar=False)))
-                )
-            test_data_fold = dict(
-                N = data_fold['N_test'],
-                K = data['K'],
-                J = data['J'],
-                yy = data_fold['y_test'],
-                sigma_prior = np.diag(np.linalg.inv(np.cov(data_fold['y_test'], rowvar=False)))
-                )
-            complete_data[fold_index] = dict( train = stan_data[fold_index], test = test_data_fold)
+            data_fold['D_train'], data_fold['D_test'] = X[train_index], X[test_index]
+            data_fold['N_train'], data_fold['N_test'] = data_fold['D_train'].shape[0], data_fold['D_test'].shape[0]
+            stan_data[fold_index] = dict(N=data_fold['N_train'],
+                                         K=data['K'],
+                                         J=data['J'],
+                                         DD=data_fold['D_train'])
+            test_data_fold = dict(N=data_fold['N_test'],
+                                  K=data['K'],
+                                  J=data['J'],
+                                  DD=data_fold['D_test'])
+            complete_data[fold_index] = dict(
+                train=stan_data[fold_index], test=test_data_fold)
 
             fold_index += 1
 
         print("\n\nSaving data folds at %s" % log_dir)
+        complete_data['cv_seed'] = args.cv_seed
+        complete_data['n_splits'] = args.n_splits
         save_obj(stan_data, 'stan_data', log_dir)
         save_obj(complete_data, 'complete_data', log_dir)
         save_obj(data, 'data', log_dir)
@@ -187,38 +188,28 @@ else:
 
 ############################################################
 ################ Compile Model or Load ##########
-path_to_stan = './codebase/stan_code/cont/'
+path_to_stan = './codebase/stan_code/discr/'
 
 print("\n\nReading Stan Code from model %d" % args.stan_model)
-if args.stan_model == 0 :
-    with open(path_to_stan+'EFA/model0.stan', 'r') as file:
-        model_code = file.read()        
-    param_names = ['Marg_cov', 'alpha']
-elif args.stan_model == 1 :
-    with open(path_to_stan+'CFA/model1.stan', 'r') as file:
+if args.stan_model == 1 :
+    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
         model_code = file.read()
-    param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
 elif args.stan_model == 2 :
-    with open(path_to_stan+'CFA/model2.stan', 'r') as file:
+    with open(path_to_stan+'CFA/logit/model2.stan', 'r') as file:
         model_code = file.read()
-    param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-        'Theta', 'Omega']
-elif args.stan_model == 3 :
-    with open(path_to_stan+'CFA/model3.stan', 'r') as file:
-        model_code = file.read()
-    param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-        'Theta']
-elif args.stan_model == 4 :
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 5 :
     with open(path_to_stan+'EFA/model1.stan', 'r') as file:
         model_code = file.read()
-    param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
-elif args.stan_model == 5 :
+    param_names = ['beta', 'alpha', 'zz', 'yy']
+elif args.stan_model == 6 :
     with open(path_to_stan+'EFA/model2.stan', 'r') as file:
         model_code = file.read()
-    param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
 else:
-    print("Choose stan model {0:benchmark saturated model," \
-        "1 CFA/4 EFA:exact zeros no u's, 2 CFA/5 EFA: full factor model}")
+    print('model is 1:6')
 
 if bool(args.print_model):
     print(model_code)
@@ -227,24 +218,19 @@ file.write(model_code)
 file.close()
 
 if args.compile_model==0:
-    with open('log/compiled_models/cont/model%s/model.txt' % args.stan_model, 'r') as file:
+    with open('log/compiled_models/discr/model%s/model.txt' % args.stan_model, 'r') as file:
         saved_model = file.read()
     if saved_model == model_code:
-        sm = load_obj('sm', 'log/compiled_models/cont/model%s/' % args.stan_model)
-        if args.stan_model == 0:
-                param_names = ['Marg_cov', 'alpha']
-        elif args.stan_model == 1:
-            param_names = ['Marg_cov', 'beta', 'Phi_cov', 'sigma', 'alpha', 'Theta']
+        sm = load_obj('sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
+        if args.stan_model == 1:
+            param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
         elif args.stan_model == 2:
-            param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-                'Theta', 'Omega']
-        elif args.stan_model == 3:
-            param_names = ['Marg_cov',  'beta', 'Phi_cov', 'sigma', 'alpha',
-                'Theta']
-        elif args.stan_model == 4:
-            param_names = ['Marg_cov', 'beta', 'sigma', 'alpha', 'Theta']
+            param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+                'Omega_cov', 'Phi_cov']
         elif args.stan_model == 5:
-            param_names = ['Marg_cov',  'beta', 'sigma', 'alpha', 'Theta', 'Omega']
+            param_names = ['beta', 'alpha', 'zz', 'yy']
+        elif args.stan_model == 6:
+            param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
         else:
             print("model option should be in [0,1,2,3]")
 
@@ -253,8 +239,8 @@ else:
     sm = pystan.StanModel(model_code=model_code, verbose=False)
     try:
         print("\n\nSaving compiled model in directory %s" % log_dir)
-        save_obj(sm, 'sm', 'log/compiled_models/cont/model%s/' % args.stan_model)
-        file = open('log/compiled_models/cont/model%s/model.txt' %
+        save_obj(sm, 'sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
+        file = open('log/compiled_models/discr/model%s/model.txt' %
                     args.stan_model, "w")
         file.write(model_code)
         file.close()
@@ -263,6 +249,7 @@ else:
 
 print("\n\nSaving compiled model in directory %s" % log_dir)
 save_obj(sm, 'sm', log_dir)
+
 
 ############################################################
 ################ Fit Model ##########
