@@ -129,24 +129,3 @@ To save storage space you can remove old pickled files with
 
     find . type f -name '*.p' -delete
 
-
-## To Do
-
-* ~~Compare PPP values for `model1` and `model2`~~
-* ~~Compare k-fold PPP for `model1` and `model2`~~
-* ~~Run EFA (model 1) for all simulated scenarios including kfold~~
-* ~~Run EFA (model 2) for all simulated scenarios including kfold~~
-* ~~Clean data from Irini to run binary model~~
-* ~~Run 1 factor model for the processed data of Irini (running)~~
-* ~~Undersand why adding approximate zeros to `beta` in Binary model fails. (Try 8 variables and 2 factors)~~
-* Create PPP for 1 factor models
-* ~~Fix hard code issue of 100 n_sim PPP calculation~~
-* ~~Write run scripts for FND data PPP and CV Index~~
-* ~~Get PPP results for EFA Model 2 on FND data~~
-* ~~Get CV Index results for Models 1 and 2 on FND data~~
-* ~~Plot and see if PPP results make sense~~
-* ~~Plot and see if CV results make sense~~
-* ~~Move vis display code to `altair`~~
-* ~~Change code for modelresultsbinary to recognize when to use 1 chain and when to use 4. Maybe do not squeeze results of one chain~~
-* ~~Organize binary simulation notebooks (including EFA specific notebooks)~~
-* ~~Re-run continuous model code for experiments and clean up code and save results~~
