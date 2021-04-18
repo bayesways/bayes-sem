@@ -28,8 +28,8 @@ def to_nparray_data(yresp):
         return res
 
 
-def get_probs(data, ps, m, cn):
-    pistr = expit(ps["yy"][m, cn])
+def get_probs(data, ps, m):
+    pistr = expit(ps["yy"][m])
     return pistr
 
 
@@ -72,7 +72,7 @@ def get_Dy(Oy, Ey, data_ptrn):
     return Dy
 
 
-def get_PPP(data, ps, cn, nsim=100):
+def get_PPP(data, ps, nsim=100):
 
     nsim_N = ps["alpha"].shape[0]
     skip_step = int(nsim_N / nsim)
@@ -84,12 +84,12 @@ def get_PPP(data, ps, cn, nsim=100):
     for m_ind in tqdm(range(nsim)):
         m = skip_step * m_ind
         # compute Dy
-        pi = get_probs(data, ps, m, cn)
+        pi = get_probs(data, ps, m)
         Ey = get_Ey(data_ptrn, pi, data["N"])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
         # compute Dy
-        ppdata = bernoulli.rvs(get_probs(data, ps, m, cn))
+        ppdata = bernoulli.rvs(get_probs(data, ps, m))
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
@@ -117,14 +117,6 @@ def compute_log_score(probs_dict, data):
         score_individual = -np.log(probs_dict[data[i]])
         score = score + score_individual
     return score
-
-
-def stack_samples(ps, num_chains):
-    stacked_ps = dict()
-    for name in ps.keys():
-        stacked_ps[name] = np.vstack(np.squeeze(np.split(ps[name], num_chains, axis=1)))
-    return stacked_ps
-
 
 def get_g2_score(data_ptrn, post_y, N):
     Oy = get_Oy(data_ptrn)
@@ -222,33 +214,26 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
     return post_y
 
 
-def get_scores(ps, data, nsim, score_metric, method_num=2):
+def get_scores(ps, data, nsim, method_num=2):
 
-    mcmc_length = ps["alpha"].shape[0] * ps["alpha"].shape[1]
-    num_chains = ps["alpha"].shape[1]
+    mcmc_length = ps["alpha"].shape[0]
+    dim_J = ps['alpha'].shape[1]
     dim_K = ps["beta"].shape[-1]
-    dim_J = ps["alpha"].shape[2]
-
-    if nsim is None:
-        print("Using all %d posterior samples" % mcmc_length)
+    if nsim>mcmc_length:
+        print('nsim > posterior sample size')
+        print('Using nsim = %d'%mcmc_length)
         nsim = mcmc_length
-    else:
-        if nsim > mcmc_length:
-            print("nsim > posterior sample size")
-            print("Using nsim = %d" % mcmc_length)
-            nsim = mcmc_length
-    skip_step = int(mcmc_length / nsim)
-    stacked_ps = stack_samples(ps, num_chains)
+    skip_step = int(mcmc_length/nsim)
 
     data_ptrn = to_str_pattern(data["test"]["DD"])
 
     if method_num == 1:
         # fix at posterior mean
-        stacked_ps = adjust_beta_sign(stacked_ps)
-        post_y = get_method1(stacked_ps, dim_K, nsim)
+        ps = adjust_beta_sign(ps)
+        post_y = get_method1(ps, dim_K, nsim)
     elif method_num == 2:
         # fix use whole distribution
-        post_y = get_method2(stacked_ps, dim_J, dim_K, nsim, skip_step)
+        post_y = get_method2(ps, dim_J, dim_K, nsim, skip_step)
     else:
         print("method_num not found")
 

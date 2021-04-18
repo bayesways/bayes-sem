@@ -4,6 +4,7 @@ import pystan
 import os
 from codebase.file_utils import save_obj, load_obj
 from codebase.model_fit_bin import get_PPP
+from codebase.post_process import remove_cn_dimension
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -28,12 +29,10 @@ ps = load_obj('ps', log_dir)
 num_chains = ps['alpha'].shape[1]
 num_samples = ps['alpha'].shape[0]
 
+for name in ['yy']:
+    ps[name] = remove_cn_dimension(ps[name])
 
-ppp_cn = np.empty(num_chains)
-for cn in range(num_chains):
-    PPP_vals = get_PPP(data, ps, cn, args.nsim_ppp)
+PPP_vals = get_PPP(data, ps, args.nsim_ppp)
 
-    ppp_cn[cn] = np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
-    print(ppp_cn[cn])
-
-print("Avg PPP %.2f"%ppp_cn.mean())
+ppp = np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
+print("PPP %.2f"%ppp)

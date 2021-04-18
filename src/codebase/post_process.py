@@ -134,3 +134,11 @@ def get_post_df(samples):
         df = form_df(samples, 1)
     return df
 
+def remove_cn_dimension(samples):
+    num_chains = samples.shape[1]
+    return np.squeeze(
+        np.vstack(
+            np.split(samples, num_chains, axis=1)
+            ),
+            axis=1
+    )

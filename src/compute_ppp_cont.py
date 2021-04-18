@@ -4,6 +4,7 @@ import pystan
 import datetime
 from tqdm import tqdm
 from codebase.model_fit_cont import get_PPP
+from codebase.post_process import remove_cn_dimension
 import sys
 import os
 from codebase.file_utils import save_obj, load_obj
@@ -29,13 +30,11 @@ ps = load_obj('ps', log_dir)
 num_chains = ps['alpha'].shape[1]
 num_samples = ps['alpha'].shape[0]
 
+for name in ['alpha', 'Marg_cov']:
+    ps[name] = remove_cn_dimension(ps[name])
 
-ppp_cn = np.empty(num_chains)
-for cn in range(num_chains):
-    PPP_vals = get_PPP(data, ps, cn, args.nsim_ppp)
+PPP_vals = get_PPP(data, ps, args.nsim_ppp)
 
-    ppp_cn[cn] = 100*np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
-    print(ppp_cn[cn])
+ppp = 100*np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
 
-print(ppp_cn)
-print(np.round(np.mean(ppp_cn)))
+print("PPP %.2f"%ppp)
