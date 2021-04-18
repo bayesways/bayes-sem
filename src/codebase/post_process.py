@@ -103,12 +103,6 @@ def samples_to_df(ps, param_name):
 
     return pd.concat(post_dfs, axis=0)
 
-
-def stack_samples(ps, num_chains):
-    stacked_ps = np.vstack(np.squeeze(np.split(ps, num_chains, axis=1)))
-    return stacked_ps
-
-
 def form_df(samples, rows):
     dfs = []
     for r in range(rows):
@@ -125,7 +119,7 @@ def form_df(samples, rows):
 
 def get_post_df(samples):
     num_chains = samples.shape[1]
-    samples = stack_samples(samples, num_chains)
+    samples = remove_cn_dimension(samples)
     if samples.ndim > 2:
         rows = samples.shape[1]
         df = form_df(samples, rows)
