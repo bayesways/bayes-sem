@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.stats import multivariate_normal
 from tqdm import tqdm
 from numpy.linalg import det, inv, norm
-from codebase.file_utils import save_obj, load_obj
+from ..codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
 from scipy.spatial.distance import pdist
 from pdb import set_trace

@@ -236,7 +236,7 @@ def get_scores(ps, data, nsim, method_num=2):
         post_y = get_method2(ps, dim_J, dim_K, nsim, skip_step)
     else:
         print("method_num not found")
-
+    set_trace()
     scores = dict()
     g2_score = get_g2_score(data_ptrn, post_y, data["test"]["N"])
     lgscr1 = get_logscore1(data_ptrn, post_y)

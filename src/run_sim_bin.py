@@ -160,16 +160,23 @@ else:
 path_to_stan = './codebase/stan_code/discr/'
 
 print("\n\nReading Stan Code from model %d" % args.stan_model)
-# if args.stan_model == 1 :
-#     with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
-#         model_code = file.read()
-#     param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
 if args.stan_model == 1 :
-    with open(path_to_stan+'CFA/logit/model1_B.stan', 'r') as file:
+    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
         model_code = file.read()
     param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
 elif args.stan_model == 2 :
     with open(path_to_stan+'CFA/logit/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 3 :
+    # alternative parametrisation of model 1
+    with open(path_to_stan+'CFA/logit/model1_B.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+elif args.stan_model == 4 :
+    # alternative parametrisation of model 2
+    with open(path_to_stan+'CFA/logit/model2_B.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
         'Omega_cov', 'Phi_cov']
@@ -195,9 +202,9 @@ if args.compile_model==0:
         saved_model = file.read()
     if saved_model == model_code:
         sm = load_obj('sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
-        if args.stan_model == 1:
+        if args.stan_model in [1,3]:
             param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-        elif args.stan_model == 2:
+        elif args.stan_model in [2,4]:
             param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                 'Omega_cov', 'Phi_cov']
         elif args.stan_model == 5:
