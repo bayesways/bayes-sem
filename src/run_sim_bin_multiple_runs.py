@@ -10,17 +10,17 @@ from sklearn.model_selection import KFold
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "num_warmup", help="number of warm up iterations", type=int, default=1000)
-parser.add_argument(
-    "num_samples", help="number of post-warm up iterations", type=int, default=1000)
 # Optional arguments
+parser.add_argument(
+    "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=1000)
+parser.add_argument(
+    "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument("-cm", "--compile_model",
                     help="load model", type=int, default=0)
 parser.add_argument("-num_chains", "--num_chains",
                     help="number of MCMC chains", type=int, default=4)
 parser.add_argument("-nd", "--nsim_data", help="data size",
-                    type=int, default=2000)
+                    type=int, default=1000)
 parser.add_argument("-th", "--task_handle",
                     help="hande for task", type=str, default="_")
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
