@@ -160,8 +160,12 @@ else:
 path_to_stan = './codebase/stan_code/discr/'
 
 print("\n\nReading Stan Code from model %d" % args.stan_model)
+# if args.stan_model == 1 :
+#     with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
+#         model_code = file.read()
+#     param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
 if args.stan_model == 1 :
-    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
+    with open(path_to_stan+'CFA/logit/model1_B.stan', 'r') as file:
         model_code = file.read()
     param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
 elif args.stan_model == 2 :
