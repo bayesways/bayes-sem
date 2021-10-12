@@ -61,7 +61,7 @@ save_obj(sm, 'sm', log_dir)
 ############################################################
 ################ Create Data or Load ##########
 
-for random_seed in range(20):
+for random_seed in range(5,20):
     data = gen_data_binary(
         args.nsim_data,
         random_seed=random_seed
