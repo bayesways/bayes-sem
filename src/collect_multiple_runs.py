@@ -52,10 +52,19 @@ if log_dir[-1] != "/":
 nsim = 20
 
 for i in range(nsim):
-    ps = load_obj('ps'+str(i), log_dir),
-    quant = np.quantile(ps['beta'], [0.025, 0.975], axis=0)
+    ps =  clean_samples(load_obj('ps'+str(i), log_dir))
+    quant = np.quantile(
+        remove_cn_dimension(ps['beta']),
+        [0.025, 0.975],
+        axis=0
+        )
     save_obj(quant, 'q_beta'+str(i), log_dir)
-    quant = np.quantile(ps['Phi_cov'], [0.025, 0.975], axis=0)
+    
+    quant = np.quantile(
+        remove_cn_dimension(ps['Phi_cov']),
+        [0.025, 0.975],
+        axis=0
+        )
     save_obj(quant, 'q_Phi_cov'+str(i), log_dir)
 
 
