@@ -68,46 +68,46 @@ for i in range(nsim):
     save_obj(quant, 'q_Phi_cov'+str(i), log_dir)
 
 
-# param = 'beta'
-# estimate_name = 'mean'
-# estimates = np.empty((nsim, 6, 2))
-# for i in range(nsim):
-#     estimates[i] = get_point_estimates(
-#         load_obj('ps'+str(i), log_dir),
-#         param,
-#         estimate_name
-#     )
-# save_obj(estimates, 'beta_mean', log_dir)
+param = 'beta'
+estimate_name = 'mean'
+estimates = np.empty((nsim, 6, 2))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'beta_mean', log_dir)
 
 
-# estimate_name = 'median'
-# estimates = np.empty((nsim, 6, 2))
-# for i in range(nsim):
-#     estimates[i] = get_point_estimates(
-#         load_obj('ps'+str(i), log_dir),
-#         param,
-#         estimate_name
-#     )
-# save_obj(estimates, 'beta_median', log_dir)
+estimate_name = 'median'
+estimates = np.empty((nsim, 6, 2))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'beta_median', log_dir)
 
 
-# param = 'Phi_cov'
-# estimate_name = 'mean'
-# estimates = np.empty((nsim, 2, 2))
-# for i in range(nsim):
-#     estimates[i] = get_point_estimates(
-#         load_obj('ps'+str(i), log_dir),
-#         param,
-#         estimate_name
-#     )
-# save_obj(estimates, 'Phi_mean', log_dir)
+param = 'Phi_cov'
+estimate_name = 'mean'
+estimates = np.empty((nsim, 2, 2))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'Phi_mean', log_dir)
 
-# estimate_name = 'median'
-# estimates = np.empty((nsim, 2, 2))
-# for i in range(nsim):
-#     estimates[i] = get_point_estimates(
-#         load_obj('ps'+str(i), log_dir),
-#         param,
-#         estimate_name
-#     )
-# save_obj(estimates, 'Phi_median', log_dir)
+estimate_name = 'median'
+estimates = np.empty((nsim, 2, 2))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'Phi_median', log_dir)
