@@ -12,6 +12,8 @@ import argparse
 parser = argparse.ArgumentParser()
 # Optional arguments
 parser.add_argument(
+    "-m", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=1)
+parser.add_argument(
     "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument(
     "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=1000)
@@ -20,7 +22,7 @@ parser.add_argument("-cm", "--compile_model",
 parser.add_argument("-num_chains", "--num_chains",
                     help="number of MCMC chains", type=int, default=4)
 parser.add_argument("-nd", "--nsim_data", help="data size",
-                    type=int, default=1000)
+                    type=int, default=2000)
 parser.add_argument("-th", "--task_handle",
                     help="hande for task", type=str, default="_")
 parser.add_argument("-xdir", "--existing_directory", help="refit compiled model in existing directory",
@@ -47,10 +49,31 @@ else:
 ################ Compile Model or Load ##########
 path_to_stan = './codebase/stan_code/discr/'
 
-# alternative parametrisation of model 1
-with open(path_to_stan+'CFA/logit/model1_B.stan', 'r') as file:
-    model_code = file.read()
-param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+print("\n\nReading Stan Code from model %d" % args.stan_model)
+if args.stan_model == 1 :
+    with open(path_to_stan+'CFA/logit/model1.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+elif args.stan_model == 2 :
+    with open(path_to_stan+'CFA/logit/model2.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+elif args.stan_model == 3 :
+    # alternative parametrisation of model 1
+    with open(path_to_stan+'CFA/logit/model1_B.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
+elif args.stan_model == 4 :
+    # alternative parametrisation of model 2
+    with open(path_to_stan+'CFA/logit/model2_B.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
+
+file = open('model.txt' %log_dir, "w")
+file.write(model_code)
+file.close()
 
 print("\n\nCompiling model")
 sm = pystan.StanModel(model_code=model_code, verbose=False)
@@ -61,7 +84,7 @@ save_obj(sm, 'sm', log_dir)
 ############################################################
 ################ Create Data or Load ##########
 
-for random_seed in range(13,20):
+for random_seed in range(20):
     data = gen_data_binary(
         args.nsim_data,
         random_seed=random_seed

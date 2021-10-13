@@ -42,8 +42,8 @@ def C_to_R(M):
     return R
 
 
-def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
-             off_diag_residual=False, off_diag_corr=0.2,
+def gen_data(nsim_data, J=6, K=2, rho=0, c=1, b=0.8,
+             off_diag_residual=False, off_diag_corr=0.0,
              cross_loadings=False,
              random_seed=None):
     if random_seed is not None:
@@ -109,10 +109,10 @@ def gen_data(nsim_data, J=6, K=2, rho=0.2, c=0.65, b=0.8,
     return(data)
 
 
-def gen_data_binary(nsim_data, J=6, K=2, rho=0.2, b=0.8,
-                    off_diag_residual=False, rho2=0.1, c=1,
+def gen_data_binary(nsim_data, J=6, K=2, rho=0.0, b=0.8,
+                    off_diag_residual=False, rho2=0.0, c=1,
                     cross_loadings=False, cross_loadings_level=3,
-                    method=3, random_seed=None):
+                    method=1, random_seed=None):
     if random_seed is not None:
         np.random.seed(random_seed)
 
