@@ -71,7 +71,7 @@ elif args.stan_model == 4 :
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
         'Omega_cov', 'Phi_cov']
 
-file = open('model.txt' %log_dir, "w")
+file = open('%smodel.txt' %log_dir, "w")
 file.write(model_code)
 file.close()
 
