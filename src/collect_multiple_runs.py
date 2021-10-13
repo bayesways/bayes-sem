@@ -55,14 +55,14 @@ for i in range(nsim):
     ps =  clean_samples(load_obj('ps'+str(i), log_dir))
     quant = np.quantile(
         remove_cn_dimension(ps['beta']),
-        [0.025, 0.975],
+        [0.005, 0.995],
         axis=0
         )
     save_obj(quant, 'q_beta'+str(i), log_dir)
     
     quant = np.quantile(
         remove_cn_dimension(ps['Phi_cov']),
-        [0.025, 0.975],
+        [0.005, 0.995],
         axis=0
         )
     save_obj(quant, 'q_Phi_cov'+str(i), log_dir)
