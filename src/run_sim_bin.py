@@ -57,8 +57,8 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  # ISO 8601 format
-    log_dir = "./log/"+nowstr+"%s_s%sm%s/" % (args.task_handle, args.sim_case,
-                                              args.stan_model)
+    log_dir = "./log/"+nowstr+"%s_s%sm%s_seed%s/" % (args.task_handle, args.sim_case,
+                                              args.stan_model, args.random_seed)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 else:
