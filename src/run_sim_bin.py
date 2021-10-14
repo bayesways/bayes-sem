@@ -263,7 +263,7 @@ if args.ppp_cv == 'ppp':  # run PPP
             ps[name] = np.squeeze(stan_samples[name])
     else:
         ps = stan_samples
-    save_obj(ps, 'ps', log_dir)
+    save_obj(ps, 'ps'+str(args.random_seed), log_dir)
 
 elif args.ppp_cv == 'cv':  # run CV
     print("\n\nKfold Fitting starts.... \n\n")
