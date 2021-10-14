@@ -12,9 +12,9 @@ import argparse
 parser = argparse.ArgumentParser()
 # Optional arguments
 parser.add_argument(
-    "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=2)
+    "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=2000)
 parser.add_argument(
-    "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=2)
+    "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=2000)
 parser.add_argument(
     "-m", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 parser.add_argument(
