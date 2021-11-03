@@ -10,7 +10,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "-d", "--log_dir" help="directory of results", type=str, default=None)
+    "-d", "--log_dir", help="directory of results", type=str, default=None)
 
 # Optional arguments
 
