@@ -70,59 +70,65 @@ for i in range(nsim):
 
 param = 'beta'
 estimate_name = 'mean'
+estimates = np.empty((nsim, 6, 2))
 for i in range(nsim):
-    estimates = get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'beta_mean'+str(i), log_dir)
+save_obj(estimates, 'beta_mean', log_dir)
 
 
 estimate_name = 'median'
+estimates = np.empty((nsim, 6, 2))
 for i in range(nsim):
-    estimates= get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'beta_median'+str(i), log_dir)
+save_obj(estimates, 'beta_median', log_dir)
 
 
 param = 'Phi_cov'
 estimate_name = 'mean'
+estimates = np.empty((nsim, 2, 2))
 for i in range(nsim):
-    estimates = get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'Phi_mean'+str(i), log_dir)
+save_obj(estimates, 'Phi_mean', log_dir)
 
 estimate_name = 'median'
+estimates = np.empty((nsim, 2, 2))
 for i in range(nsim):
-    estimates = get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'Phi_median'+str(i), log_dir)
+save_obj(estimates, 'Phi_median', log_dir)
 
 param = 'alpha'
 estimate_name = 'mean'
+estimates = np.empty((nsim, 1, 6))
 for i in range(nsim):
-    estimates = get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'alpha_mean'+str(i), log_dir)
+save_obj(estimates, 'alpha_mean', log_dir)
 
 estimate_name = 'median'
+estimates = np.empty((nsim, 1, 6))
 for i in range(nsim):
-    estimates = get_point_estimates(
+    estimates[i] = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
     )
-    save_obj(estimates, 'alpha_median'+str(i), log_dir)
+save_obj(estimates, 'alpha_median', log_dir)
