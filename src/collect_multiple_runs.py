@@ -77,7 +77,7 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'beta_mean', log_dir)
+    save_obj(estimates, 'beta_mean'+str(i), log_dir)
 
 
 estimate_name = 'median'
@@ -88,7 +88,7 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'beta_median', log_dir)
+    save_obj(estimates, 'beta_median'+str(i), log_dir)
 
 
 param = 'Phi_cov'
@@ -100,7 +100,7 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'Phi_mean', log_dir)
+    save_obj(estimates, 'Phi_mean'+str(i), log_dir)
 
 estimate_name = 'median'
 estimates = np.empty((nsim, 2, 2))
@@ -110,7 +110,7 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'Phi_median', log_dir)
+    save_obj(estimates, 'Phi_median'+str(i), log_dir)
 
 param = 'alpha'
 estimate_name = 'mean'
@@ -121,7 +121,7 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'alpha', log_dir)
+    save_obj(estimates, 'alpha_mean'+str(i), log_dir)
 
 estimate_name = 'median'
 estimates = np.empty((nsim, 1, 6))
@@ -131,4 +131,4 @@ for i in range(nsim):
         param,
         estimate_name
     )
-save_obj(estimates, 'alpha', log_dir)
+    save_obj(estimates, 'alpha_median'+str(i), log_dir)
