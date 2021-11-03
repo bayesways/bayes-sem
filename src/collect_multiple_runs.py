@@ -70,9 +70,8 @@ for i in range(nsim):
 
 param = 'beta'
 estimate_name = 'mean'
-estimates = np.empty((nsim, 6, 2))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
@@ -81,9 +80,8 @@ for i in range(nsim):
 
 
 estimate_name = 'median'
-estimates = np.empty((nsim, 6, 2))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates= get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
@@ -93,9 +91,8 @@ for i in range(nsim):
 
 param = 'Phi_cov'
 estimate_name = 'mean'
-estimates = np.empty((nsim, 2, 2))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
@@ -103,9 +100,8 @@ for i in range(nsim):
     save_obj(estimates, 'Phi_mean'+str(i), log_dir)
 
 estimate_name = 'median'
-estimates = np.empty((nsim, 2, 2))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
@@ -114,9 +110,8 @@ for i in range(nsim):
 
 param = 'alpha'
 estimate_name = 'mean'
-estimates = np.empty((nsim, 1, 6))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
@@ -124,9 +119,8 @@ for i in range(nsim):
     save_obj(estimates, 'alpha_mean'+str(i), log_dir)
 
 estimate_name = 'median'
-estimates = np.empty((nsim, 1, 6))
 for i in range(nsim):
-    estimates[i] = get_point_estimates(
+    estimates = get_point_estimates(
         load_obj('ps'+str(i), log_dir),
         param,
         estimate_name
