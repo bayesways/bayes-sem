@@ -10,7 +10,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "log_dir", help="number of warm up iterations", type=str, default=None)
+    "-d", "--log_dir" help="directory of results", type=str, default=None)
 
 # Optional arguments
 
