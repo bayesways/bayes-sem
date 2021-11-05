@@ -49,7 +49,7 @@ if log_dir[-1] != "/":
     log_dir = log_dir + "/"
 
 
-nsim = 94
+nsim = 100
 
 for i in range(nsim):
     ps =  clean_samples(load_obj('ps'+str(i), log_dir))
