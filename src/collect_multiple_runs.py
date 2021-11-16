@@ -54,12 +54,17 @@ nsim = 100
 for i in range(nsim):
     ps =  clean_samples(load_obj('ps'+str(i), log_dir))
     quant = np.quantile(
+        remove_cn_dimension(ps['alpha']),
+        [0.025, 0.975],
+        axis=0
+        )
+    save_obj(quant, 'q_alpha'+str(i), log_dir)
+    quant = np.quantile(
         remove_cn_dimension(ps['beta']),
         [0.025, 0.975],
         axis=0
         )
     save_obj(quant, 'q_beta'+str(i), log_dir)
-    
     quant = np.quantile(
         remove_cn_dimension(ps['Phi_cov']),
         [0.025, 0.975],
@@ -67,6 +72,27 @@ for i in range(nsim):
         )
     save_obj(quant, 'q_Phi_cov'+str(i), log_dir)
 
+
+param = 'alpha'
+estimate_name = 'mean'
+estimates = np.empty((nsim, 1, 6))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'alpha_mean', log_dir)
+
+estimate_name = 'median'
+estimates = np.empty((nsim, 1, 6))
+for i in range(nsim):
+    estimates[i] = get_point_estimates(
+        load_obj('ps'+str(i), log_dir),
+        param,
+        estimate_name
+    )
+save_obj(estimates, 'alpha_median', log_dir)
 
 param = 'beta'
 estimate_name = 'mean'
@@ -112,23 +138,3 @@ for i in range(nsim):
     )
 save_obj(estimates, 'Phi_median', log_dir)
 
-param = 'alpha'
-estimate_name = 'mean'
-estimates = np.empty((nsim, 1, 6))
-for i in range(nsim):
-    estimates[i] = get_point_estimates(
-        load_obj('ps'+str(i), log_dir),
-        param,
-        estimate_name
-    )
-save_obj(estimates, 'alpha_mean', log_dir)
-
-estimate_name = 'median'
-estimates = np.empty((nsim, 1, 6))
-for i in range(nsim):
-    estimates[i] = get_point_estimates(
-        load_obj('ps'+str(i), log_dir),
-        param,
-        estimate_name
-    )
-save_obj(estimates, 'alpha_median', log_dir)
