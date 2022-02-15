@@ -33,11 +33,6 @@ for fi in range(3):
 
 Ds = dict()
 for fold_index in range(3):
-    # Ds[fold_index] = get_energy_scores(
-    #     ps[fold_index],
-    #     complete_data[fold_index]['test']['yy'],
-    #     args.nsim_ppp,
-    #     )
     Ds[fold_index] = get_log_score(
         ps[fold_index],
         complete_data[fold_index]['test']['yy'],
@@ -53,7 +48,6 @@ for fold_index in range(3):
 
 ###########################################################
 ############### Compare CV scores  ##########
-# score_names = ['variogram']
 score_names = ['logscore']
 for name in score_names:
     a = [Ds[fold][name] for fold in range(3)]
