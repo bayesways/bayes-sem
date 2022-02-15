@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.stats import multivariate_normal
 from tqdm import tqdm
 from numpy.linalg import det, inv, norm
-from ..codebase.file_utils import save_obj, load_obj
+from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
 from scipy.spatial.distance import pdist
 from pdb import set_trace
@@ -86,6 +86,7 @@ def energy_score_vector(y_pred, y_obs_vector):
         scores[i] = energy_score(y_pred, y_obs_vector[i])
     return scores
 
+
 def variogram_score_vector(y_pred, y_obs_vector):
     # y_obs has dim N x J (N observation)
     # y_pred has dim m x J (m posterior samnples)
@@ -94,6 +95,37 @@ def variogram_score_vector(y_pred, y_obs_vector):
     for i in tqdm(range(N)):
         scores[i] = variogram_score(y_pred, y_obs_vector[i])
     return scores
+
+
+def get_log_score(ps, data, nsim=10, method_num=2):
+    mcmc_length = ps["alpha"].shape[0]
+    dim_J = ps['alpha'].shape[1]
+    if nsim>mcmc_length:
+        print('nsim > posterior sample size')
+        print('Using nsim = %d'%mcmc_length)
+        nsim = mcmc_length
+    skip_step = int(mcmc_length/nsim)
+    test_size = data.shape[0]
+    theta_draws = np.empty(nsim, dtype = float)
+    y_lklhds = np.empty(test_size, dtype = float)
+
+    for i in tqdm(range(test_size)):
+        for m_ind in range(nsim):
+            m = m_ind * skip_step
+            mean =  ps['alpha'][m]
+            Cov = ps['Marg_cov'][m]
+            theta_draws[m_ind] = multivariate_normal.pdf(
+                data[i],
+                mean=mean,
+                cov = Cov
+                )
+        y_lklhds[i] = -np.log(np.mean(theta_draws))
+    scores = dict()
+    logscore = y_lklhds.sum()
+    scores['logscore'] = logscore
+
+    return scores    
+    
 
 def get_energy_scores(ps, data, nsim=10, method_num=2):
     mcmc_length = ps["alpha"].shape[0]

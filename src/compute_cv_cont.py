@@ -1,5 +1,5 @@
 import numpy as np
-from codebase.model_fit_cont import get_energy_scores
+from codebase.model_fit_cont import get_energy_scores, get_log_score
 from codebase.post_process import remove_cn_dimension
 from codebase.file_utils import save_obj, load_obj
 import argparse
@@ -33,7 +33,12 @@ for fi in range(3):
 
 Ds = dict()
 for fold_index in range(3):
-    Ds[fold_index] = get_energy_scores(
+    # Ds[fold_index] = get_energy_scores(
+    #     ps[fold_index],
+    #     complete_data[fold_index]['test']['yy'],
+    #     args.nsim_ppp,
+    #     )
+    Ds[fold_index] = get_log_score(
         ps[fold_index],
         complete_data[fold_index]['test']['yy'],
         args.nsim_ppp,
@@ -48,7 +53,8 @@ for fold_index in range(3):
 
 ###########################################################
 ############### Compare CV scores  ##########
-score_names = ['variogram']
+# score_names = ['variogram']
+score_names = ['logscore']
 for name in score_names:
     a = [Ds[fold][name] for fold in range(3)]
     print("\n%s Fold Sum %.2f" % (name, np.sum(a)))
