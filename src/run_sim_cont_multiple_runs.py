@@ -23,19 +23,19 @@ parser.add_argument(
     "--num_warmup",
     help="number of warm up iterations",
     type=int,
-    default=100,
+    default=1000,
 )
 parser.add_argument(
     "-num_samples",
     "--num_samples",
     help="number of post-warm up iterations",
     type=int,
-    default=100,
+    default=1000,
 )
 parser.add_argument(
     "-num_chains", "--num_chains", help="number of MCMC chains", type=int, default=1
 )
-parser.add_argument("-nd", "--nsim_data", help="data size", type=int, default=10)
+parser.add_argument("-nd", "--nsim_data", help="data size", type=int, default=1000)
 parser.add_argument(
     "-th", "--task_handle", help="hande for task", type=str, default="_"
 )
@@ -57,8 +57,10 @@ parser.add_argument("-cm", "--compile_model",
                     help="load model", type=int, default=0)
 parser.add_argument("-prm", "--print_model",
                     help="print model on screen", type=int, default=0)
-parser.add_argument("-nsim", "--nsim_ppp",
-                    help="number of posterior samples to use for PPP", type=int, default=100)
+parser.add_argument("-nsim_ppp", "--nsim_ppp",
+                    help="number of posterior samples to use for PPP", type=int, default=1000)
+parser.add_argument("-nsim", "--nsim_sim",
+                    help="number of posterior samples to use for PPP", type=int, default=20)
                 
 args = parser.parse_args()
 
@@ -159,8 +161,8 @@ save_obj(sm, 'sm', log_dir)
 
 ############################################################
 ################ Create Data or Load ##########
-
-for random_seed in range(20):
+ppps = np.empty(args.nsim_sim)
+for random_seed in range(args.nsim_sim):
     data = gen_data(args.nsim_data,
                         off_diag_residual=False,
                         random_seed = random_seed)
@@ -215,5 +217,6 @@ for random_seed in range(20):
     save_obj(PPP_vals, 'PPP_vals'+str(random_seed), log_dir)
 
     ppp = np.sum(PPP_vals[:, 0] < PPP_vals[:, 1])/args.nsim_ppp
-    save_obj(ppp, 'ppp'+str(random_seed), log_dir)
+    ppps[random_seed] = ppp
+    save_obj(ppps, 'ppps', log_dir)
 
