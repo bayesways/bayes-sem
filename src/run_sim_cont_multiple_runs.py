@@ -55,7 +55,8 @@ parser.add_argument(
 )
 parser.add_argument("-cm", "--compile_model",
                     help="load model", type=int, default=0)
-
+parser.add_argument("-prm", "--print_model",
+                    help="print model on screen", type=int, default=0)
 args = parser.parse_args()
 
 ############################################################
