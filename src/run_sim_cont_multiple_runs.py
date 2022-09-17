@@ -1,9 +1,7 @@
-from altair_saver import save
 import numpy as np
 import pandas as pd
 import pystan
 import datetime
-import sys
 import os
 from codebase.file_utils import save_obj, load_obj
 from codebase.data import gen_data
