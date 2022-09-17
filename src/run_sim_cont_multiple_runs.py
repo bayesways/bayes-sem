@@ -25,19 +25,19 @@ parser.add_argument(
     "--num_warmup",
     help="number of warm up iterations",
     type=int,
-    default=1000,
+    default=100,
 )
 parser.add_argument(
     "-num_samples",
     "--num_samples",
     help="number of post-warm up iterations",
     type=int,
-    default=1000,
+    default=100,
 )
 parser.add_argument(
-    "-num_chains", "--num_chains", help="number of MCMC chains", type=int, default=4
+    "-num_chains", "--num_chains", help="number of MCMC chains", type=int, default=1
 )
-parser.add_argument("-nd", "--nsim_data", help="data size", type=int, default=1000)
+parser.add_argument("-nd", "--nsim_data", help="data size", type=int, default=10)
 parser.add_argument(
     "-th", "--task_handle", help="hande for task", type=str, default="_"
 )
