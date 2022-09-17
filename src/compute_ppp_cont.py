@@ -3,11 +3,11 @@ import pandas as pd
 import pystan
 import datetime
 from tqdm import tqdm
-from .codebase.model_fit_cont import get_PPP
-from .codebase.post_process import remove_cn_dimension
+from codebase.model_fit_cont import get_PPP
+from codebase.post_process import remove_cn_dimension
 import sys
 import os
-from .codebase.file_utils import save_obj, load_obj
+from codebase.file_utils import save_obj, load_obj
 import argparse
 
 parser = argparse.ArgumentParser()

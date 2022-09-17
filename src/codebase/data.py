@@ -42,10 +42,18 @@ def C_to_R(M):
     return R
 
 
-def gen_data(nsim_data, J=6, K=2, rho=0, c=1, b=0.8,
-             off_diag_residual=False, off_diag_corr=0.0,
-             cross_loadings=False,
-             random_seed=None):
+def gen_data(
+    nsim_data,
+    J=6,
+    K=2,
+    rho=0,
+    c=1,
+    b=0.8,
+    off_diag_residual=False,
+    off_diag_corr=0.0,
+    cross_loadings=False,
+    random_seed=None
+    ):
     if random_seed is not None:
         np.random.seed(random_seed)
 
