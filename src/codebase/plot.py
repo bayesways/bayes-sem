@@ -76,7 +76,7 @@ def plot_density(df, width=300, height=50) :
     return c
     
 
-def plot_line(df, width=300, height=50) :
+def plot_line(df, name=None, width=300, height=50) :
     # it only works for one chain for now
     c = alt.Chart(df).mark_line(
         strokeWidth = 1,
@@ -88,7 +88,7 @@ def plot_line(df, width=300, height=50) :
         alt.Color('source')
         ).resolve_scale(
             x='independent'
-        ).properties(width=width, height=height)
+        ).properties(width=width, height=height, title=name)
     return c
 
 
