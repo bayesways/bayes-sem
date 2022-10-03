@@ -10,7 +10,7 @@ parser.add_argument("logdir", help="path to files", type=str, default=None)
 
 # Optional arguments
 parser.add_argument("-nsim", "--nsim_ppp",
-                    help="number of posterior samples to use for PPP", type=int, default=4000)
+                    help="number of posterior samples to use for PPP", type=int, default=1000)
 
 args = parser.parse_args()
 

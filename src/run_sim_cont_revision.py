@@ -10,11 +10,11 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "num_warmup", help="number of warm up iterations", type=int, default=1000)
+    "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument(
-    "num_samples", help="number of post-warm up iterations", type=int, default=1000)
+    "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument(
-    "stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+    "-stan_model", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
 # Optional arguments
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
@@ -56,7 +56,7 @@ args = parser.parse_args()
 ###### Create Directory or Open existing ##########
 if args.existing_directory is None:
     nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  # ISO 8601 format
-    log_dir = "./log/"+nowstr+"%s_m%s/" % (args.task_handle,
+    log_dir = "./log/"+nowstr+"%s_s%s_m%s/" % (args.task_handle, args.random_seed,
                                               args.stan_model)
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
