@@ -70,7 +70,7 @@ else:
 ################ Create Data or Load ##########
 if args.gen_data == 1:
 
-    print("\n\nGenerating Continuous data for case")
+    print("\n\nReading dataset from revision dataset directory")
 
     data = load_obj('data%s'%args.random_seed, '../dat/revision_datasets/')
 

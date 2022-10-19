@@ -129,3 +129,12 @@ To save storage space you can remove old pickled files with
 
     find . type f -name '*.p' -delete
 
+### Revisions 
+
+For revisions we run repeated simulation experiments to look at the properties of our model selection method. 
+We run 100 experiments generating a new dataset for each experiment with the script `run_sim_cont_multiple_runs.py` 
+and collect log score results with script `compute_multiple_logscores.py`.
+
+Originally, we also created a script called `run_sim_cont_revisions.py` to use for specific experiments where the data is already given (This script will probably be deprecated later).
+
+Notebooks to present results are `Check multiple runs.ipynb` and `Check multiple runs - S2.ipynb`.
