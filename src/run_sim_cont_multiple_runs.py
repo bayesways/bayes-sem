@@ -159,7 +159,8 @@ for random_seed in range(50,args.nsim_sim):
         data = gen_data(args.nsim_data,
                         off_diag_residual=True,
                         cross_loadings=False,
-                        random_seed = random_seed)
+                        random_seed = random_seed,
+                        random_errors=True)
     elif args.sim_case == 2 :
         data = gen_data(args.nsim_data,
                         cross_loadings=True,

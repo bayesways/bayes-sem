@@ -52,7 +52,8 @@ def gen_data(
     off_diag_residual=False,
     off_diag_corr=0.0,
     cross_loadings=False,
-    random_seed=None
+    random_seed=None,
+    random_errors=False
     ):
     if random_seed is not None:
         np.random.seed(random_seed)
@@ -88,8 +89,13 @@ def gen_data(
         Theta_corr = np.eye(J)
         for i in [1, 2, 5]:
             for j in [3, 4]:
-                Theta_corr[i, j] = off_diag_corr
-                Theta_corr[j, i] = off_diag_corr
+                if random_errors:
+                    randerr = norm.rvs(loc=0, scale=0.2)
+                    Theta_corr[i, j] = randerr
+                    Theta_corr[j, i] = randerr
+                else:
+                    Theta_corr[i, j] = off_diag_corr
+                    Theta_corr[j, i] = off_diag_corr
         Theta = np.diag(sigma) @ Theta_corr @  np.diag(sigma)
     else:
         Theta = np.diag(sigma**2)
