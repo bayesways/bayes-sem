@@ -1,20 +1,18 @@
 from codebase.file_utils import save_obj, load_obj
 import numpy as np
-from codebase.model_fit_cont import get_PPP, get_log_score
+from codebase.model_fit_cont import get_log_score
 from codebase.post_process import remove_cn_dimension
 import datetime
 import os
 from tqdm import tqdm
 
 
-def get_cv_score_for_i(log_dir, i, nsim_ppp = 1000):
-    complete_data = load_obj("complete_data"+str(i), log_dir)
+def get_cv_score_for_i(log_dir, i, nsim_ppp=1000):
+    complete_data = load_obj("complete_data" + str(i), log_dir)
     ps = dict()
-    ps[0] = load_obj('ps'+str(i)+'_0', log_dir)
-    ps[1] = load_obj('ps'+str(i)+'_1', log_dir)
-    ps[2] = load_obj('ps'+str(i)+'_2', log_dir)
-    mcmc_length = ps[0]['alpha'].shape[0]
-    num_chains = ps[0]['alpha'].shape[1]
+    ps[0] = load_obj("ps" + str(i) + "_0", log_dir)
+    ps[1] = load_obj("ps" + str(i) + "_1", log_dir)
+    ps[2] = load_obj("ps" + str(i) + "_2", log_dir)
 
     for fi in range(3):
         for name in ps[fi].keys():
@@ -24,30 +22,23 @@ def get_cv_score_for_i(log_dir, i, nsim_ppp = 1000):
     for fold_index in range(3):
         Ds[fold_index] = get_log_score(
             ps[fold_index],
-            complete_data[fold_index]['test']['yy'],
+            complete_data[fold_index]["test"]["yy"],
             nsim_ppp,
-            )
-
-    # ###########################################################
-    # ############### Compare CV scores  ##########
-    # print('\nFold Sum %.2f'%np.sum(Ds))
-    # for f in range(3):
-    #     print('Fold %.2f'%Ds[f])
-
+        )
 
     ###########################################################
     ############### Compare CV scores  ##########
-    score_names = ['logscore']
+    score_names = ["logscore"]
     for name in score_names:
         a = [Ds[fold][name] for fold in range(3)]
         cvscore = np.sum(a)
-#     return cvscore, np.round(a, 3)
+    #     return cvscore, np.round(a, 3)
     return cvscore
 
 
 def get_all_logscores(log_dir, nsim=100):
-    total_scores =np.empty(nsim)
-#     fold_scores =np.empty((nsim,3))
+    total_scores = np.empty(nsim)
+    #     fold_scores =np.empty((nsim,3))
     for i in tqdm(range(nsim)):
         total_scores[i] = get_cv_score_for_i(log_dir, i)
     return total_scores
@@ -55,15 +46,15 @@ def get_all_logscores(log_dir, nsim=100):
 
 ############################################################
 ###### Create Directory or Open existing ##########
-nowstr = datetime.datetime.now().strftime('%Y%m%d_%H%M%S_')  # ISO 8601 format
-log_dir = "./log/revision_runs/"+nowstr 
+nowstr = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_")  # ISO 8601 format
+log_dir = "./log/revision_runs/" + nowstr
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 if log_dir[-1] != "/":
     print("\n\nAppending `/`-character at the end of directory")
     log_dir = log_dir + "/"
 
-print("\n\nSaving results in %s"%log_dir)
+print("\n\nSaving results in %s" % log_dir)
 
 
 ############################################################
@@ -71,10 +62,10 @@ print("\n\nSaving results in %s"%log_dir)
 
 model_logscores = dict()
 
-log_dir1 = './log/revision_runs/20221008_155816_mult_m2_s2_cv/'
-model_logscores['AZ'] = get_all_logscores(log_dir1)
+log_dir1 = "./log/revision_runs/20221008_155816_mult_m2_s2_cv/"
+model_logscores["AZ"] = get_all_logscores(log_dir1)
 
-log_dir2 = './log/revision_runs/20221008_155821_mult_m4_s2_cv/'
-model_logscores['EFA'] = get_all_logscores(log_dir2)
+log_dir2 = "./log/revision_runs/20221008_155821_mult_m4_s2_cv/"
+model_logscores["EFA"] = get_all_logscores(log_dir2)
 
-save_obj(model_logscores, 'model_logscores', log_dir)
+save_obj(model_logscores, "model_logscores", log_dir)
