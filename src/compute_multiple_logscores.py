@@ -48,7 +48,7 @@ def get_cv_score_for_i(log_dir, i, nsim_ppp = 1000):
 def get_all_logscores(log_dir, nsim=100):
     total_scores =np.empty(nsim)
 #     fold_scores =np.empty((nsim,3))
-    for i in tqdm(range(nsim)):
+    for i in range(nsim):
         total_scores[i] = get_cv_score_for_i(log_dir, i)
     return total_scores
 
@@ -70,11 +70,13 @@ print("\n\nSaving results in %s"%log_dir)
 # Comput Logscores ##########
 
 model_logscores = dict()
-
-log_dir1 = './log/revision_runs/20221008_155816_mult_m2_s2_cv/'
-model_logscores['AZ'] = get_all_logscores(log_dir1)
-
-log_dir2 = './log/revision_runs/20221008_155821_mult_m4_s2_cv/'
-model_logscores['EFA'] = get_all_logscores(log_dir2)
+log_dir1 = './log/revision_runs/20221029_143022_mult_m2_s1_cv/'
+model_logscores['AZ'] = get_all_logscores(log_dir1, 50)
+log_dir2 = './log/revision_runs/20221029_143024_mult_m5_s1_cv/'
+model_logscores['EFA-C'] = get_all_logscores(log_dir2, 50)
 
 save_obj(model_logscores, 'model_logscores', log_dir)
+
+print("Log dir 1:\n",log_dir1)
+print("Log dir 2:\n",log_dir2)
+print("Saving results in\n",log_dir)

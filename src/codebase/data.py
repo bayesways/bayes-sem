@@ -50,6 +50,7 @@ def gen_data(
     c=1,
     b=0.8,
     off_diag_residual=False,
+    off_diag_residual_case='a',
     off_diag_corr=0.0,
     cross_loadings=False,
     random_seed=None,
@@ -87,15 +88,27 @@ def gen_data(
 
     if off_diag_residual:
         Theta_corr = np.eye(J)
-        for i in [1, 2, 5]:
-            for j in [3, 4]:
-                if random_errors:
-                    randerr = norm.rvs(loc=0, scale=0.2)
-                    Theta_corr[i, j] = randerr
-                    Theta_corr[j, i] = randerr
-                else:
-                    Theta_corr[i, j] = off_diag_corr
-                    Theta_corr[j, i] = off_diag_corr
+        if off_diag_residual_case == 'a':
+            for i in [1, 2, 5]:
+                for j in [3, 4]:
+                    if random_errors:
+                        randerr = norm.rvs(loc=0, scale=0.2)
+                        Theta_corr[i, j] = randerr
+                        Theta_corr[j, i] = randerr
+                    else:
+                        Theta_corr[i, j] = off_diag_corr
+                        Theta_corr[j, i] = off_diag_corr
+        else: 
+            off_diag_residual_case = 'b'
+            for i in [1, 2, 4]:
+                for j in [3]:
+                    if random_errors:
+                        randerr = norm.rvs(loc=0, scale=0.2)
+                        Theta_corr[i, j] = randerr
+                        Theta_corr[j, i] = randerr
+                    else:
+                        Theta_corr[i, j] = off_diag_corr
+                        Theta_corr[j, i] = off_diag_corr
         Theta = np.diag(sigma) @ Theta_corr @  np.diag(sigma)
     else:
         Theta = np.diag(sigma**2)
@@ -118,7 +131,9 @@ def gen_data(
     data['sigma'] = sigma
     data['y'] = yy
     data['off_diag_residual'] = off_diag_residual
+    data['off_diag_residual_case'] = off_diag_residual_case
     data['cross_loadings'] = cross_loadings
+    data['random_errors'] = random_errors
 
     return(data)
 

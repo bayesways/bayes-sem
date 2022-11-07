@@ -109,7 +109,7 @@ def get_log_score(ps, data, nsim=10, method_num=2):
     theta_draws = np.empty(nsim, dtype = float)
     y_lklhds = np.empty(test_size, dtype = float)
 
-    for i in tqdm(range(test_size)):
+    for i in range(test_size):
         for m_ind in range(nsim):
             m = m_ind * skip_step
             mean =  ps['alpha'][m]

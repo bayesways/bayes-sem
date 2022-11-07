@@ -148,8 +148,8 @@ else:
 
 ############################################################
 ################ Create Data or Load ##########
-ppps = np.empty(args.nsim_sim)
-for random_seed in range(50,args.nsim_sim):
+# for random_seed in range(args.nsim_sim):
+for random_seed in range(70, args.nsim_sim):
     print("\n\nExperiment Seed %d\n\n"%random_seed)
     if args.sim_case == 0 :
         data = gen_data(args.nsim_data,
@@ -158,6 +158,7 @@ for random_seed in range(50,args.nsim_sim):
     elif args.sim_case == 1 :
         data = gen_data(args.nsim_data,
                         off_diag_residual=True,
+                        off_diag_residual_case='a',
                         cross_loadings=False,
                         random_seed = random_seed,
                         random_errors=True)
