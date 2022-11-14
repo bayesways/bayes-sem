@@ -62,10 +62,13 @@ print("\n\nSaving results in %s" % log_dir)
 
 model_variograms = {}
 
-log_dir1 = "./log/revision_runs/20221008_155816_mult_m2_s2_cv/"
+log_dir1 = "./log/revision_runs/s2/20221008_155816_mult_m2_s2_cv/"
 model_variograms["AZ"] = get_all_variograms(log_dir1)
 
-log_dir2 = "./log/revision_runs/20221008_155821_mult_m4_s2_cv/"
+log_dir2 = "./log/revision_runs/s2/20221008_155821_mult_m4_s2_cv/"
 model_variograms["EFA"] = get_all_variograms(log_dir2)
+
+log_dir3 = "./log/revision_runs/s2/20221029_152518_mult_m5_s2_cv/"
+model_variograms["EFA-C"] = get_all_variograms(log_dir3)
 
 save_obj(model_variograms, "model_variograms", log_dir)

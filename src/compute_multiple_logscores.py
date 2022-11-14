@@ -62,10 +62,14 @@ print("\n\nSaving results in %s" % log_dir)
 
 model_logscores = dict()
 
-log_dir1 = "./log/revision_runs/20221008_155816_mult_m2_s2_cv/"
+log_dir1 = "./log/revision_runs/20221112_213907_mult_m2_s3_cv/"
 model_logscores["AZ"] = get_all_logscores(log_dir1)
+save_obj(model_logscores, "model_logscores", log_dir)
 
-log_dir2 = "./log/revision_runs/20221008_155821_mult_m4_s2_cv/"
+log_dir2 = "./log/20221112_213918_mult_m4_s3_cv/"
 model_logscores["EFA"] = get_all_logscores(log_dir2)
+save_obj(model_logscores, "model_logscores", log_dir)
 
+log_dir3 = "./log/20221112_214124_mult_m5_s3_cv/"
+model_logscores["EFA"] = get_all_logscores(log_dir3)
 save_obj(model_logscores, "model_logscores", log_dir)
