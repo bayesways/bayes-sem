@@ -84,8 +84,6 @@ def gen_data(
 
     sigma_z = np.repeat(np.sqrt(c), K)
     Phi_corr = np.eye(K)
-    Phi_corr[0, 1] = rho
-    Phi_corr[1, 0] = rho
     Phi_cov = np.diag(sigma_z) @ Phi_corr @ np.diag(sigma_z)
 
     sigma = np.ones(J)

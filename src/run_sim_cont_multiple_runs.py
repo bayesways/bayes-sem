@@ -156,7 +156,7 @@ else:
 ############################################################
 ################ Create Data or Load ##########
 # for random_seed in range(args.nsim_sim):
-for random_seed in range(94, args.nsim_sim):
+for random_seed in range(args.nsim_sim):
     print("\n\nExperiment Seed %d\n\n" % random_seed)
     if args.sim_case == 0:
         data = gen_data(
@@ -188,6 +188,7 @@ for random_seed in range(94, args.nsim_sim):
             random_errors=True,
             random_seed=random_seed,
         )
+        data["K"] = 3
     else:
         print(
             "Choose simulation case {0:diag Theta, \
