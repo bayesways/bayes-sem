@@ -4,7 +4,6 @@ from codebase.model_fit_cont import get_log_score
 from codebase.post_process import remove_cn_dimension
 import datetime
 import os
-from tqdm import tqdm
 
 
 def get_cv_score_for_i(log_dir, i, nsim_ppp=1000):
@@ -39,7 +38,7 @@ def get_cv_score_for_i(log_dir, i, nsim_ppp=1000):
 def get_all_logscores(log_dir, nsim=100):
     total_scores = np.empty(nsim)
     #     fold_scores =np.empty((nsim,3))
-    for i in tqdm(range(nsim)):
+    for i in range(50, nsim):
         total_scores[i] = get_cv_score_for_i(log_dir, i)
     return total_scores
 
@@ -64,12 +63,12 @@ model_logscores = dict()
 
 log_dir1 = "./log/revision_runs/20221112_213907_mult_m2_s3_cv/"
 model_logscores["AZ"] = get_all_logscores(log_dir1)
-save_obj(model_logscores, "model_logscores", log_dir)
+save_obj(model_logscores, "model_logscores2", log_dir)
 
-log_dir2 = "./log/20221112_213918_mult_m4_s3_cv/"
+log_dir2 = "./log/revision_runs/20221112_213918_mult_m4_s3_cv/"
 model_logscores["EFA"] = get_all_logscores(log_dir2)
-save_obj(model_logscores, "model_logscores", log_dir)
+save_obj(model_logscores, "model_logscores2", log_dir)
 
-log_dir3 = "./log/20221112_214124_mult_m5_s3_cv/"
-model_logscores["EFA"] = get_all_logscores(log_dir3)
-save_obj(model_logscores, "model_logscores", log_dir)
+log_dir3 = "./log/revision_runs/20221112_214124_mult_m5_s3_cv/"
+model_logscores["EFA-C"] = get_all_logscores(log_dir3)
+save_obj(model_logscores, "model_logscores2", log_dir)

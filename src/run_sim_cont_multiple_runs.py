@@ -156,7 +156,7 @@ else:
 ############################################################
 ################ Create Data or Load ##########
 # for random_seed in range(args.nsim_sim):
-for random_seed in range(94, args.nsim_sim):
+for random_seed in range(args.nsim_sim):
     print("\n\nExperiment Seed %d\n\n" % random_seed)
     if args.sim_case == 0:
         data = gen_data(
@@ -181,6 +181,7 @@ for random_seed in range(94, args.nsim_sim):
     elif args.sim_case == 3:
         data = gen_data(
             args.nsim_data,
+            K=3,
             cross_loadings=True,
             cross_loadings_case="b",
             off_diag_residual=True,
