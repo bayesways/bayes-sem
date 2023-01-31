@@ -189,6 +189,7 @@ for random_seed in range(args.nsim_sim):
             random_errors=True,
             random_seed=random_seed,
         )
+        data["K"] = 3
     else:
         print(
             "Choose simulation case {0:diag Theta, \
