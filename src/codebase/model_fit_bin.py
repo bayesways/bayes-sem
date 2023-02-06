@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from scipy.stats import multivariate_normal, bernoulli
 from tqdm import tqdm
-from codebase.file_utils import save_obj, load_obj
 from scipy.special import expit
 from pdb import set_trace
 
@@ -28,8 +27,16 @@ def to_nparray_data(yresp):
         return res
 
 
-def get_probs(data, ps, m):
+def get_probs(ps, m):
     pistr = expit(ps["yy"][m])
+    return pistr
+
+
+def get_probs_from_prior(ps, m):
+    num_of_individuals = ps["yy"][m].shape[0]
+    zz = multivariate_normal.rvs(mean=np.zeros(2), size=num_of_individuals)
+    yy_sample = ps["alpha"][m] + zz @ ps["beta"][m].T
+    pistr = expit(yy_sample)
     return pistr
 
 
@@ -84,12 +91,13 @@ def get_PPP(data, ps, nsim=100):
     for m_ind in tqdm(range(nsim)):
         m = skip_step * m_ind
         # compute Dy
-        pi = get_probs(data, ps, m)
+        pi = get_probs(ps, m)
+        # pi = get_probs_from_prior(ps, m)
         Ey = get_Ey(data_ptrn, pi, data["N"])
         Dy = get_Dy(Oy, Ey, data_ptrn)
 
         # compute Dy
-        ppdata = bernoulli.rvs(get_probs(data, ps, m))
+        ppdata = bernoulli.rvs(pi)
         ppddata_ptrn = to_str_pattern(ppdata)
 
         Oystr = get_Oy(ppddata_ptrn)
@@ -105,7 +113,7 @@ def get_PPP(data, ps, nsim=100):
 def compute_brier_individual(probs_dict, obs):
     p_obs = probs_dict[obs]
     probs = np.array(list(probs_dict.values()))
-    probs_sum = np.sum(probs ** 2) - (p_obs ** 2)
+    probs_sum = np.sum(probs**2) - (p_obs**2)
     score = ((1.0 - p_obs) ** 2) + probs_sum
     return score
 
@@ -117,6 +125,7 @@ def compute_log_score(probs_dict, data):
         score_individual = -np.log(probs_dict[data[i]])
         score = score + score_individual
     return score
+
 
 def get_g2_score(data_ptrn, post_y, N):
     Oy = get_Oy(data_ptrn)
@@ -217,13 +226,13 @@ def get_method2(ps, dim_J, dim_K, nsim, skip_step):
 def get_scores(ps, data, nsim, method_num=2):
 
     mcmc_length = ps["alpha"].shape[0]
-    dim_J = ps['alpha'].shape[1]
+    dim_J = ps["alpha"].shape[1]
     dim_K = ps["beta"].shape[-1]
-    if nsim>mcmc_length:
-        print('nsim > posterior sample size')
-        print('Using nsim = %d'%mcmc_length)
+    if nsim > mcmc_length:
+        print("nsim > posterior sample size")
+        print("Using nsim = %d" % mcmc_length)
         nsim = mcmc_length
-    skip_step = int(mcmc_length/nsim)
+    skip_step = int(mcmc_length / nsim)
 
     data_ptrn = to_str_pattern(data["test"]["DD"])
 
@@ -236,7 +245,6 @@ def get_scores(ps, data, nsim, method_num=2):
         post_y = get_method2(ps, dim_J, dim_K, nsim, skip_step)
     else:
         print("method_num not found")
-    set_trace()
     scores = dict()
     g2_score = get_g2_score(data_ptrn, post_y, data["test"]["N"])
     lgscr1 = get_logscore1(data_ptrn, post_y)
