@@ -181,6 +181,7 @@ for random_seed in range(args.nsim_sim):
     elif args.sim_case == 3:
         data = gen_data(
             args.nsim_data,
+            K=3,
             cross_loadings=True,
             cross_loadings_case="b",
             off_diag_residual=True,
