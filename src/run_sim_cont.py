@@ -135,6 +135,16 @@ if args.gen_data == 1:
             args.nsim_data,
             off_diag_residual=True,
             off_diag_residual_case="a",
+            off_diag_corr=0.05,
+            cross_loadings=False,
+            random_seed=args.random_seed,
+            random_errors=False,
+        )
+    elif args.sim_case == 5:
+        data = gen_data(
+            args.nsim_data,
+            off_diag_residual=True,
+            off_diag_residual_case="c",
             off_diag_corr=0.2,
             cross_loadings=False,
             random_seed=args.random_seed,

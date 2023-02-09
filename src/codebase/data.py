@@ -100,6 +100,16 @@ def gen_data(
                     else:
                         Theta_corr[i, j] = off_diag_corr
                         Theta_corr[j, i] = off_diag_corr
+        if off_diag_residual_case == "c":
+            for i in [1, 2, 3, 5]:
+                for j in [3, 4]:
+                    if random_errors:
+                        randerr = norm.rvs(loc=0, scale=0.2)
+                        Theta_corr[i, j] = randerr
+                        Theta_corr[j, i] = randerr
+                    else:
+                        Theta_corr[i, j] = off_diag_corr
+                        Theta_corr[j, i] = off_diag_corr
         else:
             off_diag_residual_case = "b"
             for i in [1, 2, 4]:
