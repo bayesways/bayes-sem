@@ -16,9 +16,9 @@ parser.add_argument(
 parser.add_argument(
     "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=2000)
 parser.add_argument(
-    "-m", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=0)
+    "-m", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=1)
 parser.add_argument(
-    "-sim_case", "--sim_case", help="simulation case number", type=int, default=0)
+    "-sim_case", "--sim_case", help="simulation case number", type=int, default=4)
 parser.add_argument("-cv", "--ppp_cv",
                     help="run PPP or CV", type=str, default='ppp')
 parser.add_argument("-cm", "--compile_model",
@@ -30,7 +30,7 @@ parser.add_argument("-gd", "--gen_data",
 parser.add_argument("-rho", "--rho_param",
                     help="off diag correlation of Theta", type=float, default=0.1)
 parser.add_argument("-num_chains", "--num_chains",
-                    help="number of MCMC chains", type=int, default=4)
+                    help="number of MCMC chains", type=int, default=1)
 parser.add_argument("-seed", "--random_seed",
                     help="random seed for data generation", type=int, default=0)
 parser.add_argument("-c", "--c_param",
@@ -95,6 +95,15 @@ if args.gen_data == 1:
             off_diag_residual=False,
             cross_loadings=True,
             cross_loadings_level=3,
+            random_seed=args.random_seed
+            )
+    elif args.sim_case == 4:
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            cross_loadings=True,
+            cross_loadings_level=2,
             random_seed=args.random_seed
             )
     else:

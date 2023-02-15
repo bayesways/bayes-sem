@@ -15,7 +15,7 @@ parser.add_argument(
 parser.add_argument(
     "num_samples", help="number of post-warm up iterations", type=int, default=1000
 )
-parser.add_argument("sim_case", help="simulation case number", type=int, default=0)
+parser.add_argument("sim_case", help="simulation case number", type=int, default=1)
 parser.add_argument(
     "stan_model",
     help="0:full model, 1:no u's, 2: no u's no approx zero betas ",
@@ -133,12 +133,10 @@ if args.gen_data == 1:
     elif args.sim_case == 4:
         data = gen_data(
             args.nsim_data,
-            off_diag_residual=True,
-            off_diag_residual_case="a",
-            off_diag_corr=0.05,
-            cross_loadings=False,
+            cross_loadings=True,
+            cross_loadings_case="c",
+            off_diag_residual=False,
             random_seed=args.random_seed,
-            random_errors=False,
         )
     elif args.sim_case == 5:
         data = gen_data(

@@ -75,6 +75,19 @@ def gen_data(
                 ],
                 dtype=float,
             )
+        elif cross_loadings_case == "c":
+            r = 0.2
+            beta = np.array(
+                [
+                    [1, 0],
+                    [b, 0],
+                    [b, r],
+                    [r, 1],
+                    [0, b],
+                    [0, b],
+                ],
+                dtype=float,
+            )            
         else:
             beta = np.array(
                 [[1, 0], [b, 0], [b, 0.6], [0.6, 1], [0, b], [0, b]], dtype=float
@@ -180,7 +193,7 @@ def gen_data_binary(
             )
         elif cross_loadings_level == 2:
             beta = np.array(
-                [[1, 0], [b, 0.4], [b, 0.4], [0, 1], [0.4, b], [0.4, b]], dtype=float
+                [[1, 0], [b, 0], [b, 0.2], [0.2, 1], [0, b], [0, b]], dtype=float
             )
         elif cross_loadings_level == 3:
             beta = np.array(

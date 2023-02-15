@@ -14,7 +14,7 @@ parser.add_argument(
     "--nsim_ppp",
     help="number of posterior samples to use for PPP",
     type=int,
-    default=50,
+    default=1000,
 )
 
 args = parser.parse_args()
