@@ -251,11 +251,11 @@ def get_scores(ps, data, nsim, method_num=2):
     lgscr2 = get_logscore2(data_ptrn, post_y)
     diff = g2_score - lgscr1
     brier_score = get_brier_score(data_ptrn, post_y)
-    print("G2 = %.2f" % g2_score)
+    # print("G2 = %.2f" % g2_score)
     print("logscore = %.2f" % lgscr1)
-    print("logscore2 = %.2f" % lgscr2)
-    print("G2-logscore = %.2f" % diff)
-    print("brier = %.2f" % brier_score)
+    # print("logscore2 = %.2f" % lgscr2)
+    # print("G2-logscore = %.2f" % diff)
+    # print("brier = %.2f" % brier_score)
     print("\n\n")
 
     scores["g2"] = g2_score

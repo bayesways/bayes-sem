@@ -106,6 +106,15 @@ if args.gen_data == 1:
             cross_loadings_level=2,
             random_seed=args.random_seed
             )
+    elif args.sim_case == 5:
+        data = gen_data_binary(
+            args.nsim_data,
+            c=args.c_param,
+            off_diag_residual=False,
+            cross_loadings=True,
+            cross_loadings_level=4,
+            random_seed=args.random_seed
+            )
     else:
         print("Choose simulation case 0:Clean data ")
         print("Choose simulation case 1:Off-diag residuals")
@@ -197,6 +206,11 @@ elif args.stan_model == 6 :
     with open(path_to_stan+'EFA/model2.stan', 'r') as file:
         model_code = file.read()
     param_names = ['alpha', 'yy',  'beta', 'Marg_cov', 'Omega_cov']
+elif args.stan_model == 7 :
+    with open(path_to_stan+'CFA/logit/model2_scn5.stan', 'r') as file:
+        model_code = file.read()
+    param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
+        'Omega_cov', 'Phi_cov']
 else:
     print('model is 1:6')
 
@@ -213,7 +227,7 @@ if args.compile_model==0:
         sm = load_obj('sm', 'log/compiled_models/discr/model%s/' % args.stan_model)
         if args.stan_model in [1,3]:
             param_names = ['beta', 'alpha', 'zz', 'Phi_cov', 'yy']
-        elif args.stan_model in [2,4]:
+        elif args.stan_model in [2,4,7]:
             param_names = ['alpha', 'yy',  'beta', 'Marg_cov',
                 'Omega_cov', 'Phi_cov']
         elif args.stan_model == 5:

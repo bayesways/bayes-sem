@@ -17,7 +17,7 @@ parser.add_argument(
     "--nsim_ppp",
     help="number of posterior samples to use for PPP",
     type=int,
-    default=10,
+    default=2000,
 )
 parser.add_argument(
     "-scr",
@@ -40,10 +40,12 @@ if logdir[-1] != "/":
 complete_data = load_obj("complete_data", logdir)
 if "n_splits" not in complete_data.keys():
     complete_data["n_splits"] = 3
+
+
 ps = dict()
 for fold_index in range(complete_data["n_splits"]):
     ps[fold_index] = load_obj("ps_%s" % str(fold_index), logdir)
-    for name in ['alpha', 'Phi_cov', 'beta']:
+    for name in ps[fold_index].keys():
         ps[fold_index][name] = remove_cn_dimension(ps[fold_index][name])
 
 Ds = dict()
@@ -54,7 +56,7 @@ for fold_index in range(complete_data["n_splits"]):
     )
 ###########################################################
 ############### Compare CV scores  ##########
-score_names = ["g2", "logscore", "brier"]
+score_names = ["logscore"] # ["g2", "logscore", "brier"]
 for name in score_names:
     a = [Ds[fold][name] for fold in range(3)]
     print("\n%s Fold Sum %.2f" % (name, np.sum(a)))

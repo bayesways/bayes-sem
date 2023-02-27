@@ -10,19 +10,13 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "num_warmup", help="number of warm up iterations", type=int, default=1000
-)
+    "-num_warmup", "--num_warmup", help="number of warm up iterations", type=int, default=1000)
 parser.add_argument(
-    "num_samples", help="number of post-warm up iterations", type=int, default=1000
-)
-parser.add_argument("sim_case", help="simulation case number", type=int, default=1)
+    "-num_samples", "--num_samples", help="number of post-warm up iterations", type=int, default=1000)
 parser.add_argument(
-    "stan_model",
-    help="0:full model, 1:no u's, 2: no u's no approx zero betas ",
-    type=int,
-    default=0,
-)
-# Optional arguments
+    "-m", "--stan_model", help="0:full model, 1:no u's, 2: no u's no approx zero betas ", type=int, default=1)
+parser.add_argument(
+    "-sim_case", "--sim_case", help="simulation case number", type=int, default=4)
 parser.add_argument("-cv", "--ppp_cv", help="run PPP or CV", type=str, default="ppp")
 parser.add_argument("-cm", "--compile_model", help="load model", type=int, default=0)
 parser.add_argument(
@@ -141,12 +135,10 @@ if args.gen_data == 1:
     elif args.sim_case == 5:
         data = gen_data(
             args.nsim_data,
-            off_diag_residual=True,
-            off_diag_residual_case="c",
-            off_diag_corr=0.2,
-            cross_loadings=False,
+            cross_loadings=True,
+            cross_loadings_case="d",
+            off_diag_residual=False,
             random_seed=args.random_seed,
-            random_errors=False,
         )
     else:
         print(
@@ -251,6 +243,10 @@ elif args.stan_model == 5:
     with open(path_to_stan + "EFA/model2.stan", "r") as file:
         model_code = file.read()
     param_names = ["Marg_cov", "beta", "sigma", "alpha", "Theta", "Omega"]
+elif args.stan_model == 6:
+    with open(path_to_stan + "CFA/model2_scn5.stan", "r") as file:
+        model_code = file.read()
+    param_names = ["Marg_cov", "beta", "Phi_cov", "sigma", "alpha", "Theta", "Omega"]
 else:
     print(
         "Choose stan model {0:benchmark saturated model,"
@@ -290,6 +286,16 @@ if args.compile_model == 0:
             param_names = ["Marg_cov", "beta", "sigma", "alpha", "Theta"]
         elif args.stan_model == 5:
             param_names = ["Marg_cov", "beta", "sigma", "alpha", "Theta", "Omega"]
+        elif args.stan_model == 6:
+            param_names = [
+                "Marg_cov",
+                "beta",
+                "Phi_cov",
+                "sigma",
+                "alpha",
+                "Theta",
+                "Omega",
+            ]
         else:
             print("model option should be in [0,1,2,3]")
 

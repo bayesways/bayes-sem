@@ -16,6 +16,8 @@ parser.add_argument(
     type=int,
     default=1000,
 )
+parser.add_argument("-seed", "--random_seed",
+                    help="random seed for data generation", type=int, default=0)
 
 args = parser.parse_args()
 
@@ -25,7 +27,7 @@ if log_dir[-1] != "/":
 
 
 data = load_obj("data", log_dir)
-ps = load_obj("ps", log_dir)
+ps = load_obj("ps"+str(args.random_seed), log_dir)
 num_chains = ps["alpha"].shape[1]
 num_samples = ps["alpha"].shape[0]
 
