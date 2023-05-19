@@ -27,6 +27,9 @@ Convert `a.ipynb` to `a.py`:
 
 ## How to use:
 
+### Stan models
+The stan model files are located in `src/codebase/stan_code/cont/`.
+
 ### Continuous Data
 
 #### Simulation Continuous Data
