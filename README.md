@@ -7,13 +7,9 @@ Initial install:
     $ conda env create -f environment.yml
     $ source activate bayes-sem
 
-Update:
-
-    $ conda env update -f environment.yml
-
 Deactivate Environment:
 
-    $ source deactivate
+    $ conda deactivate
 
 Remove:
 
@@ -25,10 +21,13 @@ Convert `a.ipynb` to `a.py`:
     $ jupyter nbconvert --to script a.ipynb
 
 
+*Note* this repo requires pystan version 2.19.* (see [here](https://pystan2.readthedocs.io/en/latest/))
+
+
 ## How to use:
 
 ### Stan models
-The stan model files are located in `src/codebase/stan_code/`.
+The stan model files are located in `src/codebase/stan_code/cont` for continuous and `src/codebase/stan_code/disc` for the discrete models respectively. 
 
 ### Continuous Data
 
@@ -132,12 +131,7 @@ To save storage space you can remove old pickled files with
 
     find . type f -name '*.p' -delete
 
-### Revisions 
+### Repeated Simulations
 
-For revisions we run repeated simulation experiments to look at the properties of our model selection method. 
-We run 100 experiments generating a new dataset for each experiment with the script `run_sim_cont_multiple_runs.py` 
-and collect log score results with script `compute_multiple_logscores.py`.
-
-Originally, we also created a script called `run_sim_cont_revisions.py` to use for specific experiments where the data is already given (This script will probably be deprecated later).
-
-Notebooks to present results are `Check multiple runs.ipynb` and `Check multiple runs - S2.ipynb`.
+We ran repeated simulation experiments to look at the properties of our model selection method. 
+We ran 100 experiments each time generating a new dataset with the script `run_sim_cont_multiple_runs.py` and collect log score results with script `compute_multiple_logscores.py`. Notebook to present results `Check multiple runs.ipynb`.
