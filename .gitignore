@@ -1,7 +1,6 @@
 **/dat
 **/src/log
 **/doc
-*.DS_Store
 *.vscode
 
 *.Rproj
